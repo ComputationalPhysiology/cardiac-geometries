@@ -96,20 +96,6 @@ def gmsh2dolfin(msh_file):
     return geo
 
 
-# def mark_strain_regions(mesh, foc):
-
-
-#     fun = dolfin.MeshFunction("size_t", mesh, 3)
-#     sfun = mark_cell_function(fun, mesh, foc, regions)
-
-#     if mark_mesh:
-#         # Mark the cells accordingly
-#         for cell in dolfin.cells(mesh):
-#             mesh.domains().set_marker((cell.index(), sfun[cell]), 3)
-
-#     return sfun
-
-
 def mark_cell_function(fun, mesh, foc, regions):
     """
     Iterates over the mesh and stores the

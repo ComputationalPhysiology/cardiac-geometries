@@ -7,7 +7,7 @@ import mshr
 
 from .._dolfin_utils import Geometry
 from .._dolfin_utils import MarkerFunctions
-from .utils import default_markers
+from ._utils import default_markers
 
 
 def create_biv_mesh(
