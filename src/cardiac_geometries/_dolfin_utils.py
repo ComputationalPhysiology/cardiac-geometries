@@ -1,7 +1,8 @@
-from pathlib import Path
-import meshio
-import dolfin
 from collections import namedtuple
+from pathlib import Path
+
+import dolfin
+import meshio
 
 from . import calculus
 

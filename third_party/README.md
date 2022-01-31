@@ -89,7 +89,7 @@ Augustin, Chistoph M.; Fastl, Thomas E.; Neic, Aurel; Bellini, Chiara; Whitaker,
 
 The left atrium (LA) has a complex anatomy with heterogeneous wall thickness and curvature. We include 3 patient-specific anatomical FE meshes with rule-based myofiber directions of each of the anatomies included in our study (The impact of wall thickness and curvature on wall stress in patient-specific electromechanical models of the left atrium, BMMB, 2020, https://pubmed.ncbi.nlm.nih.gov/31802292/).
 Additionally we include
-- a noised model with Gaussian noise added (mean 0 um , standard deviation 100 um ) to the initial geometry of patient case 3 and subsequently smoothed using ParaView; and 
+- a noised model with Gaussian noise added (mean 0 um , standard deviation 100 um ) to the initial geometry of patient case 3 and subsequently smoothed using ParaView; and
 - a mesh with a constant wall thickness of 0.5 mm generated based on the endocardial surface of patient case 3.
 
 The meshes are in the binary format for the Cardiac Arrhythmia Research Package simulator, see https://carpentry.medunigraz.at/carputils/index.html">https://carpentry.medunigraz.at/carputils/index.html and https://opencarp.org. For each of the geometries, we include a list of nodal coordinates (.bpts file), a list of triangular elements (.belem file), fiber fields (.blon file), surface files (*.surf files), and surface points (*.surf.vtx files).
@@ -138,7 +138,7 @@ https://doi.org/10.6084/m9.figshare.11303306.v1
 
 ## Repository for modelling acute myocardial ischemia: simulation scripts and torso-heart mesh
 
-Martinez-Navarro, Hector and Rodriguez, Blanca and Bueno-Orovio, Alfonso and Minchole, Ana. (2019). 
+Martinez-Navarro, Hector and Rodriguez, Blanca and Bueno-Orovio, Alfonso and Minchole, Ana. (2019).
 
 
 Code and data required to run a biophysically detailed model of acute myocardial ischemia in humans on Chaste

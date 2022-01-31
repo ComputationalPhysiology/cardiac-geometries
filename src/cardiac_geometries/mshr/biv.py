@@ -1,8 +1,13 @@
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+
 import dolfin
-from typing import Optional, Dict, Tuple
 import mshr
 
-from .utils import Geometry, default_markers
+from .._dolfin_utils import Geometry
+from .._dolfin_utils import MarkerFunctions
+from .utils import default_markers
 
 
 def create_biv_mesh(
@@ -134,7 +139,8 @@ def create_biv_mesh(
     epi = Epi()
     epi.mark(ffun, markers["epi"])
 
-    return Geometry(mesh=mesh, ffun=ffun, markers=markers)
+    marker_functions = MarkerFunctions(ffun=ffun, vfun=None, efun=None, cfun=None)
+    return Geometry(mesh=mesh, markers=markers, marker_functions=marker_functions)
 
 
 def mark_biv_mesh(

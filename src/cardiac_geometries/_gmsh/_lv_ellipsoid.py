@@ -1,6 +1,6 @@
 import math
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 import gmsh
 

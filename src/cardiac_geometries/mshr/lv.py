@@ -1,8 +1,12 @@
-from typing import Tuple, Optional, Dict
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+
 import dolfin
 import mshr
 
 from .._dolfin_utils import Geometry
+from .._dolfin_utils import MarkerFunctions
 from .utils import default_markers
 
 
@@ -45,11 +49,11 @@ def create_lv_mesh(
 
     class Endo(dolfin.SubDomain):
         def inside(self, x, on_boundary):
-            return (x[0] - center.x()) ** 2 / a_endo**2 + (
+            return (x[0] - center.x()) ** 2 / a_endo ** 2 + (
                 x[1] - center.y()
-            ) ** 2 / b_endo**2 + (
+            ) ** 2 / b_endo ** 2 + (
                 x[2] - center.z()
-            ) ** 2 / c_endo**2 - 1.1 < dolfin.DOLFIN_EPS and on_boundary
+            ) ** 2 / c_endo ** 2 - 1.1 < dolfin.DOLFIN_EPS and on_boundary
 
     class Base(dolfin.SubDomain):
         def inside(self, x, on_boundary):
@@ -57,11 +61,11 @@ def create_lv_mesh(
 
     class Epi(dolfin.SubDomain):
         def inside(self, x, on_boundary):
-            return (x[0] - center.x()) ** 2 / a_epi**2 + (
+            return (x[0] - center.x()) ** 2 / a_epi ** 2 + (
                 x[1] - center.y()
-            ) ** 2 / b_epi**2 + (
+            ) ** 2 / b_epi ** 2 + (
                 x[2] - center.z()
-            ) ** 2 / c_epi**2 - 0.9 > dolfin.DOLFIN_EPS and on_boundary
+            ) ** 2 / c_epi ** 2 - 0.9 > dolfin.DOLFIN_EPS and on_boundary
 
     # The plane cutting the base
     diam = -2 * a_epi
@@ -94,4 +98,5 @@ def create_lv_mesh(
     epi = Epi()
     epi.mark(ffun, markers["epi"])
 
-    return Geometry(mesh=mesh, ffun=ffun, markers=markers)
+    marker_functions = MarkerFunctions(ffun=ffun, vfun=None, efun=None, cfun=None)
+    return Geometry(mesh=mesh, markers=markers, marker_functions=marker_functions)
