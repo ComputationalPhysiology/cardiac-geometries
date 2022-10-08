@@ -28,7 +28,7 @@ def read_meshfunction(fname, obj):
         f.read(obj, "name_to_read")
 
 
-def gmsh2dolfin(msh_file):
+def gmsh2dolfin(msh_file, unlink=True):
 
     msh = meshio.gmsh.read(msh_file)
 
@@ -59,8 +59,9 @@ def gmsh2dolfin(msh_file):
 
     cfun = dolfin.MeshFunction("size_t", mesh, 3)
     read_meshfunction(tetra_mesh_name, cfun)
-    tetra_mesh_name.unlink()
-    tetra_mesh_name.with_suffix(".h5").unlink()
+    if unlink:
+        tetra_mesh_name.unlink()
+        tetra_mesh_name.with_suffix(".h5").unlink()
 
     ffun_val = dolfin.MeshValueCollection("size_t", mesh, 2)
     read_meshfunction(triangle_mesh_name, ffun_val)
@@ -68,22 +69,25 @@ def gmsh2dolfin(msh_file):
     for value in ffun_val.values():
         mesh.domains().set_marker(value, 2)
     ffun.array()[ffun.array() == max(ffun.array())] = 0
-    triangle_mesh_name.unlink()
-    triangle_mesh_name.with_suffix(".h5").unlink()
+    if unlink:
+        triangle_mesh_name.unlink()
+        triangle_mesh_name.with_suffix(".h5").unlink()
 
     efun_val = dolfin.MeshValueCollection("size_t", mesh, 1)
     read_meshfunction(line_mesh_name, efun_val)
     efun = dolfin.MeshFunction("size_t", mesh, efun_val)
     efun.array()[efun.array() == max(efun.array())] = 0
-    line_mesh_name.unlink()
-    line_mesh_name.with_suffix(".h5").unlink()
+    if unlink:
+        line_mesh_name.unlink()
+        line_mesh_name.with_suffix(".h5").unlink()
 
     vfun_val = dolfin.MeshValueCollection("size_t", mesh, 0)
     read_meshfunction(vertex_mesh_name, vfun_val)
     vfun = dolfin.MeshFunction("size_t", mesh, vfun_val)
     vfun.array()[vfun.array() == max(vfun.array())] = 0
-    vertex_mesh_name.unlink()
-    vertex_mesh_name.with_suffix(".h5").unlink()
+    if unlink:
+        vertex_mesh_name.unlink()
+        vertex_mesh_name.with_suffix(".h5").unlink()
 
     markers = msh.field_data
     marker_functions = MarkerFunctions(vfun=vfun, efun=efun, ffun=ffun, cfun=cfun)
