@@ -28,25 +28,26 @@ def read_meshfunction(fname, obj):
         f.read(obj, "name_to_read")
 
 
-def gmsh2dolfin(msh_file, unlink=True):
+def gmsh2dolfin(msh_file, unlink=False):
 
     msh = meshio.gmsh.read(msh_file)
+    outdir = Path(msh_file).absolute().parent
 
     vertex_mesh = create_mesh(msh, "vertex")
     line_mesh = create_mesh(msh, "line")
     triangle_mesh = create_mesh(msh, "triangle")
     tetra_mesh = create_mesh(msh, "tetra")
 
-    vertex_mesh_name = Path("vertex_mesh.xdmf")
+    vertex_mesh_name = outdir / "vertex_mesh.xdmf"
     meshio.write(vertex_mesh_name, vertex_mesh)
 
-    line_mesh_name = Path("line_mesh.xdmf")
+    line_mesh_name = outdir / "line_mesh.xdmf"
     meshio.write(line_mesh_name, line_mesh)
 
-    triangle_mesh_name = Path("triangle_mesh.xdmf")
+    triangle_mesh_name = outdir / "triangle_mesh.xdmf"
     meshio.write(triangle_mesh_name, triangle_mesh)
 
-    tetra_mesh_name = Path("mesh.xdmf")
+    tetra_mesh_name = outdir / "mesh.xdmf"
     meshio.write(
         tetra_mesh_name,
         tetra_mesh,
