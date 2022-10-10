@@ -9,15 +9,12 @@ jobs:
       image: finsberg/fenics-gmsh
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: |
           python3 -m pip install ".[test, gmsh]"
 
       - name: Test with pytest
         run: |
-          python -m pytest
+          python3 -m pytest
