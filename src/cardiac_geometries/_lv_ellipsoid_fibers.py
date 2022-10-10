@@ -200,7 +200,7 @@ def create_microstructure(
     function_space,
 ):
 
-    t = laplace(mesh, ffun, markers)
+    t = laplace(mesh, ffun, markers, function_space=function_space)
     return compute_system(
         t,
         r_short_endo=r_short_endo,

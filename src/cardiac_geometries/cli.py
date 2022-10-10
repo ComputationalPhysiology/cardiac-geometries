@@ -121,14 +121,14 @@ def app():
 )
 @click.option(
     "--fiber-angle-endo",
-    default=60,
+    default=-60,
     type=float,
     help="Angle for the endocardium",
     show_default=True,
 )
 @click.option(
     "--fiber-angle-epi",
-    default=-60,
+    default=+60,
     type=float,
     help="Angle for the epicardium",
     show_default=True,
@@ -152,8 +152,8 @@ def create_lv_ellipsoid(
     mu_apex_epi: float = -math.pi,
     mu_base_epi: float = -math.acos(5 / 20),
     create_fibers: bool = False,
-    fiber_angle_endo: float = 60,
-    fiber_angle_epi: float = -60,
+    fiber_angle_endo: float = -60,
+    fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
 ):
     outdir = Path(outdir)
@@ -185,7 +185,7 @@ def create_lv_ellipsoid(
     if not create_fibers:
         return 0
 
-    from ._lv_elipsoid_fibers import create_microstructure
+    from ._lv_ellipsoid_fibers import create_microstructure
 
     f0, s0, n0 = create_microstructure(
         mesh=geometry.mesh,

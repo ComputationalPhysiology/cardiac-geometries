@@ -80,7 +80,7 @@ def lv_ellipsoid_flat_base(
     ndiv: float = 1.0,
 ) -> Path:
     mu_base_endo = math.acos(quota_base / r_long_endo)
-    mu_base_epi = math.acos(r_long_endo / r_long_epi * math.cos(mu_base_endo))
+    mu_base_epi = math.acos(quota_base / r_long_epi)
     mu_apex_endo = mu_apex_epi = 0
     psize_ref = psize / ndiv
     return lv_ellipsoid(
