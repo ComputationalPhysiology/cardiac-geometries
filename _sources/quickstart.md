@@ -9,7 +9,7 @@ cardiac-geometries create-lv-ellipsoid lv-mesh
 ```
 or using the docker container
 ```
-docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries create-lv-ellipsoid lv-mesh
+docker run --rm -v $PWD:/home/shared -w /home/shared -t ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries create-lv-ellipsoid lv-mesh
 ```
 This will create a new folder `lv-mesh` with the following content
 ```

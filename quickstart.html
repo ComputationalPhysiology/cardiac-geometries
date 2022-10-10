@@ -365,7 +365,7 @@ title="Print to PDF"
 </pre></div>
 </div>
 <p>or using the docker container</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries create-lv-ellipsoid lv-mesh
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -t ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries create-lv-ellipsoid lv-mesh
 </pre></div>
 </div>
 <p>This will create a new folder <code class="docutils literal notranslate"><span class="pre">lv-mesh</span></code> with the following content</p>
