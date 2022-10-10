@@ -226,6 +226,7 @@ def lv_ellipsoid(
 
     gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(3)
+
     gmsh.write(path.as_posix())
 
     gmsh.finalize()

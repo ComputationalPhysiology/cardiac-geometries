@@ -50,35 +50,35 @@ def app():
 )
 @click.option(
     "--r-short-endo",
-    default=0.025,
+    default=7.0,
     type=float,
     help="Shortest radius on the endocardium layer",
     show_default=True,
 )
 @click.option(
     "--r-short-epi",
-    default=0.035,
+    default=10.0,
     type=float,
     help="Shortest radius on the epicardium layer",
     show_default=True,
 )
 @click.option(
     "--r-long-endo",
-    default=0.09,
+    default=17.0,
     type=float,
     help="Longest radius on the endocardium layer",
     show_default=True,
 )
 @click.option(
     "--r-long-epi",
-    default=0.097,
+    default=20.0,
     type=float,
     help="Longest radius on the epicardium layer",
     show_default=True,
 )
 @click.option(
     "--psize-ref",
-    default=0.005,
+    default=3.0,
     type=float,
     help="The reference point size (smaller values yield as finer mesh",
     show_default=True,
@@ -142,11 +142,11 @@ def app():
 )
 def create_lv_ellipsoid(
     outdir: Path,
-    r_short_endo: float = 0.025,
-    r_short_epi: float = 0.035,
-    r_long_endo: float = 0.09,
-    r_long_epi: float = 0.097,
-    psize_ref: float = 0.005,
+    r_short_endo: float = 7.0,
+    r_short_epi: float = 10.0,
+    r_long_endo: float = 17.0,
+    r_long_epi: float = 20.0,
+    psize_ref: float = 3,
     mu_apex_endo: float = -math.pi,
     mu_base_endo: float = -math.acos(5 / 17),
     mu_apex_epi: float = -math.pi,
