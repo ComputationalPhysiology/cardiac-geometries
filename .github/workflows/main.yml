@@ -13,7 +13,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python3 -m pip install ".[test, gmsh]"
+          python3 -m pip install -e ".[test]"
 
       - name: Test with pytest
         run: |

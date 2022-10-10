@@ -18,7 +18,7 @@ docker run --rm -v $PWD:/home/shared -w /home/shared -it finsberg/fenics-gmsh
 ```
 If you want to get an image with `cardiac-gemometries` installed you can use the Docker image from the GitHub repo
 ```
-docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/computationalphysiology/simcardems:latest
+docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/computationalphysiology/cardiac_geometries:latest
 ```
 
 

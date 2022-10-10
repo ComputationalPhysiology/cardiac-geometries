@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: cardiac-mps-motion
+title: cardiac-geometries
 author: Henrik Finsberg
 logo: "logo.png"
 copyright: "2022"
@@ -15,7 +15,7 @@ execute:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/ComputationalPhysiology/mps_motion # Online location of your book
+  url: https://github.com/ComputationalPhysiology/cardiac_geometries # Online location of your book
   path_to_book: _sources # Optional path to your book, relative to the repository root
   branch: gh-pages # Which branch of the repository should be used when creating links (optional)
 

@@ -25,15 +25,11 @@ lv-mesh
 ├── vertex_mesh.h5
 └── vertex_mesh.xdmf
 ```
-Here you will find both the `.msh` file that is created by `gmsh` and all the files created by `fenics`. If you install `cardiac_geometries` with
-```
-python -m pip install cardiac-geometries[fibers]
-```
-which is already installed in the Docker image you can also run the following command
+Here you will find both the `.msh` file that is created by `gmsh` and all the files created by `fenics`. You can also run the following command
 ```
 cardiac-geometries create-lv-ellipsoid lv-mesh --create-fibers
 ```
-and then one additional file called `microstructure.h5` will be saved to the output folder. To load these files using FEniCS you can use the following code snippet
+and then one additional file called `microstructure.h5` will be saved to the output folder containing the fiber, sheet and sheet normal vector fields. To load these files using FEniCS you can use the following code snippet
 
 ```python
 from pathlib import Path
@@ -107,4 +103,25 @@ V = dolfin.VectorFunctionSpace(
  benchmark problems and solutions for testing active and passive material
  behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.
 
-To create the geometry from the Land Cardiac Mechanics Benchmark paper
+To create the geometry from the Land Cardiac Mechanics Benchmark paper you can use the following command
+
+```
+cardiac-geometries create-lv-ellipsoid benchmark-mesh --create-fibers --r-short-endo=7 --r-short-epi=10 --r-long-endo=17 --r-long-epi=20  --mu-apex-endo=0 --mu-apex-epi=0 --mu-base-endo=1.869328527979773 --mu-base-epi=1.8234765819369754 --psize-ref=3
+```
+Note that this mesh will have a flat base located at $z_{\text{base}} = 5$. The `mu-base-endo` and `mu-base-epi` is computed using the following formula
+
+$$
+\mu_{\text{base}}^{\text{endo}} = \mathrm{arccos} \left( \frac{z_{\text{base}}}{r\_ long \_ endo} \right)
+$$
+
+and
+
+$$
+\mu_{\text{base}}^{\text{epi}} = \mathrm{arccos} \left( \frac{z_{\text{base}}}{r\_ long \_ epi} \right)
+$$
+
+which means that if you want the base to be located at $z = 0$ you can set $\mu_{\text{base}}^{\text{endo}} = \mu_{\text{base}}^{\text{epi}} = \frac{\pi}{2} \approx 1.5707963267948966$, i.e
+
+```
+cardiac-geometries create-lv-ellipsoid mymesh --create-fibers --r-short-endo=7 --r-short-epi=10 --r-long-endo=17 --r-long-epi=20  --mu-apex-endo=0 --mu-apex-epi=0 --mu-base-endo=1.5707963267948966 --mu-base-epi=1.5707963267948966 --psize-ref=3
+```
