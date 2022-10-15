@@ -1,6 +1,15 @@
 FROM finsberg/fenics
 
 ARG GMSH_VERSION=4_10_5
+ARG OCC_VERSION=7_6_3
+
+RUN apt-get update && apt-get install libfontconfig1-dev mesa-common-dev -y
+
+RUN git clone -b V${OCC_VERSION} --single-branch --depth 1 https://github.com/Open-Cascade-SAS/OCCT.git && \
+    cmake -G Ninja -DBUILD_MODULE_Draw:BOOL=FALSE -DCMAKE_BUILD_TYPE=Release -B build-occt -S OCCT && \
+    cmake --build build-occt && \
+    cmake --install build-occt && \
+    rm -rf /tmp/*
 
 # Install gmsh
 RUN git clone -b gmsh_${GMSH_VERSION} --single-branch --depth 1 https://gitlab.onelab.info/gmsh/gmsh.git && \
@@ -11,5 +20,6 @@ RUN git clone -b gmsh_${GMSH_VERSION} --single-branch --depth 1 https://gitlab.o
 
 # GMSH installs python library in /usr/local/lib, see: https://gitlab.onelab.info/gmsh/gmsh/-/issues/1414
 ENV PYTHONPATH=/usr/local/lib:$PYTHONPATH
+ENV LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 
 RUN python -m pip install scipy matplotlib meshio h5py --no-binary=h5py

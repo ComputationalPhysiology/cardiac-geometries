@@ -14,6 +14,9 @@ Geometry = namedtuple("Geometry", ["mesh", "markers", "marker_functions"])
 def create_mesh(mesh, cell_type):
     # From http://jsdokken.com/converted_files/tutorial_pygmsh.html
     cells = mesh.get_cells_type(cell_type)
+    if cells.size == 0:
+        return None
+
     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
     out_mesh = meshio.Mesh(
         points=mesh.points,
@@ -24,8 +27,11 @@ def create_mesh(mesh, cell_type):
 
 
 def read_meshfunction(fname, obj):
-    with dolfin.XDMFFile(Path(fname).as_posix()) as f:
-        f.read(obj, "name_to_read")
+    try:
+        with dolfin.XDMFFile(Path(fname).as_posix()) as f:
+            f.read(obj, "name_to_read")
+    except RuntimeError:
+        pass
 
 
 def gmsh2dolfin(msh_file, unlink=False):
@@ -39,13 +45,19 @@ def gmsh2dolfin(msh_file, unlink=False):
     tetra_mesh = create_mesh(msh, "tetra")
 
     vertex_mesh_name = outdir / "vertex_mesh.xdmf"
-    meshio.write(vertex_mesh_name, vertex_mesh)
+    if vertex_mesh is not None:
+        meshio.write(vertex_mesh_name, vertex_mesh)
 
     line_mesh_name = outdir / "line_mesh.xdmf"
-    meshio.write(line_mesh_name, line_mesh)
+    if line_mesh is not None:
+        meshio.write(line_mesh_name, line_mesh)
 
     triangle_mesh_name = outdir / "triangle_mesh.xdmf"
-    meshio.write(triangle_mesh_name, triangle_mesh)
+    if triangle_mesh is not None:
+        meshio.write(triangle_mesh_name, triangle_mesh)
+
+    if tetra_mesh is None:
+        raise RuntimeError("Unable to create mesh")
 
     tetra_mesh_name = outdir / "mesh.xdmf"
     meshio.write(

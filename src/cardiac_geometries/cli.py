@@ -8,6 +8,7 @@ import rich_click as click
 
 from . import has_dolfin
 from ._gmsh import lv_ellipsoid
+from ._gmsh import slab
 
 
 def json_serial(obj):
@@ -208,4 +209,67 @@ def create_lv_ellipsoid(
         h5file.write(n0, "n0")
 
 
+@click.command()
+@click.argument(
+    "outdir",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--lx",
+    default=20.0,
+    type=float,
+    help="Length of slab in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--ly",
+    default=7.0,
+    type=float,
+    help="Length of slab in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--lz",
+    default=1.0,
+    type=float,
+    help="Length of slab in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--dx",
+    default=1.0,
+    type=float,
+    help="Element size",
+    show_default=True,
+)
+def create_slab(
+    outdir: Path,
+    lx: float = 20.0,
+    ly: float = 7.0,
+    lz: float = 3.0,
+    dx: float = 1.0,
+):
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    mesh_name = outdir / "slab.msh"
+    slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+
+    from ._dolfin_utils import gmsh2dolfin
+
+    geometry = gmsh2dolfin(mesh_name, unlink=False)
+
+    with open(outdir / "markers.json", "w") as f:
+        json.dump(geometry.markers, f, default=json_serial)
+
+
 app.add_command(create_lv_ellipsoid)
+app.add_command(create_slab)
