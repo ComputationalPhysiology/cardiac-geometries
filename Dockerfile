@@ -1,4 +1,4 @@
-FROM finsberg/fenics-gmsh:lastest
+FROM finsberg/fenics-gmsh:latest
 
 COPY . /app
 WORKDIR /app
