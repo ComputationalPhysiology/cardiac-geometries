@@ -9,10 +9,11 @@ def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
     path = utils.handle_mesh_name(mesh_name=mesh_name)
     # Initialize gmsh:
     gmsh.initialize()
-    gmsh.model.add("DFG 3D")
-
+    gmsh.model.add("Slab")
     gmsh.option.setNumber("Mesh.Optimize", 1)
     gmsh.option.setNumber("Mesh.OptimizeNetgen", 1)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", dx)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", dx)
 
     gmsh.model.occ.addBox(0, 0, 0, lx, ly, lz)
     gmsh.model.occ.synchronize()
@@ -56,8 +57,6 @@ def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
 
         else:
             print("Wtf!")
-
-    gmsh.model.occ.mesh.setSize(surfaces, dx)
 
     gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(3)
