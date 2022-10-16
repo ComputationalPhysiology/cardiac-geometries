@@ -323,6 +323,11 @@ title="Print to PDF"
    Creating the mesh from the Land Cardiac Mechanics Benchmark paper
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-mesh-for-a-slab">
+   Creating mesh for a slab
+  </a>
+ </li>
 </ul>
 
     </nav>
@@ -345,6 +350,11 @@ title="Print to PDF"
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
    Creating the mesh from the Land Cardiac Mechanics Benchmark paper
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-mesh-for-a-slab">
+   Creating mesh for a slab
   </a>
  </li>
 </ul>
@@ -475,6 +485,10 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">lv</span><span class="o">-</span><span class="n">ellipsoid</span> <span class="n">mymesh</span> <span class="o">--</span><span class="n">create</span><span class="o">-</span><span class="n">fibers</span> <span class="o">--</span><span class="n">r</span><span class="o">-</span><span class="n">short</span><span class="o">-</span><span class="n">endo</span><span class="o">=</span><span class="mi">7</span> <span class="o">--</span><span class="n">r</span><span class="o">-</span><span class="n">short</span><span class="o">-</span><span class="n">epi</span><span class="o">=</span><span class="mi">10</span> <span class="o">--</span><span class="n">r</span><span class="o">-</span><span class="n">long</span><span class="o">-</span><span class="n">endo</span><span class="o">=</span><span class="mi">17</span> <span class="o">--</span><span class="n">r</span><span class="o">-</span><span class="n">long</span><span class="o">-</span><span class="n">epi</span><span class="o">=</span><span class="mi">20</span>  <span class="o">--</span><span class="n">mu</span><span class="o">-</span><span class="n">apex</span><span class="o">-</span><span class="n">endo</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">mu</span><span class="o">-</span><span class="n">apex</span><span class="o">-</span><span class="n">epi</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">mu</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">endo</span><span class="o">=</span><span class="mf">1.5707963267948966</span> <span class="o">--</span><span class="n">mu</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">epi</span><span class="o">=</span><span class="mf">1.5707963267948966</span> <span class="o">--</span><span class="n">psize</span><span class="o">-</span><span class="n">ref</span><span class="o">=</span><span class="mi">3</span>
 </pre></div>
 </div>
+</section>
+<section id="creating-mesh-for-a-slab">
+<h2>Creating mesh for a slab<a class="headerlink" href="#creating-mesh-for-a-slab" title="Permalink to this headline">#</a></h2>
+<p>If it also possible to create a slab tissue using the command <code class="docutils literal notranslate"><span class="pre">create-slab</span></code> (note that this require <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> to be installed with with <a class="reference external" href="https://www.opencascade.com">OpenCascade kernel</a> which is installed in the docker image). In this case you can specify the length in the <span class="math notranslate nohighlight">\(x, y\)</span> and <span class="math notranslate nohighlight">\(z\)</span> direction through the arguments <code class="docutils literal notranslate"><span class="pre">lx</span></code>, <code class="docutils literal notranslate"><span class="pre">ly</span></code> and <code class="docutils literal notranslate"><span class="pre">lz</span></code> respectively. In this case the domain will be the box <span class="math notranslate nohighlight">\([0, l_x] \times [0, l_y] \times [0, l_z]\)</span> where is assumed that the apex is located at the place <span class="math notranslate nohighlight">\(z = 0\)</span>, the base at <span class="math notranslate nohighlight">\(z = l_z\)</span>, the endocardium at <span class="math notranslate nohighlight">\(y = 0\)</span> and the epicardium at <span class="math notranslate nohighlight">\(y = l_y\)</span>. Also here you can generate fibers with the same rule based approach.</p>
 </section>
 </section>
 
