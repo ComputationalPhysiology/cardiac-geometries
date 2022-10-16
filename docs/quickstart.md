@@ -125,3 +125,7 @@ which means that if you want the base to be located at $z = 0$ you can set $\mu_
 ```
 cardiac-geometries create-lv-ellipsoid mymesh --create-fibers --r-short-endo=7 --r-short-epi=10 --r-long-endo=17 --r-long-epi=20  --mu-apex-endo=0 --mu-apex-epi=0 --mu-base-endo=1.5707963267948966 --mu-base-epi=1.5707963267948966 --psize-ref=3
 ```
+
+## Creating mesh for a slab
+
+If it also possible to create a slab tissue using the command `create-slab`. In this case you can specify the length in the $x, y$ and $z$ direction through the arguments `lx`, `ly` and `lz` respectively. In this case the domain will be the box $[0, l_x] \times [0, l_y] \times [0, l_z]$ where is assumed that the apex is located at the place $z = 0$, the base at $z = l_z$, the endocardium at $y = 0$ and the epicardium at $y = l_y$. Also here you can generate fibers with the same rule based approach.

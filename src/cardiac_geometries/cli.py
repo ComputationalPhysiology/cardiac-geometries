@@ -249,12 +249,45 @@ def create_lv_ellipsoid(
     help="Element size",
     show_default=True,
 )
+@click.option(
+    "--create-fibers",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help="If True create analytic fibers",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-endo",
+    default=-60,
+    type=float,
+    help="Angle for the endocardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-epi",
+    default=+60,
+    type=float,
+    help="Angle for the epicardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-space",
+    default="P_1",
+    type=str,
+    help="Function space for fibers of the form family_degree",
+    show_default=True,
+)
 def create_slab(
     outdir: Path,
     lx: float = 20.0,
     ly: float = 7.0,
     lz: float = 3.0,
     dx: float = 1.0,
+    create_fibers: bool = True,
+    fiber_angle_endo: float = -60,
+    fiber_angle_epi: float = +60,
+    fiber_space: str = "P_1",
 ):
 
     outdir = Path(outdir)
@@ -269,6 +302,27 @@ def create_slab(
 
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
+
+    if not create_fibers:
+        return 0
+
+    from ._slab_fibers import create_microstructure
+
+    f0, s0, n0 = create_microstructure(
+        mesh=geometry.mesh,
+        ffun=geometry.marker_functions.ffun,
+        markers=geometry.markers,
+        function_space=fiber_space,
+        alpha_endo=fiber_angle_endo,
+        alpha_epi=fiber_angle_epi,
+    )
+    import dolfin
+
+    path = outdir / "microstructure.h5"
+    with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
+        h5file.write(f0, "f0")
+        h5file.write(s0, "s0")
+        h5file.write(n0, "n0")
 
 
 app.add_command(create_lv_ellipsoid)
