@@ -8,6 +8,7 @@ import rich_click as click
 
 from . import has_dolfin
 from ._gmsh import lv_ellipsoid
+from ._gmsh import slab
 
 
 def json_serial(obj):
@@ -208,4 +209,121 @@ def create_lv_ellipsoid(
         h5file.write(n0, "n0")
 
 
+@click.command()
+@click.argument(
+    "outdir",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--lx",
+    default=20.0,
+    type=float,
+    help="Length of slab in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--ly",
+    default=7.0,
+    type=float,
+    help="Length of slab in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--lz",
+    default=1.0,
+    type=float,
+    help="Length of slab in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--dx",
+    default=1.0,
+    type=float,
+    help="Element size",
+    show_default=True,
+)
+@click.option(
+    "--create-fibers",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help="If True create analytic fibers",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-endo",
+    default=-60,
+    type=float,
+    help="Angle for the endocardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-epi",
+    default=+60,
+    type=float,
+    help="Angle for the epicardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-space",
+    default="P_1",
+    type=str,
+    help="Function space for fibers of the form family_degree",
+    show_default=True,
+)
+def create_slab(
+    outdir: Path,
+    lx: float = 20.0,
+    ly: float = 7.0,
+    lz: float = 3.0,
+    dx: float = 1.0,
+    create_fibers: bool = True,
+    fiber_angle_endo: float = -60,
+    fiber_angle_epi: float = +60,
+    fiber_space: str = "P_1",
+):
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    mesh_name = outdir / "slab.msh"
+    slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+
+    from ._dolfin_utils import gmsh2dolfin
+
+    geometry = gmsh2dolfin(mesh_name, unlink=False)
+
+    with open(outdir / "markers.json", "w") as f:
+        json.dump(geometry.markers, f, default=json_serial)
+
+    if not create_fibers:
+        return 0
+
+    from ._slab_fibers import create_microstructure
+
+    f0, s0, n0 = create_microstructure(
+        mesh=geometry.mesh,
+        ffun=geometry.marker_functions.ffun,
+        markers=geometry.markers,
+        function_space=fiber_space,
+        alpha_endo=fiber_angle_endo,
+        alpha_epi=fiber_angle_epi,
+    )
+    import dolfin
+
+    path = outdir / "microstructure.h5"
+    with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
+        h5file.write(f0, "f0")
+        h5file.write(s0, "s0")
+        h5file.write(n0, "n0")
+
+
 app.add_command(create_lv_ellipsoid)
+app.add_command(create_slab)

@@ -1,14 +1,9 @@
 import math
-import tempfile
 from pathlib import Path
 
 import gmsh
 
-
-def handle_mesh_name(mesh_name: str = "") -> Path:
-    if mesh_name == "":
-        fd, mesh_name = tempfile.mkstemp(suffix=".msh")
-    return Path(mesh_name).with_suffix(".msh")
+from . import utils
 
 
 def prolate_lv_ellipsoid_flat_base(
@@ -110,7 +105,7 @@ def lv_ellipsoid(
     mu_base_epi=-math.acos(5 / 20),
 ) -> Path:
 
-    path = handle_mesh_name(mesh_name=mesh_name)
+    path = utils.handle_mesh_name(mesh_name=mesh_name)
 
     gmsh.initialize()
     gmsh.option.setNumber("Geometry.CopyMeshingMethod", 1)
