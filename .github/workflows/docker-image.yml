@@ -58,5 +58,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/$REPO:latest
+            ${{ env.REGISTRY }}/${REPO}:latest
           labels: ${{ steps.meta.outputs.labels }}
