@@ -1,3 +1,4 @@
+import datetime
 import json
 import math
 from importlib.metadata import metadata
@@ -173,6 +174,30 @@ def create_lv_ellipsoid(
         mu_apex_epi=mu_apex_epi,
         psize_ref=psize_ref,
     )
+    with open(outdir / "info.json", "w") as f:
+        json.dump(
+            {
+                "r_short_endo": r_short_endo,
+                "r_short_epi": r_short_epi,
+                "r_long_endo": r_long_endo,
+                "r_long_epi": r_long_epi,
+                "psize_ref": psize_ref,
+                "mu_apex_endo": mu_apex_endo,
+                "mu_base_endo": mu_base_endo,
+                "mu_apex_epi": mu_apex_epi,
+                "mu_base_epi": mu_base_epi,
+                "create_fibers": create_fibers,
+                "fibers_angle_endo": fiber_angle_endo,
+                "fibers_angle_epi": fiber_angle_epi,
+                "fiber_space": fiber_space,
+                "mesh_type": "lv_ellipsoid",
+                "cardiac_geometry_version": __version__,
+                "timestamp": datetime.datetime.now().isoformat(),
+            },
+            f,
+            indent=2,
+            default=json_serial,
+        )
     if not has_dolfin():
         return 0
 
@@ -295,6 +320,28 @@ def create_slab(
 
     mesh_name = outdir / "slab.msh"
     slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+    with open(outdir / "info.json", "w") as f:
+        json.dump(
+            {
+                "lx": lx,
+                "ly": ly,
+                "lz": lz,
+                "dx": dx,
+                "create_fibers": create_fibers,
+                "fibers_angle_endo": fiber_angle_endo,
+                "fibers_angle_epi": fiber_angle_epi,
+                "fiber_space": fiber_space,
+                "mesh_type": "slab",
+                "cardiac_geometry_version": __version__,
+                "timestamp": datetime.datetime.now().isoformat(),
+            },
+            f,
+            indent=2,
+            default=json_serial,
+        )
+
+    if not has_dolfin():
+        return 0
 
     from ._dolfin_utils import gmsh2dolfin
 
