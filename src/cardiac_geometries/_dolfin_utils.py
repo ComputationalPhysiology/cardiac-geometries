@@ -85,6 +85,10 @@ def gmsh2dolfin(msh_file, unlink=False):
     if unlink:
         triangle_mesh_name.unlink()
         triangle_mesh_name.with_suffix(".h5").unlink()
+    else:
+        ffun_path = outdir / "ffun.xdmf"
+        with dolfin.XDMFFile(ffun_path.as_posix()) as infile:
+            infile.write(ffun)
 
     efun_val = dolfin.MeshValueCollection("size_t", mesh, 1)
     read_meshfunction(line_mesh_name, efun_val)

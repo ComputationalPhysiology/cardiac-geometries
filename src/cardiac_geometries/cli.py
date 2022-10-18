@@ -372,5 +372,70 @@ def create_slab(
         h5file.write(n0, "n0")
 
 
+@click.command(
+    help=(
+        "Convert microstructure.h5 into separate .xdmf-files for f0, s0, and n0. "
+        "Assumes a folder containing a 'mesh.xdmf' and 'microstructure.h5'."
+    ),
+)
+@click.argument(
+    "folder",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--base-direction",
+    default="+z",
+    type=str,
+    help="Direction pointing towards the base. One of +x,-x,+y,-y,+z,-z",
+    show_default=True,
+)
+def fibers_to_xdmf(folder, base_direction: str):
+
+    outdir = Path(folder)
+    tetra_mesh_name = outdir / "mesh.xdmf"
+    microstructure_path = outdir / "microstructure.h5"
+
+    import dolfin
+    from dolfin import FiniteElement  # noqa: F401
+    from dolfin import tetrahedron  # noqa: F401
+    from dolfin import VectorElement  # noqa: F401
+    from .viz import fiber_to_xdmf, h5pyfile
+
+    mesh = dolfin.Mesh()
+
+    with dolfin.XDMFFile(tetra_mesh_name.as_posix()) as infile:
+        infile.read(mesh)
+
+    # Get signature
+    with h5pyfile(microstructure_path) as h5file:
+        signature = h5file["f0"].attrs["signature"].decode()
+
+    V = dolfin.FunctionSpace(mesh, eval(signature))
+    f0 = dolfin.Function(V)
+    s0 = dolfin.Function(V)
+    n0 = dolfin.Function(V)
+
+    with dolfin.HDF5File(
+        mesh.mpi_comm(),
+        microstructure_path.as_posix(),
+        "r",
+    ) as h5file:
+        h5file.read(f0, "f0")
+        h5file.read(s0, "s0")
+        h5file.read(n0, "n0")
+
+    fiber_to_xdmf(fun=f0, fname=outdir / "f0", base_direction=base_direction)
+    fiber_to_xdmf(fun=s0, fname=outdir / "s0", base_direction=base_direction)
+    fiber_to_xdmf(fun=n0, fname=outdir / "n0", base_direction=base_direction)
+
+
 app.add_command(create_lv_ellipsoid)
 app.add_command(create_slab)
+app.add_command(fibers_to_xdmf)
