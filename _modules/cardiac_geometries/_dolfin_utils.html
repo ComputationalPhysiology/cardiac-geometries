@@ -357,6 +357,10 @@ title="Open an issue"
     <span class="k">if</span> <span class="n">unlink</span><span class="p">:</span>
         <span class="n">triangle_mesh_name</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
         <span class="n">triangle_mesh_name</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ffun_path</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;ffun.xdmf&quot;</span>
+        <span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">ffun_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ffun</span><span class="p">)</span>
 
     <span class="n">efun_val</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshValueCollection</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">read_meshfunction</span><span class="p">(</span><span class="n">line_mesh_name</span><span class="p">,</span> <span class="n">efun_val</span><span class="p">)</span>
