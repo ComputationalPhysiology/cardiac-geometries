@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     container:
-      image: finsberg/fenics-gmsh
+      image: finsberg/fenics-gmsh:latest
     env:
       # Directory that will be published on github pages
       PUBLISH_DIR: ./docs/_build/html

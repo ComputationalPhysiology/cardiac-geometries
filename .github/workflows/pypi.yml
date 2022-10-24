@@ -7,7 +7,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     container:
-      image: finsberg/fenics-gmsh
+      image: finsberg/fenics-gmsh:latest
 
     steps:
       - uses: actions/checkout@v3
