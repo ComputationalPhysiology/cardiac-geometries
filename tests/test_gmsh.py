@@ -51,3 +51,11 @@ def test_lv_simple():
 def test_create_benchmark_geometry_land15():
     path = gmsh.create_benchmark_geometry_land15()
     path.unlink(missing_ok=False)
+
+
+@require_gmsh
+@pytest.mark.gmsh
+def test_slab(tmp_path):
+    mesh_name = tmp_path / "mesh.msh"
+    path = gmsh.slab(mesh_name)
+    path.unlink(missing_ok=False)

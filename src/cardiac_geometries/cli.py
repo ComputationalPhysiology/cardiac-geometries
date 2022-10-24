@@ -3,6 +3,8 @@ import json
 import math
 from importlib.metadata import metadata
 from pathlib import Path
+from typing import Optional
+from typing import Union
 
 import numpy as np
 import rich_click as click
@@ -406,36 +408,57 @@ def fibers_to_xdmf(folder, base_direction: str):
     from dolfin import FiniteElement  # noqa: F401
     from dolfin import tetrahedron  # noqa: F401
     from dolfin import VectorElement  # noqa: F401
-    from .viz import fiber_to_xdmf, h5pyfile
+    from .viz import fiber_to_xdmf
 
     mesh = dolfin.Mesh()
 
     with dolfin.XDMFFile(tetra_mesh_name.as_posix()) as infile:
         infile.read(mesh)
 
-    # Get signature
-    with h5pyfile(microstructure_path) as h5file:
-        signature = h5file["f0"].attrs["signature"].decode()
+    from .geometry import load_microstructure
 
-    V = dolfin.FunctionSpace(mesh, eval(signature))
-    f0 = dolfin.Function(V)
-    s0 = dolfin.Function(V)
-    n0 = dolfin.Function(V)
-
-    with dolfin.HDF5File(
-        mesh.mpi_comm(),
-        microstructure_path.as_posix(),
-        "r",
-    ) as h5file:
-        h5file.read(f0, "f0")
-        h5file.read(s0, "s0")
-        h5file.read(n0, "n0")
+    f0, s0, n0 = load_microstructure(mesh=mesh, microstructure_path=microstructure_path)
 
     fiber_to_xdmf(fun=f0, fname=outdir / "f0", base_direction=base_direction)
     fiber_to_xdmf(fun=s0, fname=outdir / "s0", base_direction=base_direction)
     fiber_to_xdmf(fun=n0, fname=outdir / "n0", base_direction=base_direction)
 
 
+@click.command(help="Convert folder with geometry files to a single file")
+@click.argument(
+    "folder",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option("--outfile", type=str, default=None)
+def folder2h5(folder: str, outfile: Optional[Union[str, Path]]):
+    try:
+        import h5py  # noqa: F401
+    except ImportError as e:
+        msg = "Please install h5py: 'python -m pip install h5py --no-binary=h5py'"
+        raise ImportError(msg) from e
+
+    folder_ = Path(folder)
+    from .geometry import Geometry
+
+    geo = Geometry.from_folder(folder_)
+
+    if outfile is None:
+        outfile = folder_.with_suffix(".h5")
+    else:
+        outfile = Path(outfile)
+
+    geo.save(outfile)
+    print(f"Saved to {outfile}.")
+
+
 app.add_command(create_lv_ellipsoid)
 app.add_command(create_slab)
 app.add_command(fibers_to_xdmf)
+app.add_command(folder2h5)

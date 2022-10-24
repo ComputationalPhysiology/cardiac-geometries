@@ -119,6 +119,42 @@ def h5pyfile(h5name, filemode="r"):
     h5file.close()
 
 
+def dict_to_h5(data, h5name, h5group):
+    with h5pyfile(h5name, "a") as h5file:
+        if h5group == "":
+            group = h5file
+        else:
+            group = h5file.create_group(h5group)
+        for k, v in data.items():
+            group.create_dataset(k, data=v)
+
+
+def decode(x):
+    if isinstance(x, bytes):
+        return x.decode()
+    elif isinstance(x, list):
+        return [xi for xi in map(decode, x)]
+    return x
+
+
+def h5_to_dict(h5group):
+    import h5py
+
+    group = {}
+    for key, value in h5group.items():
+        if isinstance(value, h5py.Dataset):
+            v = decode(value[...].tolist())
+            group[key] = v
+
+        elif isinstance(value, h5py.Group):
+            group[key] = h5_to_dict(h5group[key])
+
+        else:
+            raise ValueError(f"Unknown value type {type(value)} for key {key}.")
+
+    return group
+
+
 def dolfin_to_hd5(obj: dolfin.Function, h5name, time="", name=None):
     """
     Save object to and HDF file.
