@@ -175,11 +175,17 @@ class Geometry:
         scheme = kwargs.pop("scheme")
         if scheme is None:
             scheme = type(self).default_scheme()
-        self.scheme = scheme
 
+        self.scheme = {}
         for k, v in kwargs.items():
             self._fields.append(k)
             setattr(self, k, v)
+            s = scheme.get(k)
+            if s is None:
+                msg = f"Missing scheme entry for key {k}"
+                raise RuntimeError(msg)
+
+            self.scheme[k] = s
 
     def __repr__(self) -> str:
         fields = ", ".join(self._fields)
