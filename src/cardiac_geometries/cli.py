@@ -210,30 +210,33 @@ def create_lv_ellipsoid(
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
 
-    if not create_fibers:
-        return 0
+    if create_fibers:
+        from ._lv_ellipsoid_fibers import create_microstructure
 
-    from ._lv_ellipsoid_fibers import create_microstructure
+        f0, s0, n0 = create_microstructure(
+            mesh=geometry.mesh,
+            ffun=geometry.marker_functions.ffun,
+            markers=geometry.markers,
+            function_space=fiber_space,
+            r_short_endo=r_short_endo,
+            r_short_epi=r_short_epi,
+            r_long_endo=r_long_endo,
+            r_long_epi=r_long_epi,
+            alpha_endo=fiber_angle_endo,
+            alpha_epi=fiber_angle_epi,
+        )
+        import dolfin
 
-    f0, s0, n0 = create_microstructure(
-        mesh=geometry.mesh,
-        ffun=geometry.marker_functions.ffun,
-        markers=geometry.markers,
-        function_space=fiber_space,
-        r_short_endo=r_short_endo,
-        r_short_epi=r_short_epi,
-        r_long_endo=r_long_endo,
-        r_long_epi=r_long_epi,
-        alpha_endo=fiber_angle_endo,
-        alpha_epi=fiber_angle_epi,
-    )
-    import dolfin
+        path = outdir / "microstructure.h5"
+        with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
+            h5file.write(f0, "f0")
+            h5file.write(s0, "s0")
+            h5file.write(n0, "n0")
 
-    path = outdir / "microstructure.h5"
-    with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
-        h5file.write(f0, "f0")
-        h5file.write(s0, "s0")
-        h5file.write(n0, "n0")
+    from .geometry import Geometry
+
+    geo = Geometry.from_folder(outdir)
+    geo.save(outdir / "lv_ellipsoid.h5")
 
 
 @click.command()
@@ -352,26 +355,29 @@ def create_slab(
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
 
-    if not create_fibers:
-        return 0
+    if create_fibers:
+        from ._slab_fibers import create_microstructure
 
-    from ._slab_fibers import create_microstructure
+        f0, s0, n0 = create_microstructure(
+            mesh=geometry.mesh,
+            ffun=geometry.marker_functions.ffun,
+            markers=geometry.markers,
+            function_space=fiber_space,
+            alpha_endo=fiber_angle_endo,
+            alpha_epi=fiber_angle_epi,
+        )
+        import dolfin
 
-    f0, s0, n0 = create_microstructure(
-        mesh=geometry.mesh,
-        ffun=geometry.marker_functions.ffun,
-        markers=geometry.markers,
-        function_space=fiber_space,
-        alpha_endo=fiber_angle_endo,
-        alpha_epi=fiber_angle_epi,
-    )
-    import dolfin
+        path = outdir / "microstructure.h5"
+        with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
+            h5file.write(f0, "f0")
+            h5file.write(s0, "s0")
+            h5file.write(n0, "n0")
 
-    path = outdir / "microstructure.h5"
-    with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
-        h5file.write(f0, "f0")
-        h5file.write(s0, "s0")
-        h5file.write(n0, "n0")
+    from .geometry import Geometry
+
+    geo = Geometry.from_folder(outdir)
+    geo.save(outdir / "slab.h5")
 
 
 @click.command(

@@ -5,6 +5,7 @@ from typing import Any
 from typing import Dict
 from typing import NamedTuple
 from typing import Optional
+from typing import Sequence
 from typing import Tuple
 from typing import Union
 
@@ -13,7 +14,6 @@ from dolfin import FiniteElement  # noqa: F401
 from dolfin import tetrahedron  # noqa: F401
 from dolfin import VectorElement  # noqa: F401
 
-from ._dolfin_utils import read_meshfunction
 from .viz import dict_to_h5
 from .viz import h5_to_dict
 from .viz import h5pyfile
@@ -32,36 +32,17 @@ class H5Paths(str, Enum):
     info = "/info"
 
 
-class Paths(NamedTuple):
-    outdir: Path
-
-    @property
-    def tetra(self) -> Path:
-        return self.outdir / "mesh.xdmf"
-
-    @property
-    def triangle(self) -> Path:
-        return self.outdir / "triangle_mesh.xdmf"
-
-    @property
-    def line(self) -> Path:
-        return self.outdir / "line_mesh.xdmf"
-
-    @property
-    def vertex(self) -> Path:
-        return self.outdir / "vertex_mesh.xdmf"
-
-    @property
-    def microstructure(self) -> Path:
-        return self.outdir / "microstructure.h5"
-
-    @property
-    def info(self) -> Path:
-        return self.outdir / "info.json"
-
-    @property
-    def markers(self) -> Path:
-        return self.outdir / "markers.json"
+class FileNames(str, Enum):
+    mesh = "mesh.xdmf"
+    cfun = "mesh.xdmf:name_to_read"
+    ffun = "triangle_mesh.xdmf:name_to_read"
+    efun = "line_mesh.xdmf:name_to_read"
+    vfun = "vertex_mesh.xdmf:name_to_read"
+    f0 = "microstructure.h5:f0"
+    s0 = "microstructure.h5:s0"
+    n0 = "microstructure.h5:n0"
+    markers = "markers.json"
+    info = "info.json"
 
 
 class Microstructure(NamedTuple):
@@ -92,165 +73,338 @@ def load_microstructure(mesh, microstructure_path) -> Microstructure:
     return Microstructure(f0=f0, s0=s0, n0=n0)
 
 
-class Geometry(NamedTuple):
-    mesh: dolfin.Mesh
-    cfun: Optional[dolfin.MeshFunction] = None
-    ffun: Optional[dolfin.MeshFunction] = None
-    efun: Optional[dolfin.MeshFunction] = None
-    vfun: Optional[dolfin.MeshFunction] = None
-    markers: Optional[Dict[str, Tuple[int, int]]] = None
-    info: Optional[Dict[str, Any]] = None
-    f0: Optional[dolfin.Function] = None
-    s0: Optional[dolfin.Function] = None
-    n0: Optional[dolfin.Function] = None
+def read_signature(fname, group):
+    try:
+        with h5pyfile(fname) as h5file:
+            signature = h5file[group].attrs["signature"].decode()
+    except Exception:
+        return None
+    return signature
 
-    def save(self, fname: Union[str, Path]) -> None:
+
+class H5Path(NamedTuple):
+    h5group: str = ""
+    fname: str = ""
+    mesh_key: str = ""
+    is_dolfin: bool = True
+    is_mesh: bool = False
+    is_meshfunction: bool = False
+    is_function: bool = False
+    dim: int = -1
+
+    def to_dict(self):
+        return self._asdict()
+
+
+def load_scheme(path: Path) -> Dict[str, H5Path]:
+    data = json.loads(Path(path).read_text())
+
+    # Remove invalid keys
+    def filter_values(d: Dict[str, Any]):
+        return {k: v for k, v in d.items() if k in H5Path._fields}
+
+    return {k: H5Path(**filter_values(v)) for k, v in data.items()}
+
+
+def extract_mesh_keys(d: Dict[str, H5Path]) -> Sequence[Tuple[str, str]]:
+    required_mesh_keys = []
+    for name, p in d.items():
+        if p.is_mesh:
+            continue
+        if not p.is_dolfin:
+            continue
+        required_mesh_keys.append((name, p.mesh_key))
+    return list(required_mesh_keys)
+
+
+def read_xdmf(fname, obj, group=None):
+    try:
+        with dolfin.XDMFFile(Path(fname).as_posix()) as f:
+            if group is None:
+                f.read(obj)
+            else:
+                f.read(obj, group)
+    except RuntimeError:
+        pass
+
+
+def read_h5(fname, comm, obj, group=None):
+    try:
+        with dolfin.HDF5File(comm, Path(fname).as_posix(), "r") as f:
+            if group is None:
+                f.read(obj)
+            else:
+                f.read(obj, group)
+    except RuntimeError:
+        pass
+
+
+def read(
+    fname: Path,
+    obj: Any,
+    group: Optional[str],
+    current_mesh: dolfin.Mesh,
+) -> None:
+    if fname.suffix == ".xdmf":
+        read_xdmf(fname, obj, group)
+    elif fname.suffix == ".h5":
+        read_h5(fname, current_mesh.mpi_comm(), obj, group)
+    else:
+        raise RuntimeError(f"Unknown file format for {fname}")
+
+
+def extract_fname_group(fname: str, folder=".") -> Tuple[Path, Optional[str]]:
+    fg = fname.split(":")
+    if len(fg) == 1:
+        return Path(folder) / fg[0], None
+    if len(fg) > 2:
+        print(f"Warning: Invalid fname {fname}")
+    return Path(folder) / fg[0], fg[1]
+
+
+def dump_scheme(path: Union[Path, str], scheme: Dict[str, H5Path]) -> None:
+    Path(path).write_text(
+        json.dumps({k: v._asdict() for k, v in scheme.items()}, indent=2),
+    )
+
+
+class Geometry:
+    def __init__(self, **kwargs):
+
+        self._fields = ["scheme"]
+        scheme = kwargs.pop("scheme")
+        if scheme is None:
+            scheme = type(self).default_scheme()
+        self.scheme = scheme
+
+        for k, v in kwargs.items():
+            self._fields.append(k)
+            setattr(self, k, v)
+
+    def __repr__(self) -> str:
+        fields = ", ".join(self._fields)
+        return f"{type(self).__name__}({fields})"
+
+    @staticmethod
+    def default_scheme() -> Dict[str, H5Path]:
+        return {
+            "mesh": H5Path(
+                h5group=H5Paths.mesh.value,
+                is_mesh=True,
+                fname=FileNames.mesh.value,
+            ),
+            "cfun": H5Path(
+                h5group=H5Paths.cfun.value,
+                is_meshfunction=True,
+                dim=3,
+                mesh_key="mesh",
+                fname=FileNames.cfun.value,
+            ),
+            "ffun": H5Path(
+                h5group=H5Paths.ffun.value,
+                is_meshfunction=True,
+                dim=2,
+                mesh_key="mesh",
+                fname=FileNames.ffun.value,
+            ),
+            "efun": H5Path(
+                h5group=H5Paths.efun.value,
+                is_meshfunction=True,
+                dim=1,
+                mesh_key="mesh",
+                fname=FileNames.efun.value,
+            ),
+            "vfun": H5Path(
+                h5group=H5Paths.vfun.value,
+                is_meshfunction=True,
+                dim=0,
+                mesh_key="mesh",
+                fname=FileNames.vfun.value,
+            ),
+            "f0": H5Path(
+                h5group=H5Paths.f0.value,
+                is_function=True,
+                mesh_key="mesh",
+                fname=FileNames.f0.value,
+            ),
+            "s0": H5Path(
+                h5group=H5Paths.s0.value,
+                is_function=True,
+                mesh_key="mesh",
+                fname=FileNames.s0.value,
+            ),
+            "n0": H5Path(
+                h5group=H5Paths.n0.value,
+                is_function=True,
+                mesh_key="mesh",
+                fname=FileNames.n0.value,
+            ),
+            "info": H5Path(
+                h5group=H5Paths.info.value,
+                is_dolfin=False,
+                fname=FileNames.info.value,
+            ),
+            "markers": H5Path(
+                h5group=H5Paths.markers.value,
+                is_dolfin=False,
+                fname=FileNames.info.value,
+            ),
+        }
+
+    def save(
+        self,
+        fname: Union[str, Path],
+        scheme_path: Optional[Union[str, Path]] = None,
+    ) -> None:
         path = Path(fname).with_suffix(".h5")
         path.unlink(missing_ok=True)
 
-        with dolfin.HDF5File(self.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
+        with dolfin.HDF5File(dolfin.MPI.comm_world, path.as_posix(), "w") as h5file:
+            for name, p in self.scheme.items():
+                obj = getattr(self, name, None)
+                if obj is not None and p.is_dolfin:
+                    if p.h5group == "":
+                        raise RuntimeError("Cannot write object with empty path")
+                    h5file.write(obj, p.h5group)
 
-            h5file.write(self.mesh, H5Paths.mesh.value)
-            for obj, p in [
-                (self.cfun, H5Paths.cfun.value),
-                (self.ffun, H5Paths.ffun.value),
-                (self.efun, H5Paths.efun.value),
-                (self.vfun, H5Paths.vfun.value),
-                (self.f0, H5Paths.f0.value),
-                (self.s0, H5Paths.s0.value),
-                (self.n0, H5Paths.n0.value),
-            ]:
-                if obj is not None:
-                    h5file.write(obj, p)
+        for name, p in self.scheme.items():
+            obj = getattr(self, name, None)
+            if obj is not None and not p.is_dolfin:
+                if p.h5group == "":
+                    raise RuntimeError("Cannot write object with empty path")
+                dict_to_h5(obj, path, p.h5group)
 
-        if self.info is not None:
-            dict_to_h5(self.info, path, H5Paths.info.value)
-        if self.markers is not None:
-            dict_to_h5(self.markers, path, H5Paths.markers.value)
+        if scheme_path is None:
+            scheme_path = path.with_suffix(".json")
+        dump_scheme(scheme_path, scheme=self.scheme)
 
     @classmethod
-    def from_file(cls, fname: Union[str, Path]):
+    def from_file(
+        cls,
+        fname: Union[str, Path],
+        scheme_path: Optional[Path] = None,
+        scheme: Optional[Dict[str, H5Path]] = None,
+    ):
         path = Path(fname)
         if not path.is_file():
             msg = f"File {path} does not exist"
             raise FileNotFoundError(msg)
 
+        if scheme_path is not None:
+            scheme = load_scheme(scheme_path)
+
+        if scheme is None:
+            scheme = cls.default_scheme()
+
         groups = {}
-        signatures = {"f0": None, "s0": None, "n0": None}
+        data = {}
+        signatures = {}
         with h5pyfile(path, "r") as h5file:
 
-            if "info" in h5file:
-                info = h5_to_dict(h5file["info"])
-            else:
-                info = None
+            for name, p in scheme.items():
+                if p.h5group == "":
+                    continue
+                groups[name] = p.h5group in h5file
 
-            if "markers" in h5file:
-                markers = h5_to_dict(h5file["markers"])
-            else:
-                markers = None
+                if not p.is_dolfin:
+                    if groups[name]:
+                        data[name] = h5_to_dict(h5file[p.h5group])
+                    else:
+                        data[name] = None
 
-            for p in H5Paths:
-                groups[p.name] = p.value in h5file
+                if p.is_function and groups[name]:
+                    signatures[name] = h5file[p.h5group].attrs["signature"].decode()
 
-            for name in ["f0", "s0", "n0"]:
-                if groups[name]:
-                    signatures[name] = (
-                        h5file[H5Paths[name].value].attrs["signature"].decode()
-                    )
-
-        if not groups.pop("mesh"):
-            msg = f"Missing 'mesh' in {fname}"
-            raise RuntimeError(msg)
-
-        microstructure: Dict[str, dolfin.Function] = {}
+        required_mesh_keys = extract_mesh_keys(scheme)
+        for name, mesh_key in required_mesh_keys:
+            if not groups.get(mesh_key, False):
+                msg = f"Missing mesh key '{mesh_key}' for key {name} in {fname}"
+                raise RuntimeError(msg)
 
         mesh = dolfin.Mesh()
         with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "r") as h5file:
-            h5file.read(mesh, H5Paths.mesh, True)
-            meshfunctions = {
-                "cfun": dolfin.MeshFunction("size_t", mesh, 3),
-                "ffun": dolfin.MeshFunction("size_t", mesh, 2),
-                "efun": dolfin.MeshFunction("size_t", mesh, 1),
-                "vfun": dolfin.MeshFunction("size_t", mesh, 0),
-            }
-            for name, exists in groups.items():
-                if not exists:
+
+            # Meshes
+            for name, p in scheme.items():
+                if p.is_mesh and groups[name]:
+                    data[name] = dolfin.Mesh()
+                    h5file.read(data[name], p.h5group, True)
+
+            # Meshfunctions
+            for name, p in scheme.items():
+                if p.is_meshfunction and groups[name]:
+                    current_mesh = data[p.mesh_key]
+                    data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
+                    h5file.read(data[name], p.h5group)
                     continue
 
-                if name in meshfunctions:
-                    h5file.read(meshfunctions[name], H5Paths[name].value)
-                    continue
-
-                if name in signatures:
-                    signature = signatures[name]
+                if p.is_function and groups[name]:
+                    current_mesh = data[p.mesh_key]
+                    signature = signatures.get(name)
                     if signature is None:
                         continue
-                    V = dolfin.FunctionSpace(mesh, eval(signature))
-                    microstructure[name] = dolfin.Function(V)
-                    h5file.read(microstructure[name], H5Paths[name].value)
+                    V = dolfin.FunctionSpace(current_mesh, eval(signature))
+                    data[name] = dolfin.Function(V)
+                    h5file.read(data[name], p.h5group)
                     continue
 
-        return cls(
-            mesh=mesh, info=info, markers=markers, **microstructure, **meshfunctions
-        )
+        return cls(**data, scheme=scheme)
 
     @classmethod
-    def from_folder(cls, folder):
-        paths = Paths(folder)
+    def from_folder(cls, folder, scheme: Optional[Dict[str, H5Path]] = None):
+        folder = Path(folder)
 
-        if not paths.tetra.is_file():
-            msg = f"File {paths.tetra} not found"
-            raise RuntimeError(msg)
+        if scheme is None:
+            scheme = cls.default_scheme()
 
-        mesh = dolfin.Mesh()
-        with dolfin.XDMFFile(paths.tetra.as_posix()) as h5file:
-            h5file.read(mesh)
+        # Load mesh first
+        data = {}
 
-        cfun = dolfin.MeshFunction("size_t", mesh, 3)
-        read_meshfunction(paths.tetra, cfun)
+        for name, p in scheme.items():
+            if p.fname == "":
+                continue
+            if not p.is_mesh:
+                continue
+            fname, group = extract_fname_group(p.fname, folder)
+            if not fname.is_file():
+                continue
+            data[name] = current_mesh = dolfin.Mesh()
+            read(fname, data[name], group=group, current_mesh=current_mesh)
 
-        ffun_val = dolfin.MeshValueCollection("size_t", mesh, 2)
-        if paths.triangle.is_file():
-            read_meshfunction(paths.triangle, ffun_val)
-        ffun = dolfin.MeshFunction("size_t", mesh, ffun_val)
+        # Now load rest of the dolfin stuff
+        for name, p in scheme.items():
+            if p.fname == "":
+                continue
+            if p.is_meshfunction:
+                fname, group = extract_fname_group(p.fname, folder)
+                if not fname.is_file():
+                    continue
+                current_mesh = data[p.mesh_key]
+                data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
+                read(fname, data[name], group=group, current_mesh=current_mesh)
+                continue
 
-        efun_val = dolfin.MeshValueCollection("size_t", mesh, 1)
-        if paths.line.is_file():
-            read_meshfunction(paths.line, efun_val)
-        efun = dolfin.MeshFunction("size_t", mesh, efun_val)
+            if p.is_function:
+                fname, group = extract_fname_group(p.fname, folder)
+                if not fname.is_file():
+                    continue
+                signature = read_signature(fname, group)
+                if signature is None:
+                    continue
+                current_mesh = data[p.mesh_key]
+                V = dolfin.FunctionSpace(current_mesh, eval(signature))
+                data[name] = dolfin.Function(V)
+                read(fname, data[name], group=group, current_mesh=current_mesh)
+                continue
 
-        vfun_val = dolfin.MeshValueCollection("size_t", mesh, 0)
-        if paths.vertex.is_file():
-            read_meshfunction(paths.vertex, vfun_val)
-        vfun = dolfin.MeshFunction("size_t", mesh, vfun_val)
+        # Finally read json
+        for name, p in scheme.items():
+            if p.is_dolfin:
+                continue
+            fname = folder / p.fname
+            if fname.suffix == ".json":
+                data[name] = json.loads(fname.read_text())
+            else:
+                raise RuntimeError(f"Unknown file format for {fname}")
 
-        if paths.microstructure.is_file():
-            f0, s0, n0 = load_microstructure(
-                mesh=mesh,
-                microstructure_path=paths.microstructure,
-            )
-        else:
-            f0 = s0 = n0 = None
-
-        if paths.markers.is_file():
-            markers = json.loads(paths.markers.read_text())
-        else:
-            markers: Dict[str, Tuple[int, int]] = {}
-
-        if paths.info.is_file():
-            info = json.loads(paths.info.read_text())
-        else:
-            info: Dict[str, Any] = {}
-
-        return cls(
-            mesh=mesh,
-            cfun=cfun,
-            ffun=ffun,
-            efun=efun,
-            vfun=vfun,
-            f0=f0,
-            s0=s0,
-            n0=n0,
-            markers=markers,
-            info=info,
-        )
+        return cls(**data, scheme=scheme)
