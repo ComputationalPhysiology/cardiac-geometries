@@ -319,14 +319,48 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
-   Creating the mesh from the Land Cardiac Mechanics Benchmark paper
+  <a class="reference internal nav-link" href="#run-using-docker">
+   Run using docker
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#creating-mesh-for-a-slab">
-   Creating mesh for a slab
+  <a class="reference internal nav-link" href="#creating-a-slab">
+   Creating a slab
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#schema">
+     Schema
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generating-microstructure">
+     Generating microstructure
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#loading-the-data">
+     Loading the data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#saving-the-data-in-another-format">
+     Saving the data in another format
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-lv-ellipsoid">
+   Creating a lv ellipsoid
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
+     Creating the mesh from the Land Cardiac Mechanics Benchmark paper
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -348,14 +382,48 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
-   Creating the mesh from the Land Cardiac Mechanics Benchmark paper
+  <a class="reference internal nav-link" href="#run-using-docker">
+   Run using docker
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#creating-mesh-for-a-slab">
-   Creating mesh for a slab
+  <a class="reference internal nav-link" href="#creating-a-slab">
+   Creating a slab
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#schema">
+     Schema
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generating-microstructure">
+     Generating microstructure
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#loading-the-data">
+     Loading the data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#saving-the-data-in-another-format">
+     Saving the data in another format
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-lv-ellipsoid">
+   Creating a lv ellipsoid
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
+     Creating the mesh from the Land Cardiac Mechanics Benchmark paper
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -369,98 +437,213 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
-<p>If you have <a class="reference internal" href="install.html"><span class="doc std std-doc">installed</span></a> the packed with <code class="docutils literal notranslate"><span class="pre">pip</span></code> then you should have a command called <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> available. You can see the help menu by executing the command <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span> <span class="pre">--help</span></code></p>
-<p>You can create a left ellipsoidal ventricular geometry by using the following command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">lv</span><span class="o">-</span><span class="n">ellipsoid</span> <span class="n">lv</span><span class="o">-</span><span class="n">mesh</span>
+<p>If you have <a class="reference internal" href="install.html"><span class="doc std std-doc">installed</span></a> the packed with <code class="docutils literal notranslate"><span class="pre">pip</span></code> then you should have a command called <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> available. The <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> package comes with a a few useful cli commands and you can list information about these commands using</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cardiac-geometries --help
 </pre></div>
 </div>
-<p>or using the docker container</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -t ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries create-lv-ellipsoid lv-mesh
+<p>At the time of writing (version 0.3.1), the output look as follows</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cardiac-geometries --help
+
+ Usage: cardiac-geometries [OPTIONS] COMMAND [ARGS]...
+
+ Cardiac Geometries - A library for creating meshes of cardiac geometries
+
+╭─ Options ─────────────────────────────────────────────────────────────────────────────╮
+│ --version      Show the version and exit.                                             │
+│ --help         Show this message and exit.                                            │
+╰───────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ────────────────────────────────────────────────────────────────────────────╮
+│ create-lv-ellipsoid                                                                   │
+│ create-slab                                                                           │
+│ fibers-to-xdmf       Convert microstructure.h5 into separate .xdmf-files for f0, s0,  │
+│                      and n0. Assumes a folder containing a &#39;mesh.xdmf&#39; and            │
+│                      &#39;microstructure.h5&#39;.                                             │
+│ folder2h5            Convert folder with geometry files to a single file              │
+╰───────────────────────────────────────────────────────────────────────────────────────╯
 </pre></div>
 </div>
-<p>This will create a new folder <code class="docutils literal notranslate"><span class="pre">lv-mesh</span></code> with the following content</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>lv-mesh
-├── line_mesh.h5
-├── line_mesh.xdmf
-├── lv_ellipsoid.msh
+<p>To see more information about the individual subcommands you can use the <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag on the subcommand, e.g <code class="docutils literal notranslate"><span class="pre">cardiac</span> <span class="pre">geometries</span> <span class="pre">create-slab</span> <span class="pre">--help</span></code>.</p>
+<section id="run-using-docker">
+<h2>Run using docker<a class="headerlink" href="#run-using-docker" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> depends on both FEniCS and gmsh which might be challenging to install. Therefore we provide a docker image at</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ghcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">computationalphysiology</span><span class="o">/</span><span class="n">cardiac_geometries</span><span class="p">:</span><span class="n">latest</span>
+</pre></div>
+</div>
+<p>To run the <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> help command you can use the following command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -t ghcr.io/computationalphysiology/cardiac_geometries:latest cardiac-geometries --help
+</pre></div>
+</div>
+<p>This will also mount your current directory into the working directory of the container so that you have access to your current directory within the docker container.</p>
+</section>
+<section id="creating-a-slab">
+<h2>Creating a slab<a class="headerlink" href="#creating-a-slab" title="Permalink to this headline">#</a></h2>
+<p>You can create a slab geometry (i.e a box mesh) by using the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cardiac-geometries create-slab slab
+</pre></div>
+</div>
+<p>This will create a new directory <code class="docutils literal notranslate"><span class="pre">slab</span></code> with the following content</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>slab
+├── ffun.h5
+├── ffun.xdmf
+├── info.json
 ├── markers.json
 ├── mesh.h5
 ├── mesh.xdmf
+├── slab.h5
+├── slab.json
+├── slab.msh
 ├── triangle_mesh.h5
-├── triangle_mesh.xdmf
-├── vertex_mesh.h5
-└── vertex_mesh.xdmf
+└── triangle_mesh.xdmf
 </pre></div>
 </div>
-<p>Here you will find both the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file that is created by <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> and all the files created by <code class="docutils literal notranslate"><span class="pre">fenics</span></code>. You can also run the following command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">lv</span><span class="o">-</span><span class="n">ellipsoid</span> <span class="n">lv</span><span class="o">-</span><span class="n">mesh</span> <span class="o">--</span><span class="n">create</span><span class="o">-</span><span class="n">fibers</span>
+<p>Here the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file that is created by <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> and contains the mesh with all the physical surfaces.
+The <code class="docutils literal notranslate"><span class="pre">.xmdf</span></code> files are files that you can open in <a class="reference external" href="https://www.paraview.org">paraview</a> to inspect the geometry.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mesh.xdmf</span></code> contains the mesh and the volumetric subdomains, <code class="docutils literal notranslate"><span class="pre">triangle_mesh.xdmf</span></code> contains the facet subdomains and your might also see <code class="docutils literal notranslate"><span class="pre">line_mesh.xdmf</span></code> and <code class="docutils literal notranslate"><span class="pre">vertex_mesh.xdmf</span></code> which contains the subdomains for the edges and vertices. You will also see a <code class="docutils literal notranslate"><span class="pre">ffun.xdmf</span></code> which contains a FEniCS facet function. This is similar to <code class="docutils literal notranslate"><span class="pre">triangle_mesh.xdmf</span></code> however <code class="docutils literal notranslate"><span class="pre">ffun.xdmf</span></code> also contains information about the mesh to that you can load the facet function directly without going via a <code class="docutils literal notranslate"><span class="pre">MeshValueCollection</span></code>.</p>
+<p>The file <code class="docutils literal notranslate"><span class="pre">markers.json</span></code> contains a dictionary to the markers for the different subdomains. For the slab, the default markers are</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{&quot;X0&quot;: [1, 2], &quot;X1&quot;: [2, 2], &quot;Y0&quot;: [3, 2], &quot;Y1&quot;: [4, 2], &quot;Z0&quot;: [5, 2], &quot;Z1&quot;: [6, 2], &quot;Myocardium&quot;: [7, 3]}
 </pre></div>
 </div>
-<p>and then one additional file called <code class="docutils literal notranslate"><span class="pre">microstructure.h5</span></code> will be saved to the output folder containing the fiber, sheet and sheet normal vector fields. To load these files using FEniCS you can use the following code snippet</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">dolfin</span>
-
-
-<span class="k">def</span> <span class="nf">read_meshfunction</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-    <span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;name_to_read&quot;</span><span class="p">)</span>
-
-<span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;lv-mesh&quot;</span><span class="p">)</span>
-<span class="n">vertex_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;vertex_mesh.xdmf&quot;</span>
-<span class="n">line_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;line_mesh.xdmf&quot;</span>
-<span class="n">triangle_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;triangle_mesh.xdmf&quot;</span>
-<span class="n">tetra_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;mesh.xdmf&quot;</span>
-<span class="n">microstructure_path</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;microstructure.h5&quot;</span>
+<p>Each value has two numbers where the first number represents the marker and the second the dimension. For example <code class="docutils literal notranslate"><span class="pre">X0</span></code> has the marker <code class="docutils literal notranslate"><span class="pre">1</span></code> for dimension 2 (i.e facets), and are the markers for the <span class="math notranslate nohighlight">\(x=0\)</span> plane. <code class="docutils literal notranslate"><span class="pre">X1</span></code> is the marker for the <span class="math notranslate nohighlight">\(x=l_x\)</span> plane. In the script you can specify the length in the <span class="math notranslate nohighlight">\(x, y\)</span> and <span class="math notranslate nohighlight">\(z\)</span> direction through the arguments <code class="docutils literal notranslate"><span class="pre">lx</span></code>, <code class="docutils literal notranslate"><span class="pre">ly</span></code> and <code class="docutils literal notranslate"><span class="pre">lz</span></code> respectively. In this case the domain will be the box <span class="math notranslate nohighlight">\([0, l_x] \times [0, l_y] \times [0, l_z]\)</span> where is assumed that the apex is located at the place <span class="math notranslate nohighlight">\(z = 0\)</span>, the base at <span class="math notranslate nohighlight">\(z = l_z\)</span>, the endocardium at <span class="math notranslate nohighlight">\(y = 0\)</span> and the epicardium at <span class="math notranslate nohighlight">\(y = l_y\)</span>. Also here you can generate fibers with the same rule based approach.</p>
+<p>The file <code class="docutils literal notranslate"><span class="pre">info.json</span></code> contains parameters used to create the mesh as well as a timestamp and the version of <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> used to create the mesh.</p>
+<p>The file <code class="docutils literal notranslate"><span class="pre">slab.h5</span></code> contains all the data collected in one single file. This is useful if you want to use the geometry in a simulation for example. The file <code class="docutils literal notranslate"><span class="pre">slab.json</span></code> contains the schema used for the file and is used when loading the data. This might be relevant if you want to save data in another format. The schema is discussed in more detailed further down in this document.</p>
+<section id="schema">
+<h3>Schema<a class="headerlink" href="#schema" title="Permalink to this headline">#</a></h3>
+<p>Every object is represented as an entry in the schema (i.e in the file called <code class="docutils literal notranslate"><span class="pre">slab.json</span></code> in the slab example). Each entry contains a set of key value pairs where the keys are the same for every object but the values might be different. For example the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> object has the following key-value pairs</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;mesh&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;h5group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/mesh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;fname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mesh.xdmf&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;mesh_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_dolfin&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_mesh&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_meshfunction&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_function&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dim&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">h5group</span></code> would by the location of the mesh inside the file containing all the data (i.e <code class="docutils literal notranslate"><span class="pre">slab.h5</span></code>). This means that if you wanted to load this mesh in FEniCS you could do</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfin</span>
 
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Mesh</span><span class="p">()</span>
-
-<span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-    <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-
-<span class="n">cfun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">read_meshfunction</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="p">,</span> <span class="n">cfun</span><span class="p">)</span>
-
-<span class="n">ffun_val</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshValueCollection</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">read_meshfunction</span><span class="p">(</span><span class="n">triangle_mesh_name</span><span class="p">,</span> <span class="n">ffun_val</span><span class="p">)</span>
-<span class="n">ffun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">ffun_val</span><span class="p">)</span>
-
-<span class="n">efun_val</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshValueCollection</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">read_meshfunction</span><span class="p">(</span><span class="n">line_mesh_name</span><span class="p">,</span> <span class="n">efun_val</span><span class="p">)</span>
-<span class="n">efun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">efun_val</span><span class="p">)</span>
-
-<span class="n">vfun_val</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshValueCollection</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">read_meshfunction</span><span class="p">(</span><span class="n">vertex_mesh_name</span><span class="p">,</span> <span class="n">vfun_val</span><span class="p">)</span>
-<span class="n">vfun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">vfun_val</span><span class="p">)</span>
-
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">f0</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">s0</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">n0</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">HDF5File</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">(),</span> <span class="n">microstructure_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
-    <span class="n">h5file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="s2">&quot;f0&quot;</span><span class="p">)</span>
-    <span class="n">h5file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="s2">&quot;s0&quot;</span><span class="p">)</span>
-    <span class="n">h5file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="s2">&quot;n0&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">HDF5File</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">(),</span> <span class="s2">&quot;slab.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
+    <span class="n">h5file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s2">&quot;/mesh&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that here the fibers as assumed to be in a first order Lagrange space (<span class="math notranslate nohighlight">\(\mathbb{P}_1\)</span>). If you want another function space, e.g fourth order quadrature space, you can use the flag <code class="docutils literal notranslate"><span class="pre">--fiber-space</span></code>, e.g</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">lv</span><span class="o">-</span><span class="n">ellipsoid</span> <span class="n">lv</span><span class="o">-</span><span class="n">mesh</span> <span class="o">--</span><span class="n">create</span><span class="o">-</span><span class="n">fibers</span> <span class="o">--</span><span class="n">fiber</span><span class="o">-</span><span class="n">space</span><span class="o">=</span><span class="n">Quadrature_4</span>
+<p>(where the third argument is a boolean value indicating that we should use the partition from the file).</p>
+<p><code class="docutils literal notranslate"><span class="pre">fname</span></code> would be the corresponding single file generated by the script which is a file you can open in paraview. <code class="docutils literal notranslate"><span class="pre">mesh_key</span></code> would indicate the key to the mesh used by the object. Since this is a mesh itself, it does not apply and the value is therefore empty. <code class="docutils literal notranslate"><span class="pre">is_dolfin</span></code> indicated that this is a FEniCS object and to read it you need to use <code class="docutils literal notranslate"><span class="pre">dolfin.HDF5File</span></code>. If <code class="docutils literal notranslate"><span class="pre">is_dolfin</span></code> is false then you should use <code class="docutils literal notranslate"><span class="pre">h5py</span></code> instead. You can read more about how to load the data further down in this document.
+<code class="docutils literal notranslate"><span class="pre">is_mesh</span></code>, <code class="docutils literal notranslate"><span class="pre">is_meshfunction</span></code> and <code class="docutils literal notranslate"><span class="pre">is_function</span></code> are just boolean values where only one can be true (it is also possible that all are false in which case <code class="docutils literal notranslate"><span class="pre">is_dolfin</span></code> is also false). In this case we have a mesh and therefore <code class="docutils literal notranslate"><span class="pre">is_mesh</span></code> is true. Finally <code class="docutils literal notranslate"><span class="pre">dim</span></code> is a value that is used for the meshfunctions to indicate which dimension the meshfunction covers. In this case the value is set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> which means that this value is not used.</p>
+<p>Let us look at the example with the face function <code class="docutils literal notranslate"><span class="pre">ffun</span></code> which has the following entry in the schema</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;ffun&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;h5group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/meshfunctions/ffun&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;fname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;triangle_mesh.xdmf:name_to_read&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;mesh_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mesh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_dolfin&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_mesh&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_meshfunction&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_function&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dim&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"></span>
 </pre></div>
 </div>
-<p>in which case the function space should be</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span>
-    <span class="n">mesh</span><span class="p">,</span>
-    <span class="n">dolfin</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span>
-        <span class="n">family</span><span class="o">=</span><span class="s2">&quot;Quadrature&quot;</span><span class="p">,</span>
-        <span class="n">cell</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span>
-        <span class="n">degree</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-        <span class="n">quad_scheme</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+<p>First thing you should note is that the <code class="docutils literal notranslate"><span class="pre">mesh_key</span></code> is set to <code class="docutils literal notranslate"><span class="pre">mesh</span></code> which is the key of the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> that we first looked that. Since this is also a meshfunction and the dimension is 2 we know that the object should be constructed as follows</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ffun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another thing to note is that the <code class="docutils literal notranslate"><span class="pre">fname</span></code> both contains a filename (i.e <code class="docutils literal notranslate"><span class="pre">triangle_mesh.xdmf</span></code>) and a group (i.e <code class="docutils literal notranslate"><span class="pre">name_to_read</span></code>). This only means that the values are located in a group called <code class="docutils literal notranslate"><span class="pre">named_to_read</span></code> in the XDMF-file (this is just the default name in gmsh).</p>
+<p>The entry for <code class="docutils literal notranslate"><span class="pre">info</span></code> has a little bit different values</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;h5group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/info&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;fname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;info.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;mesh_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_dolfin&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_mesh&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_meshfunction&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_function&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dim&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"></span>
+</pre></div>
+</div>
+<p>First of all, this is not a dolfin object so <code class="docutils literal notranslate"><span class="pre">is_dolfin</span></code> is set to false.</p>
+</section>
+<section id="generating-microstructure">
+<h3>Generating microstructure<a class="headerlink" href="#generating-microstructure" title="Permalink to this headline">#</a></h3>
+<p>It is also possible to create microstructure vector fields (i.e fibers, sheets and cross sheets). You can use this by passing the flag <code class="docutils literal notranslate"><span class="pre">--create-fibers</span></code>.</p>
+<p>For the slab this will use a fiber angle on the endocardium (i.e <span class="math notranslate nohighlight">\(y = 0\)</span>), which you can specify with the flag <code class="docutils literal notranslate"><span class="pre">--fiber-angle-endo</span></code>, and another angle on the epicardium (<span class="math notranslate nohighlight">\(y = l_y\)</span>), which you can specify with the flag <code class="docutils literal notranslate"><span class="pre">--fiber-angle-epi</span></code>, and make a linear transition between the two planes. One example is shown below with <code class="docutils literal notranslate"><span class="pre">fiber-angle-endo=-60</span></code> and <code class="docutils literal notranslate"><span class="pre">fiber-angle-epi=60</span></code></p>
+<figure class="align-default" id="fiber-slab">
+<img alt="_images/fiber_slab.png" src="_images/fiber_slab.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Fibers on the slab with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#fiber-slab" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>When running with the <code class="docutils literal notranslate"><span class="pre">--create-fibers</span></code> flag you will also see another file appearing the folder called <code class="docutils literal notranslate"><span class="pre">microstructure.h5</span></code> that contains the fibers, sheets and cross sheet vector fields. To visualize these in Paraview you need to first run the <code class="docutils literal notranslate"><span class="pre">fibers-to-xdmf</span></code> command and pass in the folder.
+Notice also that the schema now has entries for the microstructure, for example the entry</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;f0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;h5group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/microstructure/f0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;fname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;microstructure.h5:f0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;mesh_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mesh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_dolfin&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_mesh&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_meshfunction&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;is_function&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dim&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"></span>
+</pre></div>
+</div>
+<p>is the entry for the fibers and we can see that this entry has <code class="docutils literal notranslate"><span class="pre">is_function</span></code> set to true.</p>
+</section>
+<section id="loading-the-data">
+<h3>Loading the data<a class="headerlink" href="#loading-the-data" title="Permalink to this headline">#</a></h3>
+<p>In <code class="docutils literal notranslate"><span class="pre">cardiac-geometries</span></code> there is also a way to load the data into python using the <code class="docutils literal notranslate"><span class="pre">Geometry</span></code> class located in the module <code class="docutils literal notranslate"><span class="pre">cardiac_geometries.geometry</span></code>.</p>
+<p>We can load the slab data as follows</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cardiac_geometries.geometry</span> <span class="kn">import</span> <span class="n">Geometry</span>
+
+<span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;slab/slab.h5&quot;</span><span class="p">,</span> <span class="n">schema_path</span><span class="o">=</span><span class="s2">&quot;slab/slab.json&quot;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>This object will now contain the objects listed in the schema and if there is an entry listed in the schema that is not contained in the file it will throw a <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p>
+</section>
+<section id="saving-the-data-in-another-format">
+<h3>Saving the data in another format<a class="headerlink" href="#saving-the-data-in-another-format" title="Permalink to this headline">#</a></h3>
+<p>One way to use the <code class="docutils literal notranslate"><span class="pre">Geometry</span></code> class is to load data using one schema and save it with another. Say for example that you want to combine two meshes into one file, then you can for example to the following</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cardiac_geometries.geometry</span> <span class="kn">import</span> <span class="n">Geometry</span>
+
+<span class="n">geo1</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;slab1/slab.h5&quot;</span><span class="p">,</span> <span class="n">schema_path</span><span class="o">=</span><span class="s2">&quot;slab1/slab.json&quot;</span><span class="p">)</span>
+<span class="n">geo2</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;slab2/slab.h5&quot;</span><span class="p">,</span> <span class="n">schema_path</span><span class="o">=</span><span class="s2">&quot;slab2/slab.json&quot;</span><span class="p">)</span>
+
+<span class="n">scheme</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;info1&quot;</span><span class="p">:</span> <span class="n">H5Path</span><span class="p">(</span><span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;geo1/info&quot;</span><span class="p">,</span> <span class="n">is_dolfin</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="s2">&quot;mesh1&quot;</span><span class="p">:</span> <span class="n">H5Path</span><span class="p">(</span><span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;geo1/mesh&quot;</span><span class="p">,</span> <span class="n">is_mesh</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;info2&quot;</span><span class="p">:</span> <span class="n">H5Path</span><span class="p">(</span><span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;geo2/info&quot;</span><span class="p">,</span> <span class="n">is_dolfin</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="s2">&quot;mesh2&quot;</span><span class="p">:</span> <span class="n">H5Path</span><span class="p">(</span><span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;geo2/mesh&quot;</span><span class="p">,</span> <span class="n">is_mesh</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span>
+    <span class="n">mesh1</span><span class="o">=</span><span class="n">geo1</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span> <span class="n">info1</span><span class="o">=</span><span class="n">geo1</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+    <span class="n">mesh2</span><span class="o">=</span><span class="n">geo2</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span> <span class="n">info2</span><span class="o">=</span><span class="n">geo2</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+    <span class="n">scheme</span><span class="o">=</span><span class="n">scheme</span>
 <span class="p">)</span>
+<span class="c1"># This will also create a file double_slab.json with the scheme</span>
+<span class="n">geo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;double_slab.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+</section>
+<section id="creating-a-lv-ellipsoid">
+<h2>Creating a lv ellipsoid<a class="headerlink" href="#creating-a-lv-ellipsoid" title="Permalink to this headline">#</a></h2>
+<p>You can create a left ellipsoidal ventricular geometry by using the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cardiac-geometries create-lv-ellipsoid lv-mesh
+</pre></div>
+</div>
+<p>Similar to the slab it can also create analytic fiber orientations.</p>
+<figure class="align-default" id="fiber-lv">
+<img alt="_images/fiber_lv.png" src="_images/fiber_lv.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">LV-ellipsoidal mesh and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#fiber-lv" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
 <section id="creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
-<h2>Creating the mesh from the Land Cardiac Mechanics Benchmark paper<a class="headerlink" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper" title="Permalink to this headline">#</a></h2>
+<h3>Creating the mesh from the Land Cardiac Mechanics Benchmark paper<a class="headerlink" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper" title="Permalink to this headline">#</a></h3>
 <blockquote>
 <div><p>Land S, Gurev V, Arens S, Augustin CM, Baron L, Blake R, Bradley C, Castro S,
 Crozier A, Favino M, Fastl TE. Verification of cardiac mechanics software:
@@ -486,9 +669,6 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 </pre></div>
 </div>
 </section>
-<section id="creating-mesh-for-a-slab">
-<h2>Creating mesh for a slab<a class="headerlink" href="#creating-mesh-for-a-slab" title="Permalink to this headline">#</a></h2>
-<p>If it also possible to create a slab tissue using the command <code class="docutils literal notranslate"><span class="pre">create-slab</span></code> (note that this require <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> to be installed with with <a class="reference external" href="https://www.opencascade.com">OpenCascade kernel</a> which is installed in the docker image). In this case you can specify the length in the <span class="math notranslate nohighlight">\(x, y\)</span> and <span class="math notranslate nohighlight">\(z\)</span> direction through the arguments <code class="docutils literal notranslate"><span class="pre">lx</span></code>, <code class="docutils literal notranslate"><span class="pre">ly</span></code> and <code class="docutils literal notranslate"><span class="pre">lz</span></code> respectively. In this case the domain will be the box <span class="math notranslate nohighlight">\([0, l_x] \times [0, l_y] \times [0, l_z]\)</span> where is assumed that the apex is located at the place <span class="math notranslate nohighlight">\(z = 0\)</span>, the base at <span class="math notranslate nohighlight">\(z = l_z\)</span>, the endocardium at <span class="math notranslate nohighlight">\(y = 0\)</span> and the epicardium at <span class="math notranslate nohighlight">\(y = l_y\)</span>. Also here you can generate fibers with the same rule based approach.</p>
 </section>
 </section>
 
