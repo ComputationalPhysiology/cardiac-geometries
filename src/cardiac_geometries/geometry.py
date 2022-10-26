@@ -1,4 +1,5 @@
 import json
+import warnings
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -177,15 +178,21 @@ class Geometry:
             scheme = type(self).default_scheme()
 
         self.scheme = {}
+        missing_scheme_entries = []
         for k, v in kwargs.items():
-            self._fields.append(k)
-            setattr(self, k, v)
             s = scheme.get(k)
             if s is None:
-                msg = f"Missing scheme entry for key {k}"
-                raise RuntimeError(msg)
-
+                missing_scheme_entries.append(k)
+                continue
+            self._fields.append(k)
+            setattr(self, k, v)
             self.scheme[k] = s
+
+        msg = (
+            f"Missing scheme entry for keys {missing_scheme_entries!r}. "
+            "Objects will not be set as geometry attributes"
+        )
+        warnings.warn(UserWarning(msg), stacklevel=2)
 
     def __repr__(self) -> str:
         fields = ", ".join(self._fields)
