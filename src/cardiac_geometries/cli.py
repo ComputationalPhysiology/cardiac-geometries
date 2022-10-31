@@ -8,10 +8,9 @@ from typing import Union
 
 import numpy as np
 import rich_click as click
+from cardiac_geometries.geometry import Geometry
 
 from . import has_dolfin
-from ._gmsh import lv_ellipsoid
-from ._gmsh import slab
 
 
 def json_serial(obj):
@@ -162,6 +161,7 @@ def create_lv_ellipsoid(
 ):
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
+    from ._gmsh import lv_ellipsoid
 
     mesh_name = outdir / "lv_ellipsoid.msh"
     lv_ellipsoid(
@@ -322,6 +322,7 @@ def create_slab(
 
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
+    from ._gmsh import slab
 
     mesh_name = outdir / "slab.msh"
     slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
@@ -464,7 +465,50 @@ def folder2h5(folder: str, outfile: Optional[Union[str, Path]]):
     print(f"Saved to {outfile}.")
 
 
+@click.command(help="List information about geometry file")
+@click.argument(
+    "mesh_path",
+    required=True,
+    type=click.Path(
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--schema-path",
+    default=None,
+    type=click.Path(
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+def info(
+    mesh_path: Union[str, Path],
+    schema_path: Optional[Union[str, Path]] = None,
+) -> None:
+    geo = Geometry.from_file(mesh_path, schema_path=schema_path)
+
+    info = getattr(geo, "info", {})
+    from rich.console import Console
+    from rich.table import Table
+
+    table = Table(title=f"Info about {mesh_path}")
+
+    table.add_column("Key", style="cyan", no_wrap=True)
+    table.add_column("Value", justify="right", style="green")
+    for k, v in info.items():
+        table.add_row(k, str(v))
+
+    console = Console()
+    console.print(table)
+
+
 app.add_command(create_lv_ellipsoid)
 app.add_command(create_slab)
 app.add_command(fibers_to_xdmf)
 app.add_command(folder2h5)
+app.add_command(info)

@@ -97,7 +97,7 @@ class H5Path(NamedTuple):
         return self._asdict()
 
 
-def load_scheme(path: Path) -> Dict[str, H5Path]:
+def load_schema(path: Path) -> Dict[str, H5Path]:
     data = json.loads(Path(path).read_text())
 
     # Remove invalid keys
@@ -125,8 +125,9 @@ def read_xdmf(fname, obj, group=None):
                 f.read(obj)
             else:
                 f.read(obj, group)
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        msg = f"Unable to read {fname} and for group {group}. Got:\n" + e.args[0]
+        warnings.warn(msg, category=UserWarning, stacklevel=3)
 
 
 def read_h5(fname, comm, obj, group=None):
@@ -136,8 +137,9 @@ def read_h5(fname, comm, obj, group=None):
                 f.read(obj)
             else:
                 f.read(obj, group)
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        msg = f"Unable to read {fname} and for group {group}. Got:\n" + e.args[0]
+        warnings.warn(msg, category=UserWarning, stacklevel=3)
 
 
 def read(
@@ -163,43 +165,44 @@ def extract_fname_group(fname: str, folder=".") -> Tuple[Path, Optional[str]]:
     return Path(folder) / fg[0], fg[1]
 
 
-def dump_scheme(path: Union[Path, str], scheme: Dict[str, H5Path]) -> None:
+def dump_schema(path: Union[Path, str], schema: Dict[str, H5Path]) -> None:
     Path(path).write_text(
-        json.dumps({k: v._asdict() for k, v in scheme.items()}, indent=2),
+        json.dumps({k: v._asdict() for k, v in schema.items()}, indent=2),
     )
 
 
 class Geometry:
     def __init__(self, **kwargs):
 
-        self._fields = ["scheme"]
-        scheme = kwargs.pop("scheme")
-        if scheme is None:
-            scheme = type(self).default_scheme()
+        self._fields = ["schema"]
+        schema = kwargs.pop("schema")
+        if schema is None:
+            schema = type(self).default_schema()
 
-        self.scheme = {}
-        missing_scheme_entries = []
+        self.schema = {}
+        missing_schema_entries = []
         for k, v in kwargs.items():
-            s = scheme.get(k)
+            s = schema.get(k)
             if s is None:
-                missing_scheme_entries.append(k)
+                missing_schema_entries.append(k)
                 continue
             self._fields.append(k)
             setattr(self, k, v)
-            self.scheme[k] = s
+            self.schema[k] = s
 
-        msg = (
-            f"Missing scheme entry for keys {missing_scheme_entries!r}. "
-            "Objects will not be set as geometry attributes"
-        )
-        warnings.warn(UserWarning(msg), stacklevel=2)
+        if len(missing_schema_entries) > 0:
+            msg = (
+                f"Missing schema entry for keys {missing_schema_entries!r}. "
+                "Objects will not be set as geometry attributes"
+            )
+            warnings.warn(UserWarning(msg), stacklevel=2)
 
     def __repr__(self) -> str:
         fields = ", ".join(self._fields)
         return f"{type(self).__name__}({fields})"
 
     @staticmethod
-    def default_scheme() -> Dict[str, H5Path]:
+    def default_schema() -> Dict[str, H5Path]:
         return {
             "mesh": H5Path(
                 h5group=H5Paths.mesh.value,
@@ -267,54 +270,54 @@ class Geometry:
     def save(
         self,
         fname: Union[str, Path],
-        scheme_path: Optional[Union[str, Path]] = None,
+        schema_path: Optional[Union[str, Path]] = None,
     ) -> None:
         path = Path(fname).with_suffix(".h5")
         path.unlink(missing_ok=True)
 
         with dolfin.HDF5File(dolfin.MPI.comm_world, path.as_posix(), "w") as h5file:
-            for name, p in self.scheme.items():
+            for name, p in self.schema.items():
                 obj = getattr(self, name, None)
                 if obj is not None and p.is_dolfin:
                     if p.h5group == "":
                         raise RuntimeError("Cannot write object with empty path")
                     h5file.write(obj, p.h5group)
 
-        for name, p in self.scheme.items():
+        for name, p in self.schema.items():
             obj = getattr(self, name, None)
             if obj is not None and not p.is_dolfin:
                 if p.h5group == "":
                     raise RuntimeError("Cannot write object with empty path")
                 dict_to_h5(obj, path, p.h5group)
 
-        if scheme_path is None:
-            scheme_path = path.with_suffix(".json")
-        dump_scheme(scheme_path, scheme=self.scheme)
+        if schema_path is None:
+            schema_path = path.with_suffix(".json")
+        dump_schema(schema_path, schema=self.schema)
 
     @classmethod
     def from_file(
         cls,
         fname: Union[str, Path],
-        scheme_path: Optional[Path] = None,
-        scheme: Optional[Dict[str, H5Path]] = None,
+        schema_path: Optional[Union[str, Path]] = None,
+        schema: Optional[Dict[str, H5Path]] = None,
     ):
         path = Path(fname)
         if not path.is_file():
             msg = f"File {path} does not exist"
             raise FileNotFoundError(msg)
 
-        if scheme_path is not None:
-            scheme = load_scheme(scheme_path)
+        if schema_path is not None:
+            schema = load_schema(Path(schema_path))
 
-        if scheme is None:
-            scheme = cls.default_scheme()
+        if schema is None:
+            schema = cls.default_schema()
 
         groups = {}
         data = {}
         signatures = {}
         with h5pyfile(path, "r") as h5file:
 
-            for name, p in scheme.items():
+            for name, p in schema.items():
                 if p.h5group == "":
                     continue
                 groups[name] = p.h5group in h5file
@@ -328,7 +331,7 @@ class Geometry:
                 if p.is_function and groups[name]:
                     signatures[name] = h5file[p.h5group].attrs["signature"].decode()
 
-        required_mesh_keys = extract_mesh_keys(scheme)
+        required_mesh_keys = extract_mesh_keys(schema)
         for name, mesh_key in required_mesh_keys:
             if not groups.get(mesh_key, False):
                 msg = f"Missing mesh key '{mesh_key}' for key {name} in {fname}"
@@ -338,17 +341,19 @@ class Geometry:
         with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "r") as h5file:
 
             # Meshes
-            for name, p in scheme.items():
+            for name, p in schema.items():
                 if p.is_mesh and groups[name]:
                     data[name] = dolfin.Mesh()
+
                     h5file.read(data[name], p.h5group, True)
 
             # Meshfunctions
-            for name, p in scheme.items():
+            for name, p in schema.items():
                 if p.is_meshfunction and groups[name]:
                     current_mesh = data[p.mesh_key]
                     data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
                     h5file.read(data[name], p.h5group)
+                    data[name].array()[data[name].array() == 2**64 - 1] = 0
                     continue
 
                 if p.is_function and groups[name]:
@@ -361,19 +366,19 @@ class Geometry:
                     h5file.read(data[name], p.h5group)
                     continue
 
-        return cls(**data, scheme=scheme)
+        return cls(**data, schema=schema)
 
     @classmethod
-    def from_folder(cls, folder, scheme: Optional[Dict[str, H5Path]] = None):
+    def from_folder(cls, folder, schema: Optional[Dict[str, H5Path]] = None):
         folder = Path(folder)
 
-        if scheme is None:
-            scheme = cls.default_scheme()
+        if schema is None:
+            schema = cls.default_schema()
 
         # Load mesh first
         data = {}
 
-        for name, p in scheme.items():
+        for name, p in schema.items():
             if p.fname == "":
                 continue
             if not p.is_mesh:
@@ -385,7 +390,7 @@ class Geometry:
             read(fname, data[name], group=group, current_mesh=current_mesh)
 
         # Now load rest of the dolfin stuff
-        for name, p in scheme.items():
+        for name, p in schema.items():
             if p.fname == "":
                 continue
             if p.is_meshfunction:
@@ -393,8 +398,11 @@ class Geometry:
                 if not fname.is_file():
                     continue
                 current_mesh = data[p.mesh_key]
-                data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
-                read(fname, data[name], group=group, current_mesh=current_mesh)
+
+                val = dolfin.MeshValueCollection("size_t", current_mesh, p.dim)
+                read(fname, val, group=group, current_mesh=current_mesh)
+                data[name] = dolfin.MeshFunction("size_t", current_mesh, val)
+                data[name].array()[data[name].array() == 2**64 - 1] = 0
                 continue
 
             if p.is_function:
@@ -411,7 +419,7 @@ class Geometry:
                 continue
 
         # Finally read json
-        for name, p in scheme.items():
+        for name, p in schema.items():
             if p.is_dolfin:
                 continue
             fname = folder / p.fname
@@ -420,4 +428,4 @@ class Geometry:
             else:
                 raise RuntimeError(f"Unknown file format for {fname}")
 
-        return cls(**data, scheme=scheme)
+        return cls(**data, schema=schema)

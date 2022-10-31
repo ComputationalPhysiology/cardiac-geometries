@@ -58,11 +58,11 @@ def create_biv_mesh(
 
     class EndoLV(dolfin.SubDomain):
         def inside(self, x, on_boundary):
-            return (x[0] - center_lv.x()) ** 2 / a_endo_lv ** 2 + (
+            return (x[0] - center_lv.x()) ** 2 / a_endo_lv**2 + (
                 x[1] - center_lv.y()
-            ) ** 2 / b_endo_lv ** 2 + (
+            ) ** 2 / b_endo_lv**2 + (
                 x[2] - center_lv.z()
-            ) ** 2 / c_endo_lv ** 2 - 1 < dolfin.DOLFIN_EPS and on_boundary
+            ) ** 2 / c_endo_lv**2 - 1 < dolfin.DOLFIN_EPS and on_boundary
 
     class Base(dolfin.SubDomain):
         def inside(self, x, on_boundary):
@@ -71,14 +71,14 @@ def create_biv_mesh(
     class EndoRV(dolfin.SubDomain):
         def inside(self, x, on_boundary):
             return (
-                (x[0] - center_rv.x()) ** 2 / a_endo_rv ** 2
-                + (x[1] - center_rv.y()) ** 2 / b_endo_rv ** 2
-                + (x[2] - center_rv.z()) ** 2 / c_endo_rv ** 2
+                (x[0] - center_rv.x()) ** 2 / a_endo_rv**2
+                + (x[1] - center_rv.y()) ** 2 / b_endo_rv**2
+                + (x[2] - center_rv.z()) ** 2 / c_endo_rv**2
                 - 1
                 < dolfin.DOLFIN_EPS
-                and (x[0] - center_lv.x()) ** 2 / a_epi_lv ** 2
-                + (x[1] - center_lv.y()) ** 2 / b_epi_lv ** 2
-                + (x[2] - center_lv.z()) ** 2 / c_epi_lv ** 2
+                and (x[0] - center_lv.x()) ** 2 / a_epi_lv**2
+                + (x[1] - center_lv.y()) ** 2 / b_epi_lv**2
+                + (x[2] - center_lv.z()) ** 2 / c_epi_lv**2
                 - 0.9
                 > dolfin.DOLFIN_EPS
             ) and on_boundary
@@ -86,14 +86,14 @@ def create_biv_mesh(
     class Epi(dolfin.SubDomain):
         def inside(self, x, on_boundary):
             return (
-                (x[0] - center_rv.x()) ** 2 / a_epi_rv ** 2
-                + (x[1] - center_rv.y()) ** 2 / b_epi_rv ** 2
-                + (x[2] - center_rv.z()) ** 2 / c_epi_rv ** 2
+                (x[0] - center_rv.x()) ** 2 / a_epi_rv**2
+                + (x[1] - center_rv.y()) ** 2 / b_epi_rv**2
+                + (x[2] - center_rv.z()) ** 2 / c_epi_rv**2
                 - 0.9
                 > dolfin.DOLFIN_EPS
-                and (x[0] - center_lv.x()) ** 2 / a_epi_lv ** 2
-                + (x[1] - center_lv.y()) ** 2 / b_epi_lv ** 2
-                + (x[2] - center_lv.z()) ** 2 / c_epi_lv ** 2
+                and (x[0] - center_lv.x()) ** 2 / a_epi_lv**2
+                + (x[1] - center_lv.y()) ** 2 / b_epi_lv**2
+                + (x[2] - center_lv.z()) ** 2 / c_epi_lv**2
                 - 0.9
                 > dolfin.DOLFIN_EPS
                 and on_boundary
