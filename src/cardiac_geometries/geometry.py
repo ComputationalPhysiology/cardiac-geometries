@@ -266,7 +266,7 @@ class Geometry:
             "markers": H5Path(
                 h5group=H5Paths.markers.value,
                 is_dolfin=False,
-                fname=FileNames.info.value,
+                fname=FileNames.markers.value,
             ),
         }
 
