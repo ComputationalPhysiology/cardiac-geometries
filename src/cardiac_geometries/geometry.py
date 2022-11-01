@@ -97,7 +97,10 @@ class H5Path(NamedTuple):
         return self._asdict()
 
 
-def load_schema(path: Path) -> Dict[str, H5Path]:
+def load_schema(path: Path) -> Optional[Dict[str, H5Path]]:
+    if not path.is_file():
+        return None
+
     data = json.loads(Path(path).read_text())
 
     # Remove invalid keys
@@ -271,11 +274,21 @@ class Geometry:
         self,
         fname: Union[str, Path],
         schema_path: Optional[Union[str, Path]] = None,
+        unlink: bool = True,
     ) -> None:
         path = Path(fname).with_suffix(".h5")
-        path.unlink(missing_ok=True)
+        file_mode = "w"
+        if path.is_file():
+            if unlink:
+                path.unlink()
+            else:
+                file_mode = "a"
 
-        with dolfin.HDF5File(dolfin.MPI.comm_world, path.as_posix(), "w") as h5file:
+        with dolfin.HDF5File(
+            dolfin.MPI.comm_world,
+            path.as_posix(),
+            file_mode,
+        ) as h5file:
             for name, p in self.schema.items():
                 obj = getattr(self, name, None)
                 if obj is not None and p.is_dolfin:
