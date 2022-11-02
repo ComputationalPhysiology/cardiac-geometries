@@ -57,7 +57,9 @@ def load_microstructure(mesh, microstructure_path) -> Microstructure:
     with h5pyfile(microstructure_path) as h5file:
         signature = h5file["f0"].attrs["signature"].decode()
 
-    V = dolfin.FunctionSpace(mesh, eval(signature))
+    sig = eval(signature)
+    sig._quad_scheme = "default"
+    V = dolfin.FunctionSpace(mesh, sig)
     f0 = dolfin.Function(V)
     s0 = dolfin.Function(V)
     n0 = dolfin.Function(V)
@@ -374,7 +376,9 @@ class Geometry:
                     signature = signatures.get(name)
                     if signature is None:
                         continue
-                    V = dolfin.FunctionSpace(current_mesh, eval(signature))
+                    sig = eval(signature)
+                    sig._quad_scheme = "default"
+                    V = dolfin.FunctionSpace(current_mesh, sig)
                     data[name] = dolfin.Function(V)
                     h5file.read(data[name], p.h5group)
                     continue
@@ -426,7 +430,9 @@ class Geometry:
                 if signature is None:
                     continue
                 current_mesh = data[p.mesh_key]
-                V = dolfin.FunctionSpace(current_mesh, eval(signature))
+                sig = eval(signature)
+                sig._quad_scheme = "default"
+                V = dolfin.FunctionSpace(current_mesh, sig)
                 data[name] = dolfin.Function(V)
                 read(fname, data[name], group=group, current_mesh=current_mesh)
                 continue
