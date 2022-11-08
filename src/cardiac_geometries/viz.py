@@ -126,7 +126,10 @@ def dict_to_h5(data, h5name, h5group):
         else:
             group = h5file.create_group(h5group)
         for k, v in data.items():
-            group.create_dataset(k, data=v)
+            if isinstance(v, str):
+                group.create_dataset(k, data=v, dtype=np.dtype(("S", 50)))
+            else:
+                group.create_dataset(k, data=v)
 
 
 def decode(x):
