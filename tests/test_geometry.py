@@ -23,7 +23,7 @@ class ExampleData(NamedTuple):
 
 @pytest.fixture(scope="session")
 def example_data():
-    info = {"param1": 13, "param2": 20}
+    info = {"param1": 13, "param2": 20, "fiber_space": "CG_1"}
     mesh = dolfin.UnitCubeMesh(2, 2, 2)
     ffun = dolfin.MeshFunction("size_t", mesh, 2)
     ffun.array()[0] = 42

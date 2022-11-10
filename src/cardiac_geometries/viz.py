@@ -127,9 +127,10 @@ def dict_to_h5(data, h5name, h5group):
             group = h5file.create_group(h5group)
         for k, v in data.items():
             if isinstance(v, str):
-                group.create_dataset(k, data=v, dtype=np.dtype(("S", 50)))
-            else:
-                group.create_dataset(k, data=v)
+                if dolfin.MPI.size(dolfin.MPI.comm_world) > 1:
+                    # There are some issues with writing strings in paralell
+                    continue
+            group.create_dataset(k, data=v)
 
 
 def decode(x):
