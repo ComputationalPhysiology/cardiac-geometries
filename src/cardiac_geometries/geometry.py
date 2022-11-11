@@ -1,5 +1,6 @@
 import json
 import warnings
+from enum import auto
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,11 @@ from dolfin import VectorElement  # noqa: F401
 from .viz import dict_to_h5
 from .viz import h5_to_dict
 from .viz import h5pyfile
+
+
+class MeshTypes(Enum):
+    slab = auto()
+    lv_ellipsoid = auto()
 
 
 class H5Paths(str, Enum):

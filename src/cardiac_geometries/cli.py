@@ -9,6 +9,7 @@ from typing import Union
 import numpy as np
 import rich_click as click
 from cardiac_geometries.geometry import Geometry
+from cardiac_geometries.geometry import MeshTypes
 
 from . import has_dolfin
 
@@ -192,7 +193,7 @@ def create_lv_ellipsoid(
                 "fibers_angle_endo": fiber_angle_endo,
                 "fibers_angle_epi": fiber_angle_epi,
                 "fiber_space": fiber_space,
-                "mesh_type": "lv_ellipsoid",
+                "mesh_type": MeshTypes.lv_ellipsoid.value,
                 "cardiac_geometry_version": __version__,
                 "timestamp": datetime.datetime.now().isoformat(),
             },
@@ -337,7 +338,7 @@ def create_slab(
                 "fibers_angle_endo": fiber_angle_endo,
                 "fibers_angle_epi": fiber_angle_epi,
                 "fiber_space": fiber_space,
-                "mesh_type": "slab",
+                "mesh_type": MeshTypes.slab.value,
                 "cardiac_geometry_version": __version__,
                 "timestamp": datetime.datetime.now().isoformat(),
             },
