@@ -5,13 +5,13 @@
 The LifeX example meshes can be found at https://zenodo.org/record/5810269#.YeEjWi8w1B0, which also contains a DOI: https://doi.org/10.5281/zenodo.5810269.
 
 
-# Computational meshes of the cardiac left ventricle of 50 heart failure subjects
+## Computational meshes of the cardiac left ventricle of 50 heart failure subjects
 
 Collection of 50 anatomies of the left ventricle of a cohort of subjects selected for cardiac resynchronisation therapy, togheter with their response data.Meshes: provided in VTK format for easier compatibility (original work done with cubic Hermite EX format meshes)Response: excel spreadsheet with the case ID and the class (responder or not responder). "data process.gif" provides an overview of the segmentation and mesh personalization process. Panel A: semi-automatic segmentation by 3D extrapolation (yellow surface and contours) of 2D segmentation contours (red contours and projections) using an open source platform (29). Panel B: mesh template. Panel C: resulting mesh (white surface) overlaid with the segmentation surface colour coded by the distance between them (jet colour map, from 0mm in blue to 1mm in red).
 
 https://figshare.com/articles/dataset/Computational_meshes_of_the_cardiac_left_ventricle_of_50_heart_failure_subjects/5853948/1
 
-# Virtual cohort of adult healthy four-chamber heart meshes from CT images
+## Virtual cohort of adult healthy four-chamber heart meshes from CT images
 
 Rodero, Cristobal; Strocchi, Marina; Marciniak, Maciej; Longobardi, Stefano; Whitaker, John; O'Neill, Mark D.; Gillette, Karli; Augustin, Christoph; Plank, Gernot; Vigmond, Edward J.; Lamata, Pablo; Niederer, Steven A.
 
