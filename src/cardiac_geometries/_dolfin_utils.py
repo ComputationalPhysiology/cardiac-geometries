@@ -1,4 +1,4 @@
-from collections import namedtuple
+import typing
 from pathlib import Path
 
 import dolfin
@@ -7,8 +7,17 @@ import meshio
 from . import calculus
 
 
-MarkerFunctions = namedtuple("MarkerFunctions", ["vfun", "efun", "ffun", "cfun"])
-Geometry = namedtuple("Geometry", ["mesh", "markers", "marker_functions"])
+class MarkerFunctions(typing.NamedTuple):
+    vfun: dolfin.MeshFunction
+    efun: dolfin.MeshFunction
+    ffun: dolfin.MeshFunction
+    cfun: dolfin.MeshFunction
+
+
+class Geometry(typing.NamedTuple):
+    mesh: dolfin.Mesh
+    markers: typing.Dict[str, typing.Tuple[int, int]]
+    marker_functions: MarkerFunctions
 
 
 def create_mesh(mesh, cell_type):
@@ -34,10 +43,19 @@ def read_meshfunction(fname, obj):
         pass
 
 
-def gmsh2dolfin(msh_file, unlink=False):
+def gmsh2dolfin(
+    msh_file: typing.Union[Path, str],
+    outdir: typing.Optional[typing.Union[Path, str]] = None,
+    unlink: bool = False,
+) -> Geometry:
 
     msh = meshio.gmsh.read(msh_file)
-    outdir = Path(msh_file).absolute().parent
+    if outdir is None:
+        outdir = Path(msh_file).absolute().parent
+    else:
+        outdir = Path(outdir)
+
+    outdir.mkdir(exist_ok=True, parents=True)
 
     vertex_mesh = create_mesh(msh, "vertex")
     line_mesh = create_mesh(msh, "line")
@@ -73,8 +91,8 @@ def gmsh2dolfin(msh_file, unlink=False):
     cfun = dolfin.MeshFunction("size_t", mesh, 3)
     read_meshfunction(tetra_mesh_name, cfun)
     if unlink:
-        tetra_mesh_name.unlink()
-        tetra_mesh_name.with_suffix(".h5").unlink()
+        tetra_mesh_name.unlink(missing_ok=True)
+        tetra_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
 
     ffun_val = dolfin.MeshValueCollection("size_t", mesh, 2)
     read_meshfunction(triangle_mesh_name, ffun_val)
@@ -83,8 +101,8 @@ def gmsh2dolfin(msh_file, unlink=False):
         mesh.domains().set_marker(value, 2)
     ffun.array()[ffun.array() == max(ffun.array())] = 0
     if unlink:
-        triangle_mesh_name.unlink()
-        triangle_mesh_name.with_suffix(".h5").unlink()
+        triangle_mesh_name.unlink(missing_ok=True)
+        triangle_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
     else:
         ffun_path = outdir / "ffun.xdmf"
         with dolfin.XDMFFile(ffun_path.as_posix()) as infile:
@@ -95,16 +113,16 @@ def gmsh2dolfin(msh_file, unlink=False):
     efun = dolfin.MeshFunction("size_t", mesh, efun_val)
     efun.array()[efun.array() == max(efun.array())] = 0
     if unlink:
-        line_mesh_name.unlink()
-        line_mesh_name.with_suffix(".h5").unlink()
+        line_mesh_name.unlink(missing_ok=True)
+        line_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
 
     vfun_val = dolfin.MeshValueCollection("size_t", mesh, 0)
     read_meshfunction(vertex_mesh_name, vfun_val)
     vfun = dolfin.MeshFunction("size_t", mesh, vfun_val)
     vfun.array()[vfun.array() == max(vfun.array())] = 0
     if unlink:
-        vertex_mesh_name.unlink()
-        vertex_mesh_name.with_suffix(".h5").unlink()
+        vertex_mesh_name.unlink(missing_ok=True)
+        vertex_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
 
     markers = msh.field_data
     marker_functions = MarkerFunctions(vfun=vfun, efun=efun, ffun=ffun, cfun=cfun)

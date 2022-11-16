@@ -27,7 +27,7 @@ def create_biv_mesh(
     c_epi_rv: float = 1.0,
     center_rv: Tuple[float, float, float] = (0.0, 0.5, 0.0),
     base_x: float = 0.0,
-    markers: Optional[Dict[str, int]] = None,
+    markers: Optional[Dict[str, Tuple[int, int]]] = None,
 ) -> Geometry:
     r"""
     Create an biv-ellipsoidal mesh.

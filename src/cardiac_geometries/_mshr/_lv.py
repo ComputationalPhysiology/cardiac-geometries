@@ -20,7 +20,7 @@ def create_lv_mesh(
     c_epi: float = 1.0,
     center: Tuple[float, float, float] = (0.0, 0.0, 0.0),
     base_x: float = 0.0,
-    markers: Optional[Dict[str, int]] = None,
+    markers: Optional[Dict[str, Tuple[int, int]]] = None,
 ) -> Geometry:
     r"""
     Create an lv-ellipsoidal mesh.
