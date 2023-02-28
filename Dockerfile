@@ -1,4 +1,4 @@
-FROM finsberg/fenics-gmsh:latest
+FROM ghcr.io/scientificcomputing/fenics-gmsh:2023-02-20
 
 COPY . /app
 WORKDIR /app
