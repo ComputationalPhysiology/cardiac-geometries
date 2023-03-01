@@ -578,6 +578,11 @@ title="Print to PDF"
    </li>
   </ul>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-biv-ellipsoid">
+   Creating a BiV ellipsoid
+  </a>
+ </li>
 </ul>
 
             </nav>
@@ -822,6 +827,20 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 </div>
 </section>
 </section>
+<section id="creating-a-biv-ellipsoid">
+<h2>Creating a BiV ellipsoid<a class="headerlink" href="#creating-a-biv-ellipsoid" title="Permalink to this heading">#</a></h2>
+<p>There is also an option to create BiV ellipsoid using the <code class="docutils literal notranslate"><span class="pre">create-biv-ellipsoid</span></code> command, e.g</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">biv</span><span class="o">-</span><span class="n">ellipsoid</span> <span class="n">biv</span> <span class="o">--</span><span class="n">char</span><span class="o">-</span><span class="n">length</span> <span class="mf">0.1</span> <span class="o">--</span><span class="n">create</span><span class="o">-</span><span class="n">fibers</span>
+</pre></div>
+</div>
+<p>will create the following mesh with fibers. Note that the fibers are not analytically computed, and you are therefore required to install <a class="reference external" href="https://github.com/finsberg/ldrb">ldrb</a> if you want to create fibers.</p>
+<figure class="align-default" id="biv">
+<img alt="_images/biv.png" src="_images/biv.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">BiV-ellipsoidal mesh, facet markers and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#biv" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -925,6 +944,11 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
     </a>
    </li>
   </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-biv-ellipsoid">
+   Creating a BiV ellipsoid
+  </a>
  </li>
 </ul>
 

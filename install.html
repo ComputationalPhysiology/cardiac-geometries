@@ -564,8 +564,8 @@ title="Print to PDF"
 <p>However, to actually use the software you need to also install <a class="reference external" href="http://gmsh.info"><code class="docutils literal notranslate"><span class="pre">gmsh</span></code></a> with python bindings and to convert the mesh into FEniCS format you also need to install <a class="reference external" href="https://fenicsproject.org/download/archive/">FEniCS</a>.</p>
 <section id="install-using-docker">
 <h2>Install using Docker<a class="headerlink" href="#install-using-docker" title="Permalink to this heading">#</a></h2>
-<p>Docker is a simple alternative if you don’t want to go through the hazel of installing both FEniCS and Gmsh. We provide a pre-build Docker image with FEniCS and Gmsh installed called <code class="docutils literal notranslate"><span class="pre">finsberg/fenics-gmsh</span></code>, which should be compatible with both AMD64 and ARM64 architectures. You can run the image interactively using the command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -it finsberg/fenics-gmsh
+<p>Docker is a simple alternative if you don’t want to go through the hazel of installing both FEniCS and Gmsh. We provide a pre-build Docker image with FEniCS and Gmsh installed at <a class="github reference external" href="https://github.com/orgs/scientificcomputing/packages/container/package/fenics-gmsh">orgs/scientificcomputing</a>, which should be compatible with both AMD64 and ARM64 architectures. You can run the image interactively using the command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/scientificcomputing/fenics-gmsh:2023-03-01a
 </pre></div>
 </div>
 <p>If you want to get an image with <code class="docutils literal notranslate"><span class="pre">cardiac-gemometries</span></code> installed you can use the Docker image from the GitHub repo</p>
