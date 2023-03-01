@@ -1,14 +1,12 @@
 name: Github Pages
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
+
 jobs:
   deploy:
     runs-on: ubuntu-22.04
     container:
-      image: finsberg/fenics-gmsh:latest
+      image: ghcr.io/scientificcomputing/fenics-gmsh:2023-02-20
     env:
       # Directory that will be published on github pages
       PUBLISH_DIR: ./docs/_build/html
@@ -23,6 +21,7 @@ jobs:
         run: jupyter book build -W docs
 
       - name: Deploy
+        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
