@@ -24,6 +24,7 @@ from .viz import h5pyfile
 class MeshTypes(Enum):
     slab = auto()
     lv_ellipsoid = auto()
+    biv_ellipsoid = auto()
 
 
 class H5Paths(str, Enum):
