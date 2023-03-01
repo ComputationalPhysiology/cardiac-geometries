@@ -6,7 +6,7 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/scientificcomputing/fenics-gmsh:2023-03-01
+      image: ghcr.io/scientificcomputing/fenics-gmsh:2023-03-01a
     env:
       # Directory that will be published on github pages
       PUBLISH_DIR: ./docs/_build/html
