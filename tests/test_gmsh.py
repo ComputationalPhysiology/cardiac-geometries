@@ -59,3 +59,12 @@ def test_slab(tmp_path):
     mesh_name = tmp_path / "mesh.msh"
     path = gmsh.slab(mesh_name)
     path.unlink(missing_ok=False)
+
+
+@require_gmsh
+@pytest.mark.gmsh
+def test_biv_ellipsoid():
+    mesh_path = Path("biv_ellipsoid.msh")
+    mesh_path.unlink(missing_ok=True)
+    gmsh.biv_ellipsoid(mesh_name=mesh_path)
+    mesh_path.unlink(missing_ok=False)

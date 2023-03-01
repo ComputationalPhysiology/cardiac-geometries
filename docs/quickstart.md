@@ -252,3 +252,18 @@ which means that if you want the base to be located at $z = 0$ you can set $\mu_
 ```
 cardiac-geometries create-lv-ellipsoid mymesh --create-fibers --r-short-endo=7 --r-short-epi=10 --r-long-endo=17 --r-long-epi=20  --mu-apex-endo=0 --mu-apex-epi=0 --mu-base-endo=1.5707963267948966 --mu-base-epi=1.5707963267948966 --psize-ref=3
 ```
+
+
+## Creating a BiV ellipsoid
+There is also an option to create BiV ellipsoid using the `create-biv-ellipsoid` command, e.g
+```
+cardiac-geometries create-biv-ellipsoid biv --char-length 0.1 --create-fibers
+```
+will create the following mesh with fibers. Note that the fibers are not analytically computed, and you are therefore required to install [ldrb](https://github.com/finsberg/ldrb) if you want to create fibers.
+
+```{figure} biv.png
+---
+name: biv
+---
+BiV-ellipsoidal mesh, facet markers and fibers with $-60^{\circ}$ angle on the endocardium and $60^{\circ}$ angle on the epicardium.
+```
