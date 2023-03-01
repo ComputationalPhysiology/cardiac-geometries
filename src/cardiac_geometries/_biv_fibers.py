@@ -47,5 +47,4 @@ def create_biv_fibers(
             h5file.write(s0, "s0")
             h5file.write(n0, "n0")
 
-    dolfin.File("f0.pvd") << f0
     return Microstructure(f0=f0, s0=s0, n0=n0)

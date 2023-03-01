@@ -12,9 +12,9 @@ python3 -m pip install git+https://github.com/ComputationalPhysiology/cardiac_ge
 However, to actually use the software you need to also install [`gmsh`](http://gmsh.info) with python bindings and to convert the mesh into FEniCS format you also need to install [FEniCS](https://fenicsproject.org/download/archive/).
 
 ## Install using Docker
-Docker is a simple alternative if you don't want to go through the hazel of installing both FEniCS and Gmsh. We provide a pre-build Docker image with FEniCS and Gmsh installed called `finsberg/fenics-gmsh`, which should be compatible with both AMD64 and ARM64 architectures. You can run the image interactively using the command
+Docker is a simple alternative if you don't want to go through the hazel of installing both FEniCS and Gmsh. We provide a pre-build Docker image with FEniCS and Gmsh installed at https://github.com/orgs/scientificcomputing/packages/container/package/fenics-gmsh, which should be compatible with both AMD64 and ARM64 architectures. You can run the image interactively using the command
 ```
-docker run --rm -v $PWD:/home/shared -w /home/shared -it finsberg/fenics-gmsh
+docker run --rm -v $PWD:/home/shared -w /home/shared -it ghcr.io/scientificcomputing/fenics-gmsh:2023-03-01
 ```
 If you want to get an image with `cardiac-gemometries` installed you can use the Docker image from the GitHub repo
 ```
