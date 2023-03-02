@@ -98,6 +98,14 @@ def biv_ellipsoid(
     gmsh.model.occ.synchronize()
 
     # Use the GUI to find out which surfaces are which
+    # Alternatively we could do this programmatically using
+    # the following functions, but lets assume that the order
+    # remains the same.
+    # for surf in surfaces:
+    #     print(gmsh.model.occ.getCenterOfMass(surf[0], surf[1]))
+    #     print(gmsh.model.occ.getBoundingBox(surf[0], surf[1]))
+    #     print()
+
     base_marker = 1
     endo_lv_marker = 2
     endo_rv_marker = 3
