@@ -1,12 +1,14 @@
-from collections import namedtuple
+from pathlib import Path
 from typing import Dict
+from typing import Optional
 from typing import Tuple
+from typing import Union
 
 import dolfin
 import numpy as np
 
-
-Microstructure = namedtuple("Microstructure", "f0, s0, n0")
+from ._utils import Microstructure
+from ._utils import save_microstructure
 
 
 def laplace(
@@ -152,12 +154,17 @@ def create_microstructure(
     alpha_endo,
     alpha_epi,
     function_space,
-):
+    outdir: Optional[Union[str, Path]] = None,
+) -> Microstructure:
 
     t = laplace(mesh, ffun, markers, function_space=function_space)
 
-    return compute_system(
+    system = compute_system(
         t,
         alpha_endo=alpha_endo,
         alpha_epi=alpha_epi,
     )
+
+    save_microstructure(system=system, outdir=outdir, comm=mesh.mpi_comm())
+
+    return system

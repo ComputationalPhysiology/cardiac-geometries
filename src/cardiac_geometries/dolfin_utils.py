@@ -5,6 +5,7 @@ import dolfin
 import meshio
 
 from . import calculus
+from ._import_checks import has_gmsh
 
 
 class MarkerFunctions(typing.NamedTuple):
@@ -156,3 +157,28 @@ def mark_cell_function(fun, mesh, foc, regions):
         fun[cell] = calculus.strain_region_number(T, regions)
 
     return fun
+
+
+def create_biv_ellipsoid(
+    char_length: float = 0.5,
+    center_lv_y: float = 0.0,
+    a_endo_lv: float = 2.5,
+    b_endo_lv: float = 1.0,
+    c_endo_lv: float = 1.0,
+    a_epi_lv: float = 3.0,
+    b_epi_lv: float = 1.5,
+    c_epi_lv: float = 1.5,
+    center_rv_y: float = 0.5,
+    a_endo_rv: float = 3.0,
+    b_endo_rv: float = 1.5,
+    c_endo_rv: float = 1.5,
+    a_epi_rv: float = 4.0,
+    b_epi_rv: float = 2.5,
+    c_epi_rv: float = 2.0,
+    create_fibers: bool = False,
+    fiber_angle_endo: float = -60,
+    fiber_angle_epi: float = +60,
+    fiber_space: str = "P_1",
+):
+    if not has_gmsh():
+        raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")
