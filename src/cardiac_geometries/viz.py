@@ -162,6 +162,7 @@ def h5_to_dict(h5group):
 def dolfin_to_hd5(obj: dolfin.Function, h5name, time="", name=None):
     """
     Save object to and HDF file.
+
     Parameters
     ----------
     obj : dolfin.Function
@@ -171,6 +172,7 @@ def dolfin_to_hd5(obj: dolfin.Function, h5name, time="", name=None):
     h5group : str
         The folder you want to save the object
         withing the HDF file. Default: ''
+
     """
     assert isinstance(obj, dolfin.Function)
     name = obj.name() if name is None else name

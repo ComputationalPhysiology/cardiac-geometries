@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Dict
-from typing import NamedTuple
 from typing import Optional
 from typing import Tuple
 from typing import Union
@@ -8,11 +7,8 @@ from typing import Union
 import dolfin
 import numpy as np
 
-
-class Microstructure(NamedTuple):
-    f0: dolfin.Function
-    s0: dolfin.Function
-    n0: dolfin.Function
+from ._utils import Microstructure
+from ._utils import save_microstructure
 
 
 def laplace(
@@ -218,11 +214,6 @@ def create_microstructure(
         alpha_epi=alpha_epi,
     )
 
-    if outdir is not None:
-        path = Path(outdir) / "microstructure.h5"
-        with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "w") as h5file:
-            h5file.write(system.f0, "f0")
-            h5file.write(system.s0, "s0")
-            h5file.write(system.n0, "n0")
+    save_microstructure(system=system, outdir=outdir, comm=mesh.mpi_comm())
 
     return system

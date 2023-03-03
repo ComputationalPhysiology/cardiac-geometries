@@ -6,7 +6,9 @@ from typing import Union
 
 import dolfin
 
-from ._lv_ellipsoid_fibers import Microstructure
+from .._import_checks import has_ldrb
+from ._utils import Microstructure
+from ._utils import save_microstructure
 
 
 def create_biv_fibers(
@@ -18,11 +20,12 @@ def create_biv_fibers(
     alpha_epi=-60,
     outdir: Optional[Union[str, Path]] = None,
 ) -> Microstructure:
-    try:
-        import ldrb
-    except ImportError as e:
+
+    if not has_ldrb():
         msg = "Need ldrb to create fibers for BiV geometry - pip install ldrb"
-        raise ImportError(msg) from e
+        raise ImportError(msg)
+
+    import ldrb
 
     ldrb_markers = {
         "base": markers["BASE"][0],
@@ -39,12 +42,8 @@ def create_biv_fibers(
         alpha_endo_lv=alpha_endo,  # Fiber angle on the endocardium
         alpha_epi_lv=alpha_epi,  # Fiber angle on the epicardium
     )
+    system = Microstructure(f0=f0, s0=s0, n0=n0)
 
-    if outdir is not None:
-        path = Path(outdir) / "microstructure.h5"
-        with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "w") as h5file:
-            h5file.write(f0, "f0")
-            h5file.write(s0, "s0")
-            h5file.write(n0, "n0")
+    save_microstructure(system=system, outdir=outdir, comm=mesh.mpi_comm())
 
-    return Microstructure(f0=f0, s0=s0, n0=n0)
+    return system

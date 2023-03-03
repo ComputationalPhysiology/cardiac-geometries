@@ -1,27 +1,12 @@
-import datetime
-import json
 import math
 from importlib.metadata import metadata
 from pathlib import Path
 from typing import Optional
 from typing import Union
 
-import numpy as np
 import rich_click as click
-from cardiac_geometries.geometry import Geometry
-from cardiac_geometries.geometry import MeshTypes
 
 from . import has_dolfin
-
-
-def json_serial(obj):
-    if isinstance(obj, (np.ndarray)):
-        return obj.tolist()
-    else:
-        try:
-            return str(obj)
-        except Exception:
-            raise TypeError("Type %s not serializable" % type(obj))
 
 
 meta = metadata("cardiac_geometries")
@@ -162,11 +147,11 @@ def create_lv_ellipsoid(
 ):
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
-    from ._gmsh import lv_ellipsoid
 
-    mesh_name = outdir / "lv_ellipsoid.msh"
-    lv_ellipsoid(
-        mesh_name=mesh_name.as_posix(),
+    from ._mesh import create_lv_ellipsoid
+
+    geo = create_lv_ellipsoid(
+        outdir=outdir,
         r_short_endo=r_short_endo,
         r_short_epi=r_short_epi,
         r_long_endo=r_long_endo,
@@ -176,62 +161,13 @@ def create_lv_ellipsoid(
         mu_apex_endo=mu_apex_endo,
         mu_apex_epi=mu_apex_epi,
         psize_ref=psize_ref,
+        create_fibers=create_fibers,
+        fiber_angle_endo=fiber_angle_endo,
+        fiber_angle_epi=fiber_angle_epi,
+        fiber_space=fiber_space,
     )
-    with open(outdir / "info.json", "w") as f:
-        json.dump(
-            {
-                "r_short_endo": r_short_endo,
-                "r_short_epi": r_short_epi,
-                "r_long_endo": r_long_endo,
-                "r_long_epi": r_long_epi,
-                "psize_ref": psize_ref,
-                "mu_apex_endo": mu_apex_endo,
-                "mu_base_endo": mu_base_endo,
-                "mu_apex_epi": mu_apex_epi,
-                "mu_base_epi": mu_base_epi,
-                "create_fibers": create_fibers,
-                "fibers_angle_endo": fiber_angle_endo,
-                "fibers_angle_epi": fiber_angle_epi,
-                "fiber_space": fiber_space,
-                "mesh_type": MeshTypes.lv_ellipsoid.value,
-                "cardiac_geometry_version": __version__,
-                "timestamp": datetime.datetime.now().isoformat(),
-            },
-            f,
-            indent=2,
-            default=json_serial,
-        )
-    if not has_dolfin():
-        return 0
-
-    from ._dolfin_utils import gmsh2dolfin
-
-    geometry = gmsh2dolfin(mesh_name, unlink=False)
-
-    with open(outdir / "markers.json", "w") as f:
-        json.dump(geometry.markers, f, default=json_serial)
-
-    if create_fibers:
-        from ._lv_ellipsoid_fibers import create_microstructure
-
-        create_microstructure(
-            mesh=geometry.mesh,
-            ffun=geometry.marker_functions.ffun,
-            markers=geometry.markers,
-            function_space=fiber_space,
-            r_short_endo=r_short_endo,
-            r_short_epi=r_short_epi,
-            r_long_endo=r_long_endo,
-            r_long_epi=r_long_epi,
-            alpha_endo=fiber_angle_endo,
-            alpha_epi=fiber_angle_epi,
-            outdir=outdir,
-        )
-
-    from .geometry import Geometry
-
-    geo = Geometry.from_folder(outdir)
-    geo.save(outdir / "lv_ellipsoid.h5")
+    if geo is not None:
+        geo.save(outdir / "lv_ellipsoid.h5")
 
 
 @click.command(help="Create BiV ellipsoidal geometry")
@@ -404,84 +340,33 @@ def create_biv_ellipsoid(
 ):
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
-    from ._gmsh import biv_ellipsoid
 
-    mesh_name = outdir / "biv_ellipsoid.msh"
-    biv_ellipsoid(
-        mesh_name=mesh_name.as_posix(),
+    from ._mesh import create_biv_ellipsoid
+
+    geo = create_biv_ellipsoid(
+        outdir=outdir,
         char_length=char_length,
-        center_lv=(0.0, center_lv_y, 0.0),
+        center_lv_y=center_lv_y,
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
-        center_rv=(0.0, center_rv_y, 0.0),
+        center_rv_y=center_rv_y,
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
         a_epi_rv=a_epi_rv,
         b_epi_rv=b_epi_rv,
         c_epi_rv=c_epi_rv,
+        create_fibers=create_fibers,
+        fiber_angle_endo=fiber_angle_endo,
+        fiber_angle_epi=fiber_angle_epi,
+        fiber_space=fiber_space,
     )
-    with open(outdir / "info.json", "w") as f:
-        json.dump(
-            {
-                "char_length": char_length,
-                "center_lv": (0.0, center_lv_y, 0.0),
-                "a_endo_lv": a_endo_lv,
-                "b_endo_lv": b_endo_lv,
-                "c_endo_lv": c_endo_lv,
-                "a_epi_lv": a_epi_lv,
-                "b_epi_lv": b_epi_lv,
-                "c_epi_lv": c_epi_lv,
-                "center_rv": (0.0, center_rv_y, 0.0),
-                "a_endo_rv": a_endo_rv,
-                "b_endo_rv": b_endo_rv,
-                "c_endo_rv": c_endo_rv,
-                "a_epi_rv": a_epi_rv,
-                "b_epi_rv": b_epi_rv,
-                "c_epi_rv": c_epi_rv,
-                "create_fibers": create_fibers,
-                "fibers_angle_endo": fiber_angle_endo,
-                "fibers_angle_epi": fiber_angle_epi,
-                "fiber_space": fiber_space,
-                "mesh_type": MeshTypes.biv_ellipsoid.value,
-                "cardiac_geometry_version": __version__,
-                "timestamp": datetime.datetime.now().isoformat(),
-            },
-            f,
-            indent=2,
-            default=json_serial,
-        )
-    if not has_dolfin():
-        return 0
-
-    from ._dolfin_utils import gmsh2dolfin
-
-    geometry = gmsh2dolfin(mesh_name, unlink=False)
-
-    with open(outdir / "markers.json", "w") as f:
-        json.dump(geometry.markers, f, default=json_serial)
-
-    if create_fibers:
-        from ._biv_fibers import create_biv_fibers
-
-        create_biv_fibers(
-            mesh=geometry.mesh,
-            ffun=geometry.marker_functions.ffun,
-            markers=geometry.markers,
-            fiber_space=fiber_space,
-            alpha_endo=fiber_angle_endo,
-            alpha_epi=fiber_angle_epi,
-            outdir=outdir,
-        )
-
-    from .geometry import Geometry
-
-    geo = Geometry.from_folder(outdir)
-    geo.save(outdir / "biv_ellipsoid.h5")
+    if geo is not None:
+        geo.save(outdir / "biv_ellipsoid.h5")
 
 
 @click.command()
@@ -567,62 +452,20 @@ def create_slab(
 
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
-    from ._gmsh import slab
 
-    mesh_name = outdir / "slab.msh"
-    slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
-    with open(outdir / "info.json", "w") as f:
-        json.dump(
-            {
-                "lx": lx,
-                "ly": ly,
-                "lz": lz,
-                "dx": dx,
-                "create_fibers": create_fibers,
-                "fibers_angle_endo": fiber_angle_endo,
-                "fibers_angle_epi": fiber_angle_epi,
-                "fiber_space": fiber_space,
-                "mesh_type": MeshTypes.slab.value,
-                "cardiac_geometry_version": __version__,
-                "timestamp": datetime.datetime.now().isoformat(),
-            },
-            f,
-            indent=2,
-            default=json_serial,
-        )
+    from ._mesh import create_slab
 
-    if not has_dolfin():
-        return 0
-
-    from ._dolfin_utils import gmsh2dolfin
-
-    geometry = gmsh2dolfin(mesh_name, unlink=False)
-
-    with open(outdir / "markers.json", "w") as f:
-        json.dump(geometry.markers, f, default=json_serial)
-
-    if create_fibers:
-        from ._slab_fibers import create_microstructure
-
-        f0, s0, n0 = create_microstructure(
-            mesh=geometry.mesh,
-            ffun=geometry.marker_functions.ffun,
-            markers=geometry.markers,
-            function_space=fiber_space,
-            alpha_endo=fiber_angle_endo,
-            alpha_epi=fiber_angle_epi,
-        )
-        import dolfin
-
-        path = outdir / "microstructure.h5"
-        with dolfin.HDF5File(geometry.mesh.mpi_comm(), path.as_posix(), "w") as h5file:
-            h5file.write(f0, "f0")
-            h5file.write(s0, "s0")
-            h5file.write(n0, "n0")
-
-    from .geometry import Geometry
-
-    geo = Geometry.from_folder(outdir)
+    geo = create_slab(
+        outdir=outdir,
+        lx=lx,
+        ly=ly,
+        lz=lz,
+        dx=dx,
+        create_fibers=create_fibers,
+        fiber_angle_endo=fiber_angle_endo,
+        fiber_angle_epi=fiber_angle_epi,
+        fiber_space=fiber_space,
+    )
     geo.save(outdir / "slab.h5")
 
 
@@ -735,6 +578,13 @@ def info(
     mesh_path: Union[str, Path],
     schema_path: Optional[Union[str, Path]] = None,
 ) -> None:
+
+    if not has_dolfin():
+        msg = "Cannot get info - dolfin is not installed"
+        raise ImportError(msg)
+
+    from .geometry import Geometry
+
     geo = Geometry.from_file(mesh_path, schema_path=schema_path)
 
     info = getattr(geo, "info", {})

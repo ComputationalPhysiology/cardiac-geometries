@@ -14,7 +14,32 @@ def prolate_lv_ellipsoid_flat_base(
     quota_base: float = -5.0,
     psize: float = 3.0,
     ndiv: float = 1.0,
-):
+) -> Path:
+    """Create an LV ellipsoid with flat base
+    in prolate spheroidal coordinates
+
+    Parameters
+    ----------
+    mesh_name : str, optional
+        _description_, by default ""
+    a : float, optional
+        _description_, by default 25.0
+    nu_epi : float, optional
+        _description_, by default 0.8
+    nu_endo : float, optional
+        _description_, by default 0.5
+    quota_base : float, optional
+        _description_, by default -5.0
+    psize : float, optional
+        _description_, by default 3.0
+    ndiv : float, optional
+        _description_, by default 1.0
+
+    Returns
+    -------
+    Path
+        Path to the generated gmsh file
+    """
     r_short_endo = a * math.sinh(nu_endo)
     r_long_endo = a * math.cosh(nu_endo)
     r_short_epi = a * math.sinh(nu_epi)
@@ -41,7 +66,35 @@ def prolate_lv_ellipsoid(
     mu_base_endo=-math.acos(5 / 17),
     mu_apex_epi=-math.pi,
     mu_base_epi=-math.acos(5 / 20),
-):
+) -> Path:
+    """Create an LV ellipsoid in prolate spheroidal coordinates
+
+    Parameters
+    ----------
+    mesh_name : str, optional
+        _description_, by default ""
+    a : float, optional
+        _description_, by default 2.0
+    nu_epi : float, optional
+        _description_, by default 0.8
+    nu_endo : float, optional
+        _description_, by default 0.5
+    psize_ref : float, optional
+        _description_, by default 1.0
+    mu_apex_endo : _type_, optional
+        _description_, by default -math.pi
+    mu_base_endo : _type_, optional
+        _description_, by default -math.acos(5 / 17)
+    mu_apex_epi : _type_, optional
+        _description_, by default -math.pi
+    mu_base_epi : _type_, optional
+        _description_, by default -math.acos(5 / 20)
+
+    Returns
+    -------
+    Path
+        Path to the generated gmsh file
+    """
     r_short_endo = a * math.sinh(nu_endo)
     r_long_endo = a * math.cosh(nu_endo)
     r_short_epi = a * math.sinh(nu_epi)
@@ -74,6 +127,32 @@ def lv_ellipsoid_flat_base(
     psize: float = 3.0,
     ndiv: float = 1.0,
 ) -> Path:
+    """Create an LV ellipsoids with a flat base
+
+    Parameters
+    ----------
+    mesh_name : str, optional
+        Name of the mesh by default ""
+    r_short_endo : float, optional
+        Shortest radius on the endocardium layer, by default 7.0
+    r_short_epi : float, optional
+       Shortest radius on the epicardium layer, by default 10.0
+    r_long_endo : float, optional
+        Longest radius on the endocardium layer, by default 17.0
+    r_long_epi : float, optional
+        Longest radius on the epicardium layer, by default 20.0
+    quota_base : float, optional
+        Position of the base relative to the x=0 plane, by default -5.0
+    psize : float, optional
+        Point size, by default 3.0
+    ndiv : float, optional
+        Number of divisions, by default 1.0
+
+    Returns
+    -------
+    Path
+        _description_
+    """
     mu_base_endo = math.acos(quota_base / r_long_endo)
     mu_base_epi = math.acos(quota_base / r_long_epi)
     mu_apex_endo = mu_apex_epi = 0
@@ -104,6 +183,36 @@ def lv_ellipsoid(
     mu_apex_epi=-math.pi,
     mu_base_epi=-math.acos(5 / 20),
 ) -> Path:
+    """Create general LV ellipsoid
+
+    Parameters
+    ----------
+    mesh_name : str, optional
+        Name of the mesh, by default ""
+    r_short_endo : float, optional
+        Shortest radius on the endocardium layer, by default 0.025
+    r_short_epi : float, optional
+       Shortest radius on the epicardium layer, by default 0.035
+    r_long_endo : float, optional
+        Longest radius on the endocardium layer, by default 0.09
+    r_long_epi : float, optional
+        Longest radius on the epicardium layer, by default 0.097
+    psize_ref : float, optional
+        The reference point size (smaller values yield as finer mesh, by default 0.005
+    mu_apex_endo : float, optional
+        Angle for the endocardial apex, by default -math.pi
+    mu_base_endo : float, optional
+        Angle for the endocardial base, by default -math.acos(5 / 17)
+    mu_apex_epi : float, optional
+        Angle for the epicardial apex, by default -math.pi
+    mu_base_epi : float, optional
+        Angle for the epicardial apex, by default -math.acos(5 / 20)
+
+    Returns
+    -------
+    Path
+        Path to the generated gmsh file
+    """
 
     path = utils.handle_mesh_name(mesh_name=mesh_name)
 

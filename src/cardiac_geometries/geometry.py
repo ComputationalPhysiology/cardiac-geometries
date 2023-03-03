@@ -11,14 +11,17 @@ from typing import Sequence
 from typing import Tuple
 from typing import Union
 
-import dolfin
-from dolfin import FiniteElement  # noqa: F401
-from dolfin import tetrahedron  # noqa: F401
-from dolfin import VectorElement  # noqa: F401
+try:
+    import dolfin
+    from dolfin import FiniteElement  # noqa: F401
+    from dolfin import tetrahedron  # noqa: F401
+    from dolfin import VectorElement  # noqa: F401
 
-from .viz import dict_to_h5
-from .viz import h5_to_dict
-from .viz import h5pyfile
+    from .viz import dict_to_h5
+    from .viz import h5_to_dict
+    from .viz import h5pyfile
+except ImportError:
+    pass
 
 
 class MeshTypes(Enum):
