@@ -5,8 +5,8 @@ from typing import Tuple
 import dolfin
 import mshr
 
-from .._dolfin_utils import Geometry
-from .._dolfin_utils import MarkerFunctions
+from ..dolfin_utils import Geometry
+from ..dolfin_utils import MarkerFunctions
 from ._utils import default_markers
 
 
