@@ -16,13 +16,30 @@ gmsh
 .. automodule:: cardiac_geometries.gmsh
     :members:
 
+mesh
+----
+.. automodule:: cardiac_geometries._mesh
+    :members:
+
 
 dolfin_utils
 ------------
-.. automodule:: cardiac_geometries._dolfin_utils
+.. automodule:: cardiac_geometries.dolfin_utils
     :members:
 
-lv_ellipsoid_fibers
--------------------
-.. automodule:: cardiac_geometries._lv_ellipsoid_fibers
+geometry
+--------
+.. automodule:: cardiac_geometries.geometry
+    :members:
+
+
+utils
+-----
+.. automodule:: cardiac_geometries.utils
+    :members:
+
+
+viz
+---
+.. automodule:: cardiac_geometries.viz
     :members:

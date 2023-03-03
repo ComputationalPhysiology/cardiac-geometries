@@ -39,6 +39,63 @@ def create_biv_ellipsoid(
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
 ) -> Optional[Geometry]:
+    """Create BiV ellipsoidal geometry
+
+    Parameters
+    ----------
+    outdir : Union[str, Path, None], optional
+        Directory where to save the results. If not provided a temporary
+        directory will be created, by default None, by default None
+    char_length : float, optional
+        Characteristic length of mesh, by default 0.5
+    center_lv_y : float, optional
+        Y-coordinate for the center of the lv, by default 0.0
+    a_endo_lv : float, optional
+        Dilation of lv endo ellipsoid in the x-direction, by default 2.5
+    b_endo_lv : float, optional
+       Dilation of lv endo ellipsoid in the y-direction, by default 1.0
+    c_endo_lv : float, optional
+       Dilation of lv endo ellipsoid in the z-direction, by default 1.0
+    a_epi_lv : float, optional
+        Dilation of lv epi ellipsoid in the x-direction, by default 3.0
+    b_epi_lv : float, optional
+        Dilation of lv epi ellipsoid in the y-direction, by default 1.5
+    c_epi_lv : float, optional
+        Dilation of lv epi ellipsoid in the z-direction, by default 1.5
+    center_rv_y : float, optional
+        Y-coordinate for the center of the rv, by default 0.5
+    a_endo_rv : float, optional
+       Dilation of rv endo ellipsoid in the x-direction, by default 3.0
+    b_endo_rv : float, optional
+       Dilation of rv endo ellipsoid in the y-direction, by default 1.5
+    c_endo_rv : float, optional
+       Dilation of rv endo ellipsoid in the z-direction, by default 1.5
+    a_epi_rv : float, optional
+        Dilation of rv epi ellipsoid in the x-direction, by default 4.0
+    b_epi_rv : float, optional
+        Dilation of rv epi ellipsoid in the y-direction, by default 2.5
+    c_epi_rv : float, optional
+        Dilation of rv epi ellipsoid in the z-direction, by default 2.0
+    create_fibers : bool, optional
+        If True create analytic fibers, by default False
+    fiber_angle_endo : float, optional
+        Angle for the endocardium, by default -60
+    fiber_angle_epi : float, optional
+        Angle for the epicardium, by default +60
+    fiber_space : str, optional
+        Function space for fibers of the form family_degree, by default "P_1"
+
+    Returns
+    -------
+    Optional[Geometry]
+        A Geometry with the mesh, markers, markers functions and fibers.
+        Returns None if dolfin is not installed.
+
+    Raises
+    ------
+    ImportError
+        If gmsh is not installed
+    """
     if not has_gmsh():
         raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")
 
@@ -136,7 +193,7 @@ def create_biv_ellipsoid(
 
 
 def create_lv_ellipsoid(
-    outdir: Path,
+    outdir: Optional[Union[Path, str]] = None,
     r_short_endo: float = 7.0,
     r_short_epi: float = 10.0,
     r_long_endo: float = 17.0,
@@ -151,6 +208,52 @@ def create_lv_ellipsoid(
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
 ) -> Optional[Geometry]:
+    """Create an LV ellipsoidal geometry
+
+    Parameters
+    ----------
+    outdir : Optional[Path], optional
+        Directory where to save the results. If not provided a temporary
+        directory will be created, by default None
+    r_short_endo : float, optional
+        Shortest radius on the endocardium layer, by default 7.0
+    r_short_epi : float, optional
+       Shortest radius on the epicardium layer, by default 10.0
+    r_long_endo : float, optional
+        Longest radius on the endocardium layer, by default 17.0
+    r_long_epi : float, optional
+        Longest radius on the epicardium layer, by default 20.0
+    psize_ref : float, optional
+        The reference point size (smaller values yield as finer mesh, by default 3
+    mu_apex_endo : float, optional
+        Angle for the endocardial apex, by default -math.pi
+    mu_base_endo : float, optional
+        Angle for the endocardial base, by default -math.acos(5 / 17)
+    mu_apex_epi : float, optional
+        Angle for the epicardial apex, by default -math.pi
+    mu_base_epi : float, optional
+        Angle for the epicardial apex, by default -math.acos(5 / 20)
+    create_fibers : bool, optional
+        If True create analytic fibers, by default False
+    fiber_angle_endo : float, optional
+        Angle for the endocardium, by default -60
+    fiber_angle_epi : float, optional
+        Angle for the epicardium, by default +60
+    fiber_space : str, optional
+        Function space for fibers of the form family_degree, by default "P_1"
+
+    Returns
+    -------
+    Optional[Geometry]
+        A Geometry with the mesh, markers, markers functions and fibers.
+        Returns None if dolfin is not installed.
+
+    Raises
+    ------
+    ImportError
+        If gmsh is not installed
+    """
+
     if not has_gmsh():
         raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")
 
@@ -239,7 +342,7 @@ def create_lv_ellipsoid(
 
 
 def create_slab(
-    outdir: Path,
+    outdir: Optional[Union[Path, str]] = None,
     lx: float = 20.0,
     ly: float = 7.0,
     lz: float = 3.0,
@@ -249,6 +352,41 @@ def create_slab(
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
 ) -> Optional[Geometry]:
+    """Create slab geometry
+
+    Parameters
+    ----------
+    outdir : Optional[Path], optional
+        Directory where to save the results. If not provided a temporary
+        directory will be created, by default None
+    lx : float, optional
+        Length of slab the x-direction, by default 20.0
+    ly : float, optional
+        Length of slab the x-direction, by default 7.0
+    lz : float, optional
+        Length of slab the z-direction, by default 3.0
+    dx : float, optional
+        Element size, by default 1.0
+    create_fibers : bool, optional
+        If True create analytic fibers, by default True
+    fiber_angle_endo : float, optional
+        Angle for the endocardium, by default -60
+    fiber_angle_epi : float, optional
+        Angle for the epicardium, by default +60
+    fiber_space : str, optional
+        Function space for fibers of the form family_degree, by default "P_1"
+
+    Returns
+    -------
+    Optional[Geometry]
+        A Geometry with the mesh, markers, markers functions and fibers.
+        Returns None if dolfin is not installed.
+
+    Raises
+    ------
+    ImportError
+        If gmsh is not installed
+    """
 
     if not has_gmsh():
         raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")

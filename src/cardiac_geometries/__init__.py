@@ -17,6 +17,7 @@ if has_dolfin():
     from .fibers import _slab as slab_fibers
     from .fibers import _lv_ellipsoid as lv_ellipsoid_fibers
     from .fibers import _biv_ellipsoid as biv_ellipsoid_fibers
+    from . import _mesh as mesh
     from ._mesh import create_biv_ellipsoid, create_lv_ellipsoid, create_slab
 else:
     gmsh2dolfin = None  # type: ignore
@@ -48,4 +49,5 @@ __all__ = [
     "create_biv_ellipsoid",
     "create_lv_ellipsoid",
     "create_slab",
+    "mesh",
 ]
