@@ -549,13 +549,28 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-cardiac_geometries._dolfin_utils">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries._mesh">
+   mesh
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.dolfin_utils">
    dolfin_utils
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-cardiac_geometries._lv_ellipsoid_fibers">
-   lv_ellipsoid_fibers
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.geometry">
+   geometry
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.utils">
+   utils
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.viz">
+   viz
   </a>
  </li>
 </ul>
@@ -624,92 +639,407 @@ T belongs to</p>
 </section>
 <section id="module-cardiac_geometries.gmsh">
 <span id="gmsh"></span><h2>gmsh<a class="headerlink" href="#module-cardiac_geometries.gmsh" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries.gmsh.lv_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.gmsh.</span></span><span class="sig-name descname"><span class="pre">lv_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.035</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.097</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psize_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1.2722641256100204</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1.318116071652818</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#cardiac_geometries.gmsh.lv_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Create general LV ellipsoid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the mesh, by default “”</p></li>
+<li><p><strong>r_short_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the endocardium layer, by default 0.025</p></li>
+<li><p><strong>r_short_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the epicardium layer, by default 0.035</p></li>
+<li><p><strong>r_long_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the endocardium layer, by default 0.09</p></li>
+<li><p><strong>r_long_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the epicardium layer, by default 0.097</p></li>
+<li><p><strong>psize_ref</strong> (<em>float</em><em>, </em><em>optional</em>) – The reference point size (smaller values yield as finer mesh, by default 0.005</p></li>
+<li><p><strong>mu_apex_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardial apex, by default -math.pi</p></li>
+<li><p><strong>mu_base_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardial base, by default -math.acos(5 / 17)</p></li>
+<li><p><strong>mu_apex_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardial apex, by default -math.pi</p></li>
+<li><p><strong>mu_base_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardial apex, by default -math.acos(5 / 20)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the generated gmsh file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries.gmsh.lv_ellipsoid_flat_base">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.gmsh.</span></span><span class="sig-name descname"><span class="pre">lv_ellipsoid_flat_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quota_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndiv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#cardiac_geometries.gmsh.lv_ellipsoid_flat_base" title="Permalink to this definition">#</a></dt>
+<dd><p>Create an LV ellipsoids with a flat base</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the mesh by default “”</p></li>
+<li><p><strong>r_short_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the endocardium layer, by default 7.0</p></li>
+<li><p><strong>r_short_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the epicardium layer, by default 10.0</p></li>
+<li><p><strong>r_long_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the endocardium layer, by default 17.0</p></li>
+<li><p><strong>r_long_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the epicardium layer, by default 20.0</p></li>
+<li><p><strong>quota_base</strong> (<em>float</em><em>, </em><em>optional</em>) – Position of the base relative to the x=0 plane, by default -5.0</p></li>
+<li><p><strong>psize</strong> (<em>float</em><em>, </em><em>optional</em>) – Point size, by default 3.0</p></li>
+<li><p><strong>ndiv</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of divisions, by default 1.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries.gmsh.prolate_lv_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.gmsh.</span></span><span class="sig-name descname"><span class="pre">prolate_lv_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psize_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_endo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1.2722641256100204</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_epi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1.318116071652818</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#cardiac_geometries.gmsh.prolate_lv_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Create an LV ellipsoid in prolate spheroidal coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh_name</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_, by default “”</p></li>
+<li><p><strong>a</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 2.0</p></li>
+<li><p><strong>nu_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 0.8</p></li>
+<li><p><strong>nu_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 0.5</p></li>
+<li><p><strong>psize_ref</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 1.0</p></li>
+<li><p><strong>mu_apex_endo</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_, by default -math.pi</p></li>
+<li><p><strong>mu_base_endo</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_, by default -math.acos(5 / 17)</p></li>
+<li><p><strong>mu_apex_epi</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_, by default -math.pi</p></li>
+<li><p><strong>mu_base_epi</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_, by default -math.acos(5 / 20)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the generated gmsh file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries.gmsh.prolate_lv_ellipsoid_flat_base">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.gmsh.</span></span><span class="sig-name descname"><span class="pre">prolate_lv_ellipsoid_flat_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quota_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndiv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#cardiac_geometries.gmsh.prolate_lv_ellipsoid_flat_base" title="Permalink to this definition">#</a></dt>
+<dd><p>Create an LV ellipsoid with flat base
+in prolate spheroidal coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh_name</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_, by default “”</p></li>
+<li><p><strong>a</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 25.0</p></li>
+<li><p><strong>nu_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 0.8</p></li>
+<li><p><strong>nu_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 0.5</p></li>
+<li><p><strong>quota_base</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default -5.0</p></li>
+<li><p><strong>psize</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 3.0</p></li>
+<li><p><strong>ndiv</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_, by default 1.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the generated gmsh file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="module-cardiac_geometries._dolfin_utils">
-<span id="dolfin-utils"></span><h2>dolfin_utils<a class="headerlink" href="#module-cardiac_geometries._dolfin_utils" title="Permalink to this heading">#</a></h2>
+<section id="module-cardiac_geometries._mesh">
+<span id="mesh"></span><h2>mesh<a class="headerlink" href="#module-cardiac_geometries._mesh" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries._mesh.create_biv_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries._mesh.</span></span><span class="sig-name descname"><span class="pre">create_biv_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">char_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_lv_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_endo_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_endo_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_endo_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_epi_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_epi_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_epi_lv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_rv_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_endo_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_endo_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_endo_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_epi_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_epi_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_epi_rv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_fibers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'P_1'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Geometry</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cardiac_geometries/_mesh.html#create_biv_ellipsoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._mesh.create_biv_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Create BiV ellipsoidal geometry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – Directory where to save the results. If not provided a temporary
+directory will be created, by default None, by default None</p></li>
+<li><p><strong>char_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Characteristic length of mesh, by default 0.5</p></li>
+<li><p><strong>center_lv_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Y-coordinate for the center of the lv, by default 0.0</p></li>
+<li><p><strong>a_endo_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv endo ellipsoid in the x-direction, by default 2.5</p></li>
+<li><p><strong>b_endo_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv endo ellipsoid in the y-direction, by default 1.0</p></li>
+<li><p><strong>c_endo_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv endo ellipsoid in the z-direction, by default 1.0</p></li>
+<li><p><strong>a_epi_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv epi ellipsoid in the x-direction, by default 3.0</p></li>
+<li><p><strong>b_epi_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv epi ellipsoid in the y-direction, by default 1.5</p></li>
+<li><p><strong>c_epi_lv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of lv epi ellipsoid in the z-direction, by default 1.5</p></li>
+<li><p><strong>center_rv_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Y-coordinate for the center of the rv, by default 0.5</p></li>
+<li><p><strong>a_endo_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv endo ellipsoid in the x-direction, by default 3.0</p></li>
+<li><p><strong>b_endo_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv endo ellipsoid in the y-direction, by default 1.5</p></li>
+<li><p><strong>c_endo_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv endo ellipsoid in the z-direction, by default 1.5</p></li>
+<li><p><strong>a_epi_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv epi ellipsoid in the x-direction, by default 4.0</p></li>
+<li><p><strong>b_epi_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv epi ellipsoid in the y-direction, by default 2.5</p></li>
+<li><p><strong>c_epi_rv</strong> (<em>float</em><em>, </em><em>optional</em>) – Dilation of rv epi ellipsoid in the z-direction, by default 2.0</p></li>
+<li><p><strong>create_fibers</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True create analytic fibers, by default False</p></li>
+<li><p><strong>fiber_angle_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardium, by default -60</p></li>
+<li><p><strong>fiber_angle_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardium, by default +60</p></li>
+<li><p><strong>fiber_space</strong> (<em>str</em><em>, </em><em>optional</em>) – Function space for fibers of the form family_degree, by default “P_1”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Geometry with the mesh, markers, markers functions and fibers.
+Returns None if dolfin is not installed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="#cardiac_geometries.dolfin_utils.Geometry" title="cardiac_geometries.dolfin_utils.Geometry">Geometry</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – If gmsh is not installed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries._mesh.create_lv_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries._mesh.</span></span><span class="sig-name descname"><span class="pre">create_lv_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_short_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_long_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psize_ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1.2722641256100204</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_apex_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">3.141592653589793</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_base_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1.318116071652818</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_fibers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'P_1'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Geometry</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cardiac_geometries/_mesh.html#create_lv_ellipsoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._mesh.create_lv_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Create an LV ellipsoidal geometry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<em>Optional</em><em>[</em><em>Path</em><em>]</em><em>, </em><em>optional</em>) – Directory where to save the results. If not provided a temporary
+directory will be created, by default None</p></li>
+<li><p><strong>r_short_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the endocardium layer, by default 7.0</p></li>
+<li><p><strong>r_short_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Shortest radius on the epicardium layer, by default 10.0</p></li>
+<li><p><strong>r_long_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the endocardium layer, by default 17.0</p></li>
+<li><p><strong>r_long_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Longest radius on the epicardium layer, by default 20.0</p></li>
+<li><p><strong>psize_ref</strong> (<em>float</em><em>, </em><em>optional</em>) – The reference point size (smaller values yield as finer mesh, by default 3</p></li>
+<li><p><strong>mu_apex_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardial apex, by default -math.pi</p></li>
+<li><p><strong>mu_base_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardial base, by default -math.acos(5 / 17)</p></li>
+<li><p><strong>mu_apex_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardial apex, by default -math.pi</p></li>
+<li><p><strong>mu_base_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardial apex, by default -math.acos(5 / 20)</p></li>
+<li><p><strong>create_fibers</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True create analytic fibers, by default False</p></li>
+<li><p><strong>fiber_angle_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardium, by default -60</p></li>
+<li><p><strong>fiber_angle_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardium, by default +60</p></li>
+<li><p><strong>fiber_space</strong> (<em>str</em><em>, </em><em>optional</em>) – Function space for fibers of the form family_degree, by default “P_1”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Geometry with the mesh, markers, markers functions and fibers.
+Returns None if dolfin is not installed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="#cardiac_geometries.dolfin_utils.Geometry" title="cardiac_geometries.dolfin_utils.Geometry">Geometry</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – If gmsh is not installed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries._mesh.create_slab">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries._mesh.</span></span><span class="sig-name descname"><span class="pre">create_slab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_fibers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_endo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_angle_epi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'P_1'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Geometry</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cardiac_geometries/_mesh.html#create_slab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._mesh.create_slab" title="Permalink to this definition">#</a></dt>
+<dd><p>Create slab geometry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<em>Optional</em><em>[</em><em>Path</em><em>]</em><em>, </em><em>optional</em>) – Directory where to save the results. If not provided a temporary
+directory will be created, by default None</p></li>
+<li><p><strong>lx</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of slab the x-direction, by default 20.0</p></li>
+<li><p><strong>ly</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of slab the x-direction, by default 7.0</p></li>
+<li><p><strong>lz</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of slab the z-direction, by default 3.0</p></li>
+<li><p><strong>dx</strong> (<em>float</em><em>, </em><em>optional</em>) – Element size, by default 1.0</p></li>
+<li><p><strong>create_fibers</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True create analytic fibers, by default True</p></li>
+<li><p><strong>fiber_angle_endo</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the endocardium, by default -60</p></li>
+<li><p><strong>fiber_angle_epi</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle for the epicardium, by default +60</p></li>
+<li><p><strong>fiber_space</strong> (<em>str</em><em>, </em><em>optional</em>) – Function space for fibers of the form family_degree, by default “P_1”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Geometry with the mesh, markers, markers functions and fibers.
+Returns None if dolfin is not installed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="#cardiac_geometries.dolfin_utils.Geometry" title="cardiac_geometries.dolfin_utils.Geometry">Geometry</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – If gmsh is not installed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cardiac_geometries.dolfin_utils">
+<span id="dolfin-utils"></span><h2>dolfin_utils<a class="headerlink" href="#module-cardiac_geometries.dolfin_utils" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.Geometry">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries._dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">Geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_functions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/_dolfin_utils.html#Geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._dolfin_utils.Geometry" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.Geometry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">Geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_functions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/dolfin_utils.html#Geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.dolfin_utils.Geometry" title="Permalink to this definition">#</a></dt>
 <dd><dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.Geometry.marker_functions">
-<span class="sig-name descname"><span class="pre">marker_functions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#cardiac_geometries._dolfin_utils.MarkerFunctions" title="cardiac_geometries._dolfin_utils.MarkerFunctions"><span class="pre">MarkerFunctions</span></a></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.Geometry.marker_functions" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.Geometry.marker_functions">
+<span class="sig-name descname"><span class="pre">marker_functions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#cardiac_geometries.dolfin_utils.MarkerFunctions" title="cardiac_geometries.dolfin_utils.MarkerFunctions"><span class="pre">MarkerFunctions</span></a></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.Geometry.marker_functions" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.Geometry.markers">
-<span class="sig-name descname"><span class="pre">markers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.Geometry.markers" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.Geometry.markers">
+<span class="sig-name descname"><span class="pre">markers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.Geometry.markers" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.Geometry.mesh">
-<span class="sig-name descname"><span class="pre">mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mesh</span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.Geometry.mesh" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.Geometry.mesh">
+<span class="sig-name descname"><span class="pre">mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mesh</span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.Geometry.mesh" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.MarkerFunctions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries._dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">MarkerFunctions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ffun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/_dolfin_utils.html#MarkerFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._dolfin_utils.MarkerFunctions" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.MarkerFunctions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">MarkerFunctions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ffun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/dolfin_utils.html#MarkerFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.dolfin_utils.MarkerFunctions" title="Permalink to this definition">#</a></dt>
 <dd><dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.MarkerFunctions.cfun">
-<span class="sig-name descname"><span class="pre">cfun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.MarkerFunctions.cfun" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.MarkerFunctions.cfun">
+<span class="sig-name descname"><span class="pre">cfun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.MarkerFunctions.cfun" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.MarkerFunctions.efun">
-<span class="sig-name descname"><span class="pre">efun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.MarkerFunctions.efun" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.MarkerFunctions.efun">
+<span class="sig-name descname"><span class="pre">efun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.MarkerFunctions.efun" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.MarkerFunctions.ffun">
-<span class="sig-name descname"><span class="pre">ffun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.MarkerFunctions.ffun" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.MarkerFunctions.ffun">
+<span class="sig-name descname"><span class="pre">ffun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.MarkerFunctions.ffun" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.MarkerFunctions.vfun">
-<span class="sig-name descname"><span class="pre">vfun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries._dolfin_utils.MarkerFunctions.vfun" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.MarkerFunctions.vfun">
+<span class="sig-name descname"><span class="pre">vfun</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MeshFunction</span></em><a class="headerlink" href="#cardiac_geometries.dolfin_utils.MarkerFunctions.vfun" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cardiac_geometries._dolfin_utils.mark_cell_function">
-<span class="sig-prename descclassname"><span class="pre">cardiac_geometries._dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">mark_cell_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/_dolfin_utils.html#mark_cell_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._dolfin_utils.mark_cell_function" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.dolfin_utils.mark_cell_function">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.dolfin_utils.</span></span><span class="sig-name descname"><span class="pre">mark_cell_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/dolfin_utils.html#mark_cell_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.dolfin_utils.mark_cell_function" title="Permalink to this definition">#</a></dt>
 <dd><p>Iterates over the mesh and stores the
 region number in a meshfunction</p>
 </dd></dl>
 
 </section>
-<section id="module-cardiac_geometries._lv_ellipsoid_fibers">
-<span id="lv-ellipsoid-fibers"></span><h2>lv_ellipsoid_fibers<a class="headerlink" href="#module-cardiac_geometries._lv_ellipsoid_fibers" title="Permalink to this heading">#</a></h2>
+<section id="module-cardiac_geometries.geometry">
+<span id="geometry"></span><h2>geometry<a class="headerlink" href="#module-cardiac_geometries.geometry" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="cardiac_geometries._lv_ellipsoid_fibers.Microstructure">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries._lv_ellipsoid_fibers.</span></span><span class="sig-name descname"><span class="pre">Microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/_lv_ellipsoid_fibers.html#Microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries._lv_ellipsoid_fibers.Microstructure" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.FileNames">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.geometry.</span></span><span class="sig-name descname"><span class="pre">FileNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/geometry.html#FileNames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.geometry.FileNames" title="Permalink to this definition">#</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.geometry.</span></span><span class="sig-name descname"><span class="pre">H5Path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dolfin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_meshfunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/geometry.html#H5Path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.geometry.H5Path" title="Permalink to this definition">#</a></dt>
 <dd><dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._lv_ellipsoid_fibers.Microstructure.f0">
-<span class="sig-name descname"><span class="pre">f0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries._lv_ellipsoid_fibers.Microstructure.f0" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.dim" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.fname">
+<span class="sig-name descname"><span class="pre">fname</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.fname" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.h5group">
+<span class="sig-name descname"><span class="pre">h5group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.h5group" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._lv_ellipsoid_fibers.Microstructure.n0">
-<span class="sig-name descname"><span class="pre">n0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries._lv_ellipsoid_fibers.Microstructure.n0" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.is_dolfin">
+<span class="sig-name descname"><span class="pre">is_dolfin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.is_dolfin" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.is_function">
+<span class="sig-name descname"><span class="pre">is_function</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.is_function" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.is_mesh">
+<span class="sig-name descname"><span class="pre">is_mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.is_mesh" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.is_meshfunction">
+<span class="sig-name descname"><span class="pre">is_meshfunction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.is_meshfunction" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Path.mesh_key">
+<span class="sig-name descname"><span class="pre">mesh_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cardiac_geometries.geometry.H5Path.mesh_key" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.H5Paths">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.geometry.</span></span><span class="sig-name descname"><span class="pre">H5Paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/geometry.html#H5Paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.geometry.H5Paths" title="Permalink to this definition">#</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.MeshTypes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.geometry.</span></span><span class="sig-name descname"><span class="pre">MeshTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/geometry.html#MeshTypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.geometry.MeshTypes" title="Permalink to this definition">#</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.Microstructure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cardiac_geometries.geometry.</span></span><span class="sig-name descname"><span class="pre">Microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/geometry.html#Microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.geometry.Microstructure" title="Permalink to this definition">#</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.Microstructure.f0">
+<span class="sig-name descname"><span class="pre">f0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries.geometry.Microstructure.f0" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.Microstructure.n0">
+<span class="sig-name descname"><span class="pre">n0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries.geometry.Microstructure.n0" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cardiac_geometries._lv_ellipsoid_fibers.Microstructure.s0">
-<span class="sig-name descname"><span class="pre">s0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries._lv_ellipsoid_fibers.Microstructure.s0" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="cardiac_geometries.geometry.Microstructure.s0">
+<span class="sig-name descname"><span class="pre">s0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Function</span></em><a class="headerlink" href="#cardiac_geometries.geometry.Microstructure.s0" title="Permalink to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-cardiac_geometries.utils">
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-cardiac_geometries.utils" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="module-cardiac_geometries.viz">
+<span id="viz"></span><h2>viz<a class="headerlink" href="#module-cardiac_geometries.viz" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cardiac_geometries.viz.dolfin_to_hd5">
+<span class="sig-prename descclassname"><span class="pre">cardiac_geometries.viz.</span></span><span class="sig-name descname"><span class="pre">dolfin_to_hd5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h5name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cardiac_geometries/viz.html#dolfin_to_hd5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cardiac_geometries.viz.dolfin_to_hd5" title="Permalink to this definition">#</a></dt>
+<dd><p>Save object to and HDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>dolfin.Function</em>) – The object you want to save</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the object</p></li>
+<li><p><strong>h5group</strong> (<em>str</em>) – The folder you want to save the object
+withing the HDF file. Default: ‘’</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -782,13 +1112,28 @@ region number in a meshfunction</p>
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-cardiac_geometries._dolfin_utils">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries._mesh">
+   mesh
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.dolfin_utils">
    dolfin_utils
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-cardiac_geometries._lv_ellipsoid_fibers">
-   lv_ellipsoid_fibers
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.geometry">
+   geometry
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.utils">
+   utils
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-cardiac_geometries.viz">
+   viz
   </a>
  </li>
 </ul>
@@ -825,7 +1170,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-Last updated on None.<br>
+Last updated on Mar 03, 2023.<br>
 </p>
   </div>
   
