@@ -124,7 +124,7 @@ def gmsh2dolfin(
         vertex_mesh_name.unlink(missing_ok=True)
         vertex_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
 
-    markers = msh.field_data
+    markers = {k: [int(vi) for vi in v] for k, v in msh.field_data.items()}
     marker_functions = MarkerFunctions(vfun=vfun, efun=efun, ffun=ffun, cfun=cfun)
 
     geo = Geometry(
