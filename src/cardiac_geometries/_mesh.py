@@ -351,6 +351,7 @@ def create_slab(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
+    torso: float = 0.0,
 ) -> Optional[Geometry]:
     """Create slab geometry
 
@@ -389,7 +390,7 @@ def create_slab(
     """
 
     if not has_gmsh():
-        raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")
+        raise ImportError("Cannot create slab. Gmsh is not installed")
 
     _tmpfile = None
     if outdir is None:
@@ -410,6 +411,7 @@ def create_slab(
                 "fibers_angle_endo": fiber_angle_endo,
                 "fibers_angle_epi": fiber_angle_epi,
                 "fiber_space": fiber_space,
+                "torso": torso,
                 "mesh_type": MeshTypes.slab.value,
                 "cardiac_geometry_version": __version__,
                 "timestamp": datetime.datetime.now().isoformat(),
@@ -421,8 +423,11 @@ def create_slab(
 
     from ._gmsh import slab
 
-    mesh_name = outdir / "slab.msh"
-    slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+    if torso:
+        mesh_name = outdir / "slab_torso.msh"
+    else:
+        mesh_name = outdir / "slab.msh"
+    slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx, torso=torso)
 
     if not has_dolfin():
         return None

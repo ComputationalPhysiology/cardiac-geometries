@@ -438,6 +438,13 @@ def create_biv_ellipsoid(
     help="Function space for fibers of the form family_degree",
     show_default=True,
 )
+@click.option(
+    "--torso-mesh",
+    default=0.0,
+    type=float,
+    help="Build surrounding torso with dimension [lx + (2*torso)*lx, ly + (2*torso)*ly, lz + (2*torso)*lz]",
+    show_default=True,
+)
 def create_slab(
     outdir: Path,
     lx: float = 20.0,
@@ -448,6 +455,7 @@ def create_slab(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
+    torso_mesh: float = 0.0,
 ):
 
     outdir = Path(outdir)
@@ -465,8 +473,12 @@ def create_slab(
         fiber_angle_endo=fiber_angle_endo,
         fiber_angle_epi=fiber_angle_epi,
         fiber_space=fiber_space,
+        torso=torso_mesh,
     )
-    geo.save(outdir / "slab.h5")
+    if torso_mesh:
+        geo.save(outdir / "slab_torso.h5")
+    else:
+        geo.save(outdir / "slab.h5")
 
 
 @click.command(

@@ -4,7 +4,7 @@ import numpy as np
 from . import utils
 
 
-def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
+def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0, torso=0):
 
     path = utils.handle_mesh_name(mesh_name=mesh_name)
     # Initialize gmsh:
@@ -15,7 +15,12 @@ def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
     gmsh.option.setNumber("Mesh.CharacteristicLengthMin", dx)
     gmsh.option.setNumber("Mesh.CharacteristicLengthMax", dx)
 
-    gmsh.model.occ.addBox(0, 0, 0, lx, ly, lz)
+    gmsh.model.occ.addBox(0, 0, 0, lx, ly, lz, 1)
+    if torso:
+        gmsh.model.occ.addBox(-torso * lx, -torso * ly, -torso * lz,
+                              (1 + 2 * torso) * lx, (1 + 2 * torso) * ly, (1 + 2 * torso) * lz, 2)
+        ov, ovv = gmsh.model.occ.fragment([(3, 1)], [(3, 2)])
+
     gmsh.model.occ.synchronize()
 
     volumes = gmsh.model.getEntities(dim=3)
@@ -23,6 +28,10 @@ def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
     myo_marker = 7
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], myo_marker)
     gmsh.model.setPhysicalName(volumes[0][0], myo_marker, "Myocardium")
+    if torso:
+        torso_marker = 8
+        gmsh.model.addPhysicalGroup(3, [ov[-1][1]], torso_marker)
+        gmsh.model.setPhysicalName(3, torso_marker, "Torso")
 
     surfaces = gmsh.model.occ.getEntities(dim=2)
     x0, x1, y0, y1, z0, z1 = 1, 2, 3, 4, 5, 6
@@ -55,8 +64,8 @@ def slab(mesh_name: str = "", lx=20.0, ly=7.0, lz=3.0, dx=1.0):
             gmsh.model.addPhysicalGroup(surface[0], [surface[1]], z1)
             gmsh.model.setPhysicalName(surface[0], z1, "Z1")
 
-        else:
-            print("Wtf!")
+        # else:
+        #     print("Wtf!")
 
     gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(3)
