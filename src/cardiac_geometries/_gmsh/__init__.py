@@ -1,4 +1,5 @@
 from ._biv_ellipsoid import biv_ellipsoid
+from ._biv_ellipsoid import biv_ellipsoid_torso
 from ._lv_ellipsoid import create_benchmark_geometry_land15
 from ._lv_ellipsoid import lv_ellipsoid
 from ._lv_ellipsoid import lv_ellipsoid_flat_base
@@ -15,4 +16,5 @@ __all__ = [
     "create_benchmark_geometry_land15",
     "slab",
     "biv_ellipsoid",
+    "biv_ellipsoid_torso",
 ]
