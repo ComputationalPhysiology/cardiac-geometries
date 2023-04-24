@@ -144,3 +144,12 @@ Martinez-Navarro, Hector and Rodriguez, Blanca and Bueno-Orovio, Alfonso and Min
 Code and data required to run a biophysically detailed model of acute myocardial ischemia in humans on Chaste
 
 https://ora.ox.ac.uk/objects/uuid:951b086c-c4ba-41ef-b967-c2106d87ee06
+
+
+
+# Human atria and torso 3D computational models for simulation of atrial arrhythmias
+
+Sebastián Aguilar, R.; Ferrer Albero, A.; Saiz Rodríguez, FJ. (2015). Human atria and torso 3D computational models for simulation of atrial arrhythmias. https://doi.org/10.4995/Dataset/10251/55150
+
+
+https://riunet.upv.es/handle/10251/55150
