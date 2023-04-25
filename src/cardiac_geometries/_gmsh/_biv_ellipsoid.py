@@ -186,8 +186,8 @@ def biv_ellipsoid_torso(
 
     # Create a box for cutting the base
     a_epi = max(a_epi_lv, a_epi_rv)
-    diam = 5 * a_epi  # Just make it sufficiently big
-    box_id = gmsh.model.occ.addBox(base_x, a_epi, a_epi, diam, -diam, -diam)
+    diam = -5 * a_epi  # Just make it sufficiently big
+    box_id = gmsh.model.occ.addBox(base_x, a_epi, a_epi, diam, diam, diam)
     dim_tag_box = [(3, box_id)]
 
     # LV epicardium
@@ -251,7 +251,8 @@ def biv_ellipsoid_torso(
     )
 
     # Rotate torso around this point to align with realistic heart in torso
-    gmsh.model.occ.rotate([(3, torso_tag)], 0, 0, 0, 0, 1, 1, rotation_angle)
+    gmsh.model.occ.rotate([(3, torso_tag)], 0, 0, 0, 0, 0, 1, -rotation_angle)
+    gmsh.model.occ.rotate([(3, torso_tag)], 0, 0, 0, 0, 1, 0, rotation_angle)
 
     # Now we mark the different surfaces
     surfaces = gmsh.model.occ.getEntities(dim=2)
@@ -282,43 +283,37 @@ def biv_ellipsoid_torso(
         dim=surfaces[0][0],
         tags=[surfaces[0][1]],
         tag=side1_marker,
-        name="SIDE1",
+        name="TOP",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[1][0],
         tags=[surfaces[1][1]],
         tag=side2_marker,
-        name="SIDE2",
+        name="LEFT",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[2][0],
         tags=[surfaces[2][1]],
         tag=side3_marker,
-        name="SIDE3",
+        name="FRONT",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[3][0],
         tags=[surfaces[3][1]],
         tag=side4_marker,
-        name="SIDE4",
+        name="RIGHT",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[4][0],
         tags=[surfaces[4][1]],
         tag=side5_marker,
-        name="SIDE5",
+        name="BACK",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[5][0],
         tags=[surfaces[5][1]],
         tag=side6_marker,
-        name="SIDE6",
-    )
-    gmsh.model.addPhysicalGroup(
-        dim=surfaces[6][0],
-        tags=[surfaces[6][1]],
-        tag=epi_marker,
-        name="EPI",
+        name="BOTTOM",
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[7][0],
@@ -328,20 +323,26 @@ def biv_ellipsoid_torso(
     )
     gmsh.model.addPhysicalGroup(
         dim=surfaces[8][0],
-        tags=[surfaces[8][1], surfaces[9][1]],
+        tags=[surfaces[6][1], surfaces[8][1]],
+        tag=epi_marker,
+        name="EPI",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[9][0],
+        tags=[surfaces[9][1], surfaces[10][1], surfaces[11][1]],
         tag=endo_rv_marker,
         name="ENDO_RV",
     )
 
     gmsh.model.addPhysicalGroup(
-        dim=surfaces[10][0],
-        tags=[surfaces[10][1]],
+        dim=surfaces[12][0],
+        tags=[surfaces[12][1], surfaces[13][1]],
         tag=endo_lv_marker,
         name="ENDO_LV",
     )
 
     gmsh.model.add_physical_group(dim=3, tags=[volumes[0][1]], tag=50, name="TISSUE")
-    gmsh.option.setNumber("Mesh.SaveAll", 0)
+    # gmsh.option.setNumber("Mesh.SaveAll", 0)
     gmsh.option.setNumber("Mesh.CharacteristicLengthMin", char_length)
     gmsh.option.setNumber("Mesh.CharacteristicLengthMax", char_length)
 
