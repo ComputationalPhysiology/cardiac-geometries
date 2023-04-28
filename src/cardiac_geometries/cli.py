@@ -369,6 +369,244 @@ def create_biv_ellipsoid(
         geo.save(outdir / "biv_ellipsoid.h5")
 
 
+@click.command(help="Create BiV ellipsoidal geometry embedded in a torso")
+@click.argument(
+    "outdir",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--char-length",
+    default=0.5,
+    type=float,
+    help="Characteristic length of mesh",
+    show_default=True,
+)
+@click.option(
+    "--torso-length",
+    default=20,
+    type=float,
+    help="Length of torso in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--torso-width",
+    default=20,
+    type=float,
+    help="Length of torso in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--torso-height",
+    default=20,
+    type=float,
+    help="Length of torso in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--rotation-angle",
+    default=math.pi / 6,
+    type=float,
+    help=(
+        "Angle to rotate the torso in order to object realistic"
+        " position of the heart in a torso"
+    ),
+    show_default=True,
+)
+@click.option(
+    "--center-lv-y",
+    default=0.0,
+    type=float,
+    help="Y-coordinate for the center of the lv",
+    show_default=True,
+)
+@click.option(
+    "--a-endo-lv",
+    default=2.5,
+    type=float,
+    help="Dilation of lv endo ellipsoid in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--b-endo-lv",
+    default=1.0,
+    type=float,
+    help="Dilation of lv endo ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--c-endo-lv",
+    default=1.0,
+    type=float,
+    help="Dilation of lv endo ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--a-epi-lv",
+    default=3.0,
+    type=float,
+    help="Dilation of lv epi ellipsoid in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--b-epi-lv",
+    default=1.5,
+    type=float,
+    help="Dilation of lv epi ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--c-epi-lv",
+    default=1.5,
+    type=float,
+    help="Dilation of lv epi ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--center-rv-y",
+    default=0.5,
+    type=float,
+    help="Y-coordinate for the center of the rv",
+    show_default=True,
+)
+@click.option(
+    "--a-endo-rv",
+    default=3.0,
+    type=float,
+    help="Dilation of rv endo ellipsoid in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--b-endo-rv",
+    default=1.5,
+    type=float,
+    help="Dilation of rv endo ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--c-endo-rv",
+    default=1.5,
+    type=float,
+    help="Dilation of rv endo ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--a-epi-rv",
+    default=4.0,
+    type=float,
+    help="Dilation of rv epi ellipsoid in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--b-epi-rv",
+    default=2.5,
+    type=float,
+    help="Dilation of rv epi ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--c-epi-rv",
+    default=2.0,
+    type=float,
+    help="Dilation of rv epi ellipsoid in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--create-fibers",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help="If True create analytic fibers",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-endo",
+    default=-60,
+    type=float,
+    help="Angle for the endocardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-angle-epi",
+    default=+60,
+    type=float,
+    help="Angle for the epicardium",
+    show_default=True,
+)
+@click.option(
+    "--fiber-space",
+    default="P_1",
+    type=str,
+    help="Function space for fibers of the form family_degree",
+    show_default=True,
+)
+def create_biv_ellipsoid_torso(
+    outdir: Path,
+    char_length: float = 0.5,
+    torso_length: float = 20.0,
+    torso_width: float = 20.0,
+    torso_height: float = 20.0,
+    rotation_angle: float = math.pi / 6,
+    center_lv_y: float = 0.0,
+    a_endo_lv: float = 2.5,
+    b_endo_lv: float = 1.0,
+    c_endo_lv: float = 1.0,
+    a_epi_lv: float = 3.0,
+    b_epi_lv: float = 1.5,
+    c_epi_lv: float = 1.5,
+    center_rv_y: float = 0.5,
+    a_endo_rv: float = 3.0,
+    b_endo_rv: float = 1.5,
+    c_endo_rv: float = 1.5,
+    a_epi_rv: float = 4.0,
+    b_epi_rv: float = 2.5,
+    c_epi_rv: float = 2.0,
+    create_fibers: bool = False,
+    fiber_angle_endo: float = -60,
+    fiber_angle_epi: float = +60,
+    fiber_space: str = "P_1",
+):
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    from ._mesh import create_biv_ellipsoid_torso
+
+    geo = create_biv_ellipsoid_torso(
+        outdir=outdir,
+        char_length=char_length,
+        torso_length=torso_length,
+        torso_height=torso_height,
+        torso_width=torso_width,
+        rotation_angle=rotation_angle,
+        center_lv_y=center_lv_y,
+        a_endo_lv=a_endo_lv,
+        b_endo_lv=b_endo_lv,
+        c_endo_lv=c_endo_lv,
+        a_epi_lv=a_epi_lv,
+        b_epi_lv=b_epi_lv,
+        c_epi_lv=c_epi_lv,
+        center_rv_y=center_rv_y,
+        a_endo_rv=a_endo_rv,
+        b_endo_rv=b_endo_rv,
+        c_endo_rv=c_endo_rv,
+        a_epi_rv=a_epi_rv,
+        b_epi_rv=b_epi_rv,
+        c_epi_rv=c_epi_rv,
+        create_fibers=create_fibers,
+        fiber_angle_endo=fiber_angle_endo,
+        fiber_angle_epi=fiber_angle_epi,
+        fiber_space=fiber_space,
+    )
+    if geo is not None:
+        geo.save(outdir / "biv_ellipsoid_torso.h5")
+
+
 @click.command()
 @click.argument(
     "outdir",
@@ -449,7 +687,6 @@ def create_slab(
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
 ):
-
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
 
@@ -494,7 +731,6 @@ def create_slab(
     show_default=True,
 )
 def fibers_to_xdmf(folder, base_direction: str):
-
     outdir = Path(folder)
     tetra_mesh_name = outdir / "mesh.xdmf"
     microstructure_path = outdir / "microstructure.h5"
@@ -578,7 +814,6 @@ def info(
     mesh_path: Union[str, Path],
     schema_path: Optional[Union[str, Path]] = None,
 ) -> None:
-
     if not has_dolfin():
         msg = "Cannot get info - dolfin is not installed"
         raise ImportError(msg)
@@ -604,6 +839,7 @@ def info(
 
 app.add_command(create_lv_ellipsoid)
 app.add_command(create_biv_ellipsoid)
+app.add_command(create_biv_ellipsoid_torso)
 app.add_command(create_slab)
 app.add_command(fibers_to_xdmf)
 app.add_command(folder2h5)

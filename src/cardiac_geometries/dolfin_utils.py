@@ -48,7 +48,6 @@ def gmsh2dolfin(
     outdir: typing.Optional[typing.Union[Path, str]] = None,
     unlink: bool = False,
 ) -> Geometry:
-
     msh = meshio.gmsh.read(msh_file)
     if outdir is None:
         outdir = Path(msh_file).absolute().parent
@@ -124,7 +123,7 @@ def gmsh2dolfin(
         vertex_mesh_name.unlink(missing_ok=True)
         vertex_mesh_name.with_suffix(".h5").unlink(missing_ok=True)
 
-    markers = {k: [int(vi) for vi in v] for k, v in msh.field_data.items()}
+    markers = {k: (int(v[0]), int(v[1])) for k, v in msh.field_data.items()}
     marker_functions = MarkerFunctions(vfun=vfun, efun=efun, ffun=ffun, cfun=cfun)
 
     geo = Geometry(
@@ -145,7 +144,6 @@ def mark_cell_function(fun, mesh, foc, regions):
         foc = calculus.estimate_focal_point(mesh)
 
     for cell in dolfin.cells(mesh):
-
         # Get coordinates to cell midpoint
         x = cell.midpoint().x()
         y = cell.midpoint().y()

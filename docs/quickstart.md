@@ -267,3 +267,27 @@ name: biv
 ---
 BiV-ellipsoidal mesh, facet markers and fibers with $-60^{\circ}$ angle on the endocardium and $60^{\circ}$ angle on the epicardium.
 ```
+
+## Creating a BiV ellipsoid embedded in a torso
+
+It is also possible to take the same idealized BiV geometry and embed it in an idealized torso (i.e a BoX) using the command `create-biv-ellipsoid-torso`, e.g
+
+```
+cardiac-geometries create-biv-ellipsoid-torso biv_torso --char-length 0.7  --torso-length 30  --torso-width 30  --torso-height 30 --rotation-angle 0.4
+```
+
+
+```{figure} https://user-images.githubusercontent.com/2010323/233998680-2691f4b3-d004-4225-b57a-21e9da67f4ef.png
+---
+name: biv_torso
+---
+Idealized BiV embedded in an idealized torso
+```
+
+
+```{figure} https://user-images.githubusercontent.com/2010323/233997154-379e5845-c220-4daf-b111-73d30b33c12c.png
+---
+name: biv_torso_markers
+---
+Showing the facet markers for the biv embedded in a torso
+```
