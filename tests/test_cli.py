@@ -59,4 +59,4 @@ def test_create_biv_ellipsoid_torso(tmp_path: Path):
     assert res2.exit_code == 0
     assert outfile.is_file()
     geo = Geometry.from_file(outfile)
-    assert geo.f0 is not None
+    assert geo.mesh is not None
