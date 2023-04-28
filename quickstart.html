@@ -372,6 +372,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-biv-ellipsoid">Creating a BiV ellipsoid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-biv-ellipsoid-embedded-in-a-torso">Creating a BiV ellipsoid embedded in a torso</a></li>
 </ul>
             </nav>
         </div>
@@ -632,6 +633,25 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 </figcaption>
 </figure>
 </section>
+<section id="creating-a-biv-ellipsoid-embedded-in-a-torso">
+<h2>Creating a BiV ellipsoid embedded in a torso<a class="headerlink" href="#creating-a-biv-ellipsoid-embedded-in-a-torso" title="Permalink to this heading">#</a></h2>
+<p>It is also possible to take the same idealized BiV geometry and embed it in an idealized torso (i.e a BoX) using the command <code class="docutils literal notranslate"><span class="pre">create-biv-ellipsoid-torso</span></code>, e.g</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">biv</span><span class="o">-</span><span class="n">ellipsoid</span><span class="o">-</span><span class="n">torso</span> <span class="n">biv_torso</span> <span class="o">--</span><span class="n">char</span><span class="o">-</span><span class="n">length</span> <span class="mf">0.7</span>  <span class="o">--</span><span class="n">torso</span><span class="o">-</span><span class="n">length</span> <span class="mi">30</span>  <span class="o">--</span><span class="n">torso</span><span class="o">-</span><span class="n">width</span> <span class="mi">30</span>  <span class="o">--</span><span class="n">torso</span><span class="o">-</span><span class="n">height</span> <span class="mi">30</span> <span class="o">--</span><span class="n">rotation</span><span class="o">-</span><span class="n">angle</span> <span class="mf">0.4</span>
+</pre></div>
+</div>
+<figure class="align-default" id="biv-torso">
+<img alt="https://user-images.githubusercontent.com/2010323/233998680-2691f4b3-d004-4225-b57a-21e9da67f4ef.png" src="https://user-images.githubusercontent.com/2010323/233998680-2691f4b3-d004-4225-b57a-21e9da67f4ef.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Idealized BiV embedded in an idealized torso</span><a class="headerlink" href="#biv-torso" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="biv-torso-markers">
+<img alt="https://user-images.githubusercontent.com/2010323/233997154-379e5845-c220-4daf-b111-73d30b33c12c.png" src="https://user-images.githubusercontent.com/2010323/233997154-379e5845-c220-4daf-b111-73d30b33c12c.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Showing the facet markers for the biv embedded in a torso</span><a class="headerlink" href="#biv-torso-markers" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -714,6 +734,7 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-biv-ellipsoid">Creating a BiV ellipsoid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-biv-ellipsoid-embedded-in-a-torso">Creating a BiV ellipsoid embedded in a torso</a></li>
 </ul>
   </nav></div>
 
@@ -746,7 +767,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 24, 2023.
+  Last updated on Apr 28, 2023.
   <br/>
 </p>
   </div>

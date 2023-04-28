@@ -359,7 +359,6 @@ document.write(`
     <span class="n">outdir</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">unlink</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Geometry</span><span class="p">:</span>
-
     <span class="n">msh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">gmsh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">msh_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">outdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">msh_file</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -435,7 +434,7 @@ document.write(`
         <span class="n">vertex_mesh_name</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">vertex_mesh_name</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">vi</span><span class="p">)</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">msh</span><span class="o">.</span><span class="n">field_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">msh</span><span class="o">.</span><span class="n">field_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="n">marker_functions</span> <span class="o">=</span> <span class="n">MarkerFunctions</span><span class="p">(</span><span class="n">vfun</span><span class="o">=</span><span class="n">vfun</span><span class="p">,</span> <span class="n">efun</span><span class="o">=</span><span class="n">efun</span><span class="p">,</span> <span class="n">ffun</span><span class="o">=</span><span class="n">ffun</span><span class="p">,</span> <span class="n">cfun</span><span class="o">=</span><span class="n">cfun</span><span class="p">)</span>
 
     <span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span>
@@ -456,7 +455,6 @@ document.write(`
         <span class="n">foc</span> <span class="o">=</span> <span class="n">calculus</span><span class="o">.</span><span class="n">estimate_focal_point</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">):</span>
-
         <span class="c1"># Get coordinates to cell midpoint</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">midpoint</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">midpoint</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
@@ -517,7 +515,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 24, 2023.
+  Last updated on Apr 28, 2023.
   <br/>
 </p>
   </div>

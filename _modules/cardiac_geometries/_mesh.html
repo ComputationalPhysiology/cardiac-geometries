@@ -503,6 +503,189 @@ document.write(`
     <span class="k">return</span> <span class="n">geo</span></div>
 
 
+<div class="viewcode-block" id="create_biv_ellipsoid_torso"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_biv_ellipsoid_torso">[docs]</a><span class="k">def</span> <span class="nf">create_biv_ellipsoid_torso</span><span class="p">(</span>
+    <span class="n">outdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">char_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">torso_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">torso_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">torso_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">rotation_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">center_lv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">a_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="n">b_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">c_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">a_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">b_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">c_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">center_rv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">a_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">b_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">c_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">a_epi_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">b_epi_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="n">c_epi_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">create_fibers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">fiber_angle_endo</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">fiber_angle_epi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">+</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">fiber_space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;P_1&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Geometry</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create BiV ellipsoidal geometry</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outdir : Union[str, Path, None], optional</span>
+<span class="sd">        Directory where to save the results. If not provided a temporary</span>
+<span class="sd">        directory will be created, by default None, by default None</span>
+<span class="sd">    char_length : float, optional</span>
+<span class="sd">        Characteristic length of mesh, by default 0.5</span>
+<span class="sd">    torso_length : float, optional</span>
+<span class="sd">        Length of torso in the x-direction, by default 20.0</span>
+<span class="sd">    torso_width : float, optional</span>
+<span class="sd">        Length of torso in the y-direction, by default 20.0</span>
+<span class="sd">    torso_height : float, optional</span>
+<span class="sd">        Length of torso in the z-direction, by default 20.0</span>
+<span class="sd">    rotation_angle: float, optional</span>
+<span class="sd">        Angle to rotate the torso in order to object realistic position of</span>
+<span class="sd">        the heart in a torso, by default pi / 6</span>
+<span class="sd">    center_lv_y : float, optional</span>
+<span class="sd">        Y-coordinate for the center of the lv, by default 0.0</span>
+<span class="sd">    a_endo_lv : float, optional</span>
+<span class="sd">        Dilation of lv endo ellipsoid in the x-direction, by default 2.5</span>
+<span class="sd">    b_endo_lv : float, optional</span>
+<span class="sd">       Dilation of lv endo ellipsoid in the y-direction, by default 1.0</span>
+<span class="sd">    c_endo_lv : float, optional</span>
+<span class="sd">       Dilation of lv endo ellipsoid in the z-direction, by default 1.0</span>
+<span class="sd">    a_epi_lv : float, optional</span>
+<span class="sd">        Dilation of lv epi ellipsoid in the x-direction, by default 3.0</span>
+<span class="sd">    b_epi_lv : float, optional</span>
+<span class="sd">        Dilation of lv epi ellipsoid in the y-direction, by default 1.5</span>
+<span class="sd">    c_epi_lv : float, optional</span>
+<span class="sd">        Dilation of lv epi ellipsoid in the z-direction, by default 1.5</span>
+<span class="sd">    center_rv_y : float, optional</span>
+<span class="sd">        Y-coordinate for the center of the rv, by default 0.5</span>
+<span class="sd">    a_endo_rv : float, optional</span>
+<span class="sd">       Dilation of rv endo ellipsoid in the x-direction, by default 3.0</span>
+<span class="sd">    b_endo_rv : float, optional</span>
+<span class="sd">       Dilation of rv endo ellipsoid in the y-direction, by default 1.5</span>
+<span class="sd">    c_endo_rv : float, optional</span>
+<span class="sd">       Dilation of rv endo ellipsoid in the z-direction, by default 1.5</span>
+<span class="sd">    a_epi_rv : float, optional</span>
+<span class="sd">        Dilation of rv epi ellipsoid in the x-direction, by default 4.0</span>
+<span class="sd">    b_epi_rv : float, optional</span>
+<span class="sd">        Dilation of rv epi ellipsoid in the y-direction, by default 2.5</span>
+<span class="sd">    c_epi_rv : float, optional</span>
+<span class="sd">        Dilation of rv epi ellipsoid in the z-direction, by default 2.0</span>
+<span class="sd">    create_fibers : bool, optional</span>
+<span class="sd">        If True create analytic fibers, by default False</span>
+<span class="sd">    fiber_angle_endo : float, optional</span>
+<span class="sd">        Angle for the endocardium, by default -60</span>
+<span class="sd">    fiber_angle_epi : float, optional</span>
+<span class="sd">        Angle for the epicardium, by default +60</span>
+<span class="sd">    fiber_space : str, optional</span>
+<span class="sd">        Function space for fibers of the form family_degree, by default &quot;P_1&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Optional[Geometry]</span>
+<span class="sd">        A Geometry with the mesh, markers, markers functions and fibers.</span>
+<span class="sd">        Returns None if dolfin is not installed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ImportError</span>
+<span class="sd">        If gmsh is not installed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_gmsh</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Cannot create BiV ellipsoid. Gmsh is not installed&quot;</span><span class="p">)</span>
+
+    <span class="n">_tmpfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">outdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_tmpfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="n">_tmpfile</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+    <span class="kn">from</span> <span class="nn">._gmsh</span> <span class="kn">import</span> <span class="n">biv_ellipsoid_torso</span>
+
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+    <span class="n">outdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;info.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;char_length&quot;</span><span class="p">:</span> <span class="n">char_length</span><span class="p">,</span>
+                <span class="s2">&quot;torso_length&quot;</span><span class="p">:</span> <span class="n">torso_length</span><span class="p">,</span>
+                <span class="s2">&quot;torso_width&quot;</span><span class="p">:</span> <span class="n">torso_width</span><span class="p">,</span>
+                <span class="s2">&quot;torso_height&quot;</span><span class="p">:</span> <span class="n">torso_height</span><span class="p">,</span>
+                <span class="s2">&quot;rotation_angle&quot;</span><span class="p">:</span> <span class="n">rotation_angle</span><span class="p">,</span>
+                <span class="s2">&quot;center_lv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;a_endo_lv&quot;</span><span class="p">:</span> <span class="n">a_endo_lv</span><span class="p">,</span>
+                <span class="s2">&quot;b_endo_lv&quot;</span><span class="p">:</span> <span class="n">b_endo_lv</span><span class="p">,</span>
+                <span class="s2">&quot;c_endo_lv&quot;</span><span class="p">:</span> <span class="n">c_endo_lv</span><span class="p">,</span>
+                <span class="s2">&quot;a_epi_lv&quot;</span><span class="p">:</span> <span class="n">a_epi_lv</span><span class="p">,</span>
+                <span class="s2">&quot;b_epi_lv&quot;</span><span class="p">:</span> <span class="n">b_epi_lv</span><span class="p">,</span>
+                <span class="s2">&quot;c_epi_lv&quot;</span><span class="p">:</span> <span class="n">c_epi_lv</span><span class="p">,</span>
+                <span class="s2">&quot;center_rv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;a_endo_rv&quot;</span><span class="p">:</span> <span class="n">a_endo_rv</span><span class="p">,</span>
+                <span class="s2">&quot;b_endo_rv&quot;</span><span class="p">:</span> <span class="n">b_endo_rv</span><span class="p">,</span>
+                <span class="s2">&quot;c_endo_rv&quot;</span><span class="p">:</span> <span class="n">c_endo_rv</span><span class="p">,</span>
+                <span class="s2">&quot;a_epi_rv&quot;</span><span class="p">:</span> <span class="n">a_epi_rv</span><span class="p">,</span>
+                <span class="s2">&quot;b_epi_rv&quot;</span><span class="p">:</span> <span class="n">b_epi_rv</span><span class="p">,</span>
+                <span class="s2">&quot;c_epi_rv&quot;</span><span class="p">:</span> <span class="n">c_epi_rv</span><span class="p">,</span>
+                <span class="s2">&quot;create_fibers&quot;</span><span class="p">:</span> <span class="n">create_fibers</span><span class="p">,</span>
+                <span class="s2">&quot;fibers_angle_endo&quot;</span><span class="p">:</span> <span class="n">fiber_angle_endo</span><span class="p">,</span>
+                <span class="s2">&quot;fibers_angle_epi&quot;</span><span class="p">:</span> <span class="n">fiber_angle_epi</span><span class="p">,</span>
+                <span class="s2">&quot;fiber_space&quot;</span><span class="p">:</span> <span class="n">fiber_space</span><span class="p">,</span>
+                <span class="s2">&quot;mesh_type&quot;</span><span class="p">:</span> <span class="n">MeshTypes</span><span class="o">.</span><span class="n">biv_ellipsoid</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;cardiac_geometry_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="p">},</span>
+            <span class="n">f</span><span class="p">,</span>
+            <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">json_serial</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;biv_ellipsoid_torso.msh&quot;</span>
+
+    <span class="n">biv_ellipsoid_torso</span><span class="p">(</span>
+        <span class="n">mesh_name</span><span class="o">=</span><span class="n">mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+        <span class="n">char_length</span><span class="o">=</span><span class="n">char_length</span><span class="p">,</span>
+        <span class="n">torso_length</span><span class="o">=</span><span class="n">torso_length</span><span class="p">,</span>
+        <span class="n">torso_height</span><span class="o">=</span><span class="n">torso_height</span><span class="p">,</span>
+        <span class="n">torso_width</span><span class="o">=</span><span class="n">torso_width</span><span class="p">,</span>
+        <span class="n">rotation_angle</span><span class="o">=</span><span class="n">rotation_angle</span><span class="p">,</span>
+        <span class="n">center_lv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">a_endo_lv</span><span class="o">=</span><span class="n">a_endo_lv</span><span class="p">,</span>
+        <span class="n">b_endo_lv</span><span class="o">=</span><span class="n">b_endo_lv</span><span class="p">,</span>
+        <span class="n">c_endo_lv</span><span class="o">=</span><span class="n">c_endo_lv</span><span class="p">,</span>
+        <span class="n">a_epi_lv</span><span class="o">=</span><span class="n">a_epi_lv</span><span class="p">,</span>
+        <span class="n">b_epi_lv</span><span class="o">=</span><span class="n">b_epi_lv</span><span class="p">,</span>
+        <span class="n">c_epi_lv</span><span class="o">=</span><span class="n">c_epi_lv</span><span class="p">,</span>
+        <span class="n">center_rv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">a_endo_rv</span><span class="o">=</span><span class="n">a_endo_rv</span><span class="p">,</span>
+        <span class="n">b_endo_rv</span><span class="o">=</span><span class="n">b_endo_rv</span><span class="p">,</span>
+        <span class="n">c_endo_rv</span><span class="o">=</span><span class="n">c_endo_rv</span><span class="p">,</span>
+        <span class="n">a_epi_rv</span><span class="o">=</span><span class="n">a_epi_rv</span><span class="p">,</span>
+        <span class="n">b_epi_rv</span><span class="o">=</span><span class="n">b_epi_rv</span><span class="p">,</span>
+        <span class="n">c_epi_rv</span><span class="o">=</span><span class="n">c_epi_rv</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_dolfin</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="kn">from</span> <span class="nn">.dolfin_utils</span> <span class="kn">import</span> <span class="n">gmsh2dolfin</span>
+
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">gmsh2dolfin</span><span class="p">(</span><span class="n">mesh_name</span><span class="p">,</span> <span class="n">unlink</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;markers.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">markers</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">json_serial</span><span class="p">)</span>
+
+    <span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_tmpfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_tmpfile</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">geo</span></div>
+
+
 <div class="viewcode-block" id="create_lv_ellipsoid"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_lv_ellipsoid">[docs]</a><span class="k">def</span> <span class="nf">create_lv_ellipsoid</span><span class="p">(</span>
     <span class="n">outdir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">r_short_endo</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">7.0</span><span class="p">,</span>
@@ -814,7 +997,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 24, 2023.
+  Last updated on Apr 28, 2023.
   <br/>
 </p>
   </div>
