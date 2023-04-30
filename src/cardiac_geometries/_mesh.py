@@ -195,6 +195,7 @@ def create_biv_ellipsoid(
 def create_biv_ellipsoid_torso(
     outdir: Union[str, Path, None] = None,
     char_length: float = 0.5,
+    heart_as_surface: bool = True,
     torso_length: float = 20.0,
     torso_width: float = 20.0,
     torso_height: float = 20.0,
@@ -227,6 +228,9 @@ def create_biv_ellipsoid_torso(
         directory will be created, by default None, by default None
     char_length : float, optional
         Characteristic length of mesh, by default 0.5
+    heart_as_surface: bool
+        If true, create the heart as a a surface inside the torso,
+        otherwise let the heart be a volume, by default True.
     torso_length : float, optional
         Length of torso in the x-direction, by default 20.0
     torso_width : float, optional
@@ -301,6 +305,7 @@ def create_biv_ellipsoid_torso(
         json.dump(
             {
                 "char_length": char_length,
+                "heart_as_surface": heart_as_surface,
                 "torso_length": torso_length,
                 "torso_width": torso_width,
                 "torso_height": torso_height,
@@ -337,6 +342,7 @@ def create_biv_ellipsoid_torso(
     biv_ellipsoid_torso(
         mesh_name=mesh_name.as_posix(),
         char_length=char_length,
+        heart_as_surface=heart_as_surface,
         torso_length=torso_length,
         torso_height=torso_height,
         torso_width=torso_width,
