@@ -506,6 +506,7 @@ document.write(`
 <div class="viewcode-block" id="create_biv_ellipsoid_torso"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_biv_ellipsoid_torso">[docs]</a><span class="k">def</span> <span class="nf">create_biv_ellipsoid_torso</span><span class="p">(</span>
     <span class="n">outdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">char_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">heart_as_surface</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">torso_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
     <span class="n">torso_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
     <span class="n">torso_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
@@ -538,6 +539,9 @@ document.write(`
 <span class="sd">        directory will be created, by default None, by default None</span>
 <span class="sd">    char_length : float, optional</span>
 <span class="sd">        Characteristic length of mesh, by default 0.5</span>
+<span class="sd">    heart_as_surface: bool</span>
+<span class="sd">        If true, create the heart as a a surface inside the torso,</span>
+<span class="sd">        otherwise let the heart be a volume, by default True.</span>
 <span class="sd">    torso_length : float, optional</span>
 <span class="sd">        Length of torso in the x-direction, by default 20.0</span>
 <span class="sd">    torso_width : float, optional</span>
@@ -612,6 +616,7 @@ document.write(`
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;char_length&quot;</span><span class="p">:</span> <span class="n">char_length</span><span class="p">,</span>
+                <span class="s2">&quot;heart_as_surface&quot;</span><span class="p">:</span> <span class="n">heart_as_surface</span><span class="p">,</span>
                 <span class="s2">&quot;torso_length&quot;</span><span class="p">:</span> <span class="n">torso_length</span><span class="p">,</span>
                 <span class="s2">&quot;torso_width&quot;</span><span class="p">:</span> <span class="n">torso_width</span><span class="p">,</span>
                 <span class="s2">&quot;torso_height&quot;</span><span class="p">:</span> <span class="n">torso_height</span><span class="p">,</span>
@@ -648,6 +653,7 @@ document.write(`
     <span class="n">biv_ellipsoid_torso</span><span class="p">(</span>
         <span class="n">mesh_name</span><span class="o">=</span><span class="n">mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
         <span class="n">char_length</span><span class="o">=</span><span class="n">char_length</span><span class="p">,</span>
+        <span class="n">heart_as_surface</span><span class="o">=</span><span class="n">heart_as_surface</span><span class="p">,</span>
         <span class="n">torso_length</span><span class="o">=</span><span class="n">torso_length</span><span class="p">,</span>
         <span class="n">torso_height</span><span class="o">=</span><span class="n">torso_height</span><span class="p">,</span>
         <span class="n">torso_width</span><span class="o">=</span><span class="n">torso_width</span><span class="p">,</span>
@@ -997,7 +1003,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 28, 2023.
+  Last updated on Apr 30, 2023.
   <br/>
 </p>
   </div>
