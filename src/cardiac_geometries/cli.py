@@ -389,6 +389,12 @@ def create_biv_ellipsoid(
     show_default=True,
 )
 @click.option(
+    "--heart-as-surface/--heart-as-volume",
+    default=True,
+    help="Whether the heart should be a surface of a volume inside the torso",
+    show_default=True,
+)
+@click.option(
     "--torso-length",
     default=20,
     type=float,
@@ -549,6 +555,7 @@ def create_biv_ellipsoid(
 def create_biv_ellipsoid_torso(
     outdir: Path,
     char_length: float = 0.5,
+    heart_as_surface: bool = True,
     torso_length: float = 20.0,
     torso_width: float = 20.0,
     torso_height: float = 20.0,
@@ -580,6 +587,7 @@ def create_biv_ellipsoid_torso(
     geo = create_biv_ellipsoid_torso(
         outdir=outdir,
         char_length=char_length,
+        heart_as_surface=heart_as_surface,
         torso_length=torso_length,
         torso_height=torso_height,
         torso_width=torso_width,

@@ -152,6 +152,7 @@ def biv_ellipsoid(
 
 def biv_ellipsoid_torso(
     mesh_name: str = "",
+    heart_as_surface: bool = False,
     torso_length: float = 20.0,
     torso_width: float = 20.0,
     torso_height: float = 20.0,
@@ -254,11 +255,27 @@ def biv_ellipsoid_torso(
     gmsh.model.occ.rotate([(3, torso_tag)], 0, 0, 0, 0, 0, 1, -rotation_angle)
     gmsh.model.occ.rotate([(3, torso_tag)], 0, 0, 0, 0, 1, 0, rotation_angle)
 
-    # Now we mark the different surfaces
+    if heart_as_surface:
+        mark_heart_as_surface(ov2, torso_tag)
+    else:
+        mark_heart_as_volume(ov2, torso_tag)
+
+    # gmsh.option.setNumber("Mesh.SaveAll", 1)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", char_length)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", char_length)
+
+    gmsh.model.mesh.generate(3)
+    gmsh.model.mesh.optimize("Netgen")
+
+    gmsh.write(path.as_posix())
+    gmsh.finalize()
+
+    return path
+
+
+def mark_heart_as_surface(ov2, torso_tag):
     surfaces = gmsh.model.occ.getEntities(dim=2)
     volumes = gmsh.model.occ.getEntities(dim=3)
-
-    gmsh.model.occ.synchronize()
 
     gmsh.model.occ.cut(
         [(3, torso_tag)],
@@ -278,6 +295,8 @@ def biv_ellipsoid_torso(
     side4_marker = 8
     side5_marker = 9
     side6_marker = 10
+
+    tissue_marker = 11
 
     gmsh.model.addPhysicalGroup(
         dim=surfaces[0][0],
@@ -341,15 +360,108 @@ def biv_ellipsoid_torso(
         name="ENDO_LV",
     )
 
-    gmsh.model.add_physical_group(dim=3, tags=[volumes[0][1]], tag=50, name="TISSUE")
-    # gmsh.option.setNumber("Mesh.SaveAll", 0)
-    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", char_length)
-    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", char_length)
+    gmsh.model.add_physical_group(
+        dim=3,
+        tags=[volumes[0][1]],
+        tag=tissue_marker,
+        name="TISSUE",
+    )
 
-    gmsh.model.mesh.generate(3)
-    gmsh.model.mesh.optimize("Netgen")
 
-    gmsh.write(path.as_posix())
-    gmsh.finalize()
+def mark_heart_as_volume(ov2, torso_tag):
+    surfaces = gmsh.model.occ.getEntities(dim=2)
 
-    return path
+    gmsh.model.occ.fuse([(3, torso_tag)], ov2, removeTool=False)
+
+    volumes = gmsh.model.occ.getEntities(dim=3)
+
+    gmsh.model.occ.synchronize()
+
+    base_marker = 1
+    endo_lv_marker = 2
+    endo_rv_marker = 3
+    epi_marker = 4
+
+    side1_marker = 5
+    side2_marker = 6
+    side3_marker = 7
+    side4_marker = 8
+    side5_marker = 9
+    side6_marker = 10
+
+    tissue_marker = 11
+    heart_marker = 12
+
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[8][0],
+        tags=[surfaces[8][1]],
+        tag=side1_marker,
+        name="TOP",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[9][0],
+        tags=[surfaces[9][1]],
+        tag=side2_marker,
+        name="LEFT",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[10][0],
+        tags=[surfaces[10][1]],
+        tag=side3_marker,
+        name="FRONT",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[11][0],
+        tags=[surfaces[11][1]],
+        tag=side4_marker,
+        name="RIGHT",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[12][0],
+        tags=[surfaces[12][1]],
+        tag=side5_marker,
+        name="BACK",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[13][0],
+        tags=[surfaces[13][1]],
+        tag=side6_marker,
+        name="BOTTOM",
+    )
+
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[0][0],
+        tags=[surfaces[0][1], surfaces[2][1]],
+        tag=epi_marker,
+        name="EPI",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[1][0],
+        tags=[surfaces[1][1]],
+        tag=base_marker,
+        name="BASE",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[3][0],
+        tags=[surfaces[3][1], surfaces[4][1], surfaces[5][1]],
+        tag=endo_rv_marker,
+        name="ENDO_RV",
+    )
+    gmsh.model.addPhysicalGroup(
+        dim=surfaces[7][0],
+        tags=[surfaces[6][1], surfaces[7][1]],
+        tag=endo_lv_marker,
+        name="ENDO_LV",
+    )
+    gmsh.model.add_physical_group(
+        dim=3,
+        tags=[volumes[1][1]],
+        tag=tissue_marker,
+        name="TISSUE",
+    )
+    gmsh.model.add_physical_group(
+        dim=3,
+        tags=[volumes[0][1]],
+        tag=heart_marker,
+        name="HEART",
+    )
