@@ -123,18 +123,18 @@ def h5pyfile(h5name, filemode="r", force_serial: bool = False):
     h5file.close()
 
 
-def dict_to_h5(data, h5name, h5group, force_serial: bool = False):
-    with h5pyfile(h5name, "a", force_serial=force_serial) as h5file:
-        if h5group == "":
-            group = h5file
-        else:
-            group = h5file.create_group(h5group)
-        for k, v in data.items():
-            if isinstance(v, str):
-                if dolfin.MPI.size(dolfin.MPI.comm_world) > 1:
-                    # There are some issues with writing strings in paralell
-                    continue
-            group.create_dataset(k, data=v)
+def dict_to_h5(data, h5name, h5group, force_serial: bool = False, comm=None):
+    if comm is None:
+        comm = dolfin.MPI.comm_world
+    if comm.rank == 0:
+        with h5pyfile(h5name, "a", force_serial=force_serial) as h5file:
+            if h5group == "":
+                group = h5file
+            else:
+                group = h5file.create_group(h5group)
+            for k, v in data.items():
+                group.create_dataset(k, data=v)
+    dolfin.MPI.barrier(comm)
 
 
 def decode(x):

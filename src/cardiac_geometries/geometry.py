@@ -321,8 +321,7 @@ class Geometry:
                 if p.h5group == "":
                     raise RuntimeError("Cannot write object with empty path")
 
-                if self.comm.rank == 0:
-                    dict_to_h5(obj, path, p.h5group, force_serial=True)
+                dict_to_h5(obj, path, p.h5group, force_serial=True, comm=self.comm)
 
         if schema_path is None:
             schema_path = path.with_suffix(".json")
