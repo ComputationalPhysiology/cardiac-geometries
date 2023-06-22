@@ -188,7 +188,6 @@ def dump_schema(path: Union[Path, str], schema: Dict[str, H5Path]) -> None:
 
 class Geometry:
     def __init__(self, **kwargs):
-
         self._fields = ["schema"]
         schema = kwargs.pop("schema")
         if schema is None:
@@ -215,6 +214,12 @@ class Geometry:
     def __repr__(self) -> str:
         fields = ", ".join(self._fields)
         return f"{type(self).__name__}({fields})"
+
+    @property
+    def comm(self):
+        if hasattr(self, "mesh") and hasattr(self.mesh, "mpi_comm"):
+            return self.mesh.mpi_comm()
+        return dolfin.MPI.comm_world
 
     @staticmethod
     def default_schema() -> Dict[str, H5Path]:
@@ -296,8 +301,10 @@ class Geometry:
             else:
                 file_mode = "a"
 
+        # Lets synchronize before writing
+        dolfin.MPI.barrier(self.comm)
         with dolfin.HDF5File(
-            dolfin.MPI.comm_world,
+            self.comm,
             path.as_posix(),
             file_mode,
         ) as h5file:
@@ -313,7 +320,9 @@ class Geometry:
             if obj is not None and not p.is_dolfin:
                 if p.h5group == "":
                     raise RuntimeError("Cannot write object with empty path")
-                dict_to_h5(obj, path, p.h5group)
+
+                if self.comm.rank == 0:
+                    dict_to_h5(obj, path, p.h5group, force_serial=True)
 
         if schema_path is None:
             schema_path = path.with_suffix(".json")
@@ -341,7 +350,6 @@ class Geometry:
         data = {}
         signatures = {}
         with h5pyfile(path, "r") as h5file:
-
             for name, p in schema.items():
                 if p.h5group == "":
                     continue
@@ -364,7 +372,6 @@ class Geometry:
 
         mesh = dolfin.Mesh()
         with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "r") as h5file:
-
             # Meshes
             for name, p in schema.items():
                 if p.is_mesh and groups[name]:

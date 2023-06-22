@@ -98,7 +98,7 @@ scalar_attribute = dedent(
 
 
 @contextlib.contextmanager
-def h5pyfile(h5name, filemode="r"):
+def h5pyfile(h5name, filemode="r", force_serial: bool = False):
     try:
         import h5py
     except ImportError:
@@ -108,7 +108,11 @@ def h5pyfile(h5name, filemode="r"):
 
     from mpi4py import MPI
 
-    if h5py.h5.get_config().mpi and dolfin.MPI.size(dolfin.MPI.comm_world) > 1:
+    if (
+        h5py.h5.get_config().mpi
+        and dolfin.MPI.size(dolfin.MPI.comm_world) > 1
+        and not force_serial
+    ):
         h5file = h5py.File(h5name, filemode, driver="mpio", comm=MPI.COMM_WORLD)
     else:
         if dolfin.MPI.size(dolfin.MPI.comm_world) > 1:
@@ -119,8 +123,8 @@ def h5pyfile(h5name, filemode="r"):
     h5file.close()
 
 
-def dict_to_h5(data, h5name, h5group):
-    with h5pyfile(h5name, "a") as h5file:
+def dict_to_h5(data, h5name, h5group, force_serial: bool = False):
+    with h5pyfile(h5name, "a", force_serial=force_serial) as h5file:
         if h5group == "":
             group = h5file
         else:
@@ -188,7 +192,6 @@ def dolfin_to_hd5(obj: dolfin.Function, h5name, time="", name=None):
 
 
 def save_scalar_function(obj, h5name, h5group="", file_mode="w"):
-
     V = obj.function_space()
 
     dim = V.mesh().geometry().dim()
@@ -232,7 +235,6 @@ def save_scalar_function(obj, h5name, h5group="", file_mode="w"):
 
 
 def save_vector_function(obj, h5name, h5group="", file_mode="w"):
-
     V = obj.function_space()
     gs = obj.split(deepcopy=True)
 
@@ -249,7 +251,6 @@ def save_vector_function(obj, h5name, h5group="", file_mode="w"):
     vector_group = "/".join([h5group, "vector"])
 
     with h5pyfile(h5name, file_mode) as h5file:
-
         if h5group in h5file:
             del h5file[h5group]
         h5file.create_dataset(coord_group, data=coords)
@@ -279,7 +280,6 @@ def save_vector_function(obj, h5name, h5group="", file_mode="w"):
 
 
 def fun_to_xdmf(fun, fname, name="function"):
-
     h5name = Path(fname).with_suffix(".h5")
     dolfin_to_hd5(fun, h5name, name=name)
 
@@ -333,7 +333,6 @@ def get_sign_direction(base_direction: str) -> Tuple[int, str]:
 
 
 def fiber_to_xdmf(fun: dolfin.Function, fname, base_direction="z"):
-
     h5name = Path(fname).with_suffix(".h5")
     dolfin_to_hd5(fun, h5name, name="fiber")
 
