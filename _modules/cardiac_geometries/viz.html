@@ -409,7 +409,7 @@ document.write(`
 
 
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">h5pyfile</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">h5pyfile</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">comm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">h5py</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -417,12 +417,13 @@ document.write(`
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;python3 -m pip install h5py --no-binary=h5py&quot;</span><span class="p">)</span>
         <span class="k">raise</span>
 
-    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+    <span class="k">if</span> <span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">comm_world</span>
 
-    <span class="k">if</span> <span class="n">h5py</span><span class="o">.</span><span class="n">h5</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">mpi</span> <span class="ow">and</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">comm_world</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">filemode</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;mpio&quot;</span><span class="p">,</span> <span class="n">comm</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">h5py</span><span class="o">.</span><span class="n">h5</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">mpi</span> <span class="ow">and</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">filemode</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;mpio&quot;</span><span class="p">,</span> <span class="n">comm</span><span class="o">=</span><span class="n">comm</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">comm_world</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;h5py is not installed with MPI support&quot;</span><span class="p">)</span>
         <span class="n">h5file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">filemode</span><span class="p">)</span>
     <span class="k">yield</span> <span class="n">h5file</span>
@@ -430,18 +431,22 @@ document.write(`
     <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">dict_to_h5</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">h5group</span><span class="p">):</span>
-    <span class="k">with</span> <span class="n">h5pyfile</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">h5group</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">group</span> <span class="o">=</span> <span class="n">h5file</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">group</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">h5group</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">comm_world</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># There are some issues with writing strings in paralell</span>
-                    <span class="k">continue</span>
-            <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">dict_to_h5</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">h5group</span><span class="p">,</span> <span class="n">comm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">comm_world</span>
+    <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">h5py</span>
+
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">h5group</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">group</span> <span class="o">=</span> <span class="n">h5file</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">group</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">h5group</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="c1"># Wait for root process to finish</span>
+    <span class="n">dolfin</span><span class="o">.</span><span class="n">MPI</span><span class="o">.</span><span class="n">barrier</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -461,11 +466,11 @@ document.write(`
             <span class="n">v</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             <span class="n">group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-            <span class="n">group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">h5_to_dict</span><span class="p">(</span><span class="n">h5group</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="c1"># elif isinstance(value, h5py.Group):</span>
+        <span class="c1">#     group[key] = h5_to_dict(h5group[key])</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> for key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     raise ValueError(f&quot;Unknown value type {type(value)} for key {key}.&quot;)</span>
 
     <span class="k">return</span> <span class="n">group</span>
 
@@ -499,7 +504,6 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">save_scalar_function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">file_mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">):</span>
-
     <span class="n">V</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">function_space</span><span class="p">()</span>
 
     <span class="n">dim</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">mesh</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
@@ -543,7 +547,6 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">save_vector_function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">h5group</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">file_mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">):</span>
-
     <span class="n">V</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">function_space</span><span class="p">()</span>
     <span class="n">gs</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">deepcopy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -560,7 +563,6 @@ document.write(`
     <span class="n">vector_group</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">h5group</span><span class="p">,</span> <span class="s2">&quot;vector&quot;</span><span class="p">])</span>
 
     <span class="k">with</span> <span class="n">h5pyfile</span><span class="p">(</span><span class="n">h5name</span><span class="p">,</span> <span class="n">file_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="n">h5group</span> <span class="ow">in</span> <span class="n">h5file</span><span class="p">:</span>
             <span class="k">del</span> <span class="n">h5file</span><span class="p">[</span><span class="n">h5group</span><span class="p">]</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">coord_group</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">coords</span><span class="p">)</span>
@@ -590,7 +592,6 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">fun_to_xdmf</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">):</span>
-
     <span class="n">h5name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">)</span>
     <span class="n">dolfin_to_hd5</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
@@ -644,7 +645,6 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">fiber_to_xdmf</span><span class="p">(</span><span class="n">fun</span><span class="p">:</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Function</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">base_direction</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">):</span>
-
     <span class="n">h5name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">)</span>
     <span class="n">dolfin_to_hd5</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">h5name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;fiber&quot;</span><span class="p">)</span>
 
@@ -747,7 +747,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 30, 2023.
+  Last updated on Jun 23, 2023.
   <br/>
 </p>
   </div>
