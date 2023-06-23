@@ -2,9 +2,15 @@ import pytest
 from cardiac_geometries import has_mshr
 from cardiac_geometries import mshr
 
+try:
+    import dolfin
+
+    _size = dolfin.MPI.size(dolfin.MPI.comm_world)
+except ImportError:
+    _size = 0
 
 require_mshr = pytest.mark.skipif(
-    not has_mshr(),
+    not has_mshr() or _size > 0,
     reason="mshr is required to run the test",
 )
 

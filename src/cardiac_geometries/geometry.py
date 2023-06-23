@@ -1,4 +1,5 @@
 import json
+import logging
 import warnings
 from enum import auto
 from enum import Enum
@@ -22,6 +23,8 @@ try:
     from .viz import h5pyfile
 except ImportError:
     pass
+
+logger = logging.getLogger(__name__)
 
 
 class MeshTypes(Enum):
@@ -64,7 +67,7 @@ class Microstructure(NamedTuple):
 
 def load_microstructure(mesh, microstructure_path) -> Microstructure:
     # Get signature
-    with h5pyfile(microstructure_path) as h5file:
+    with h5pyfile(microstructure_path, comm=mesh.mpi_comm()) as h5file:
         signature = h5file["f0"].attrs["signature"].decode()
 
     sig = eval(signature)
@@ -180,15 +183,74 @@ def extract_fname_group(fname: str, folder=".") -> Tuple[Path, Optional[str]]:
     return Path(folder) / fg[0], fg[1]
 
 
-def dump_schema(path: Union[Path, str], schema: Dict[str, H5Path]) -> None:
-    Path(path).write_text(
-        json.dumps({k: v._asdict() for k, v in schema.items()}, indent=2),
-    )
+def dump_schema(path: Union[Path, str], schema: Dict[str, H5Path], comm=None) -> None:
+    data = {k: v._asdict() for k, v in schema.items()}
+    logger.debug(f"Dump {data} to {path}")
+    if comm is None:
+        comm = dolfin.MPI.comm_world
+
+    if comm.rank == 0:
+        Path(path).write_text(
+            json.dumps(data, indent=2),
+        )
+
+
+def global_check_condition(cond, comm):
+    global_cond = False
+    if comm.rank == 0:
+        global_cond = cond
+    global_cond = comm.bcast(global_cond, root=0)
+    return global_cond
+
+
+def populate_data(schema, groups, comm, path, data, signatures):
+    required_mesh_keys = extract_mesh_keys(schema)
+    for name, mesh_key in required_mesh_keys:
+        if not groups.get(mesh_key, False):
+            msg = f"Missing mesh key '{mesh_key}' for key {name} in {path}"
+            raise RuntimeError(msg)
+
+    with dolfin.HDF5File(comm, path.as_posix(), "r") as h5file:
+        # Meshes
+        for name, p in schema.items():
+            if p.is_mesh and groups.get(name, False):
+                data[name] = dolfin.Mesh(comm)
+                h5file.read(data[name], p.h5group, True)
+
+    for name, p in schema.items():
+        if p.is_meshfunction and groups.get(name, False):
+            current_mesh = data[p.mesh_key]
+            data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
+            continue
+
+        if p.is_function and groups.get(name, False):
+            current_mesh = data[p.mesh_key]
+            signature = signatures.get(name)
+            if signature is None:
+                continue
+            sig = eval(signature)
+            sig._quad_scheme = "default"
+            V = dolfin.FunctionSpace(current_mesh, sig)
+            data[name] = dolfin.Function(V)
+            continue
+
+    dolfin.MPI.barrier(comm)
+
+    with dolfin.HDF5File(comm, path.as_posix(), "r") as h5file:
+        # Meshfunctions
+        for name, p in schema.items():
+            if p.is_meshfunction and groups.get(name, False):
+                h5file.read(data[name], p.h5group)
+                data[name].array()[data[name].array() == 2**64 - 1] = 0
+                continue
+
+            if p.is_function and groups.get(name, False):
+                h5file.read(data[name], p.h5group)
+                continue
 
 
 class Geometry:
     def __init__(self, **kwargs):
-
         self._fields = ["schema"]
         schema = kwargs.pop("schema")
         if schema is None:
@@ -205,6 +267,13 @@ class Geometry:
             setattr(self, k, v)
             self.schema[k] = s
 
+        self.schema = dolfin.MPI.comm_world.bcast(self.schema, root=0)
+        missing_schema_entries = dolfin.MPI.comm_world.bcast(
+            missing_schema_entries,
+            root=0,
+        )
+        self._fields = dolfin.MPI.comm_world.bcast(self._fields, root=0)
+
         if len(missing_schema_entries) > 0:
             msg = (
                 f"Missing schema entry for keys {missing_schema_entries!r}. "
@@ -215,6 +284,12 @@ class Geometry:
     def __repr__(self) -> str:
         fields = ", ".join(self._fields)
         return f"{type(self).__name__}({fields})"
+
+    @property
+    def comm(self):
+        if hasattr(self, "mesh") and hasattr(self.mesh, "mpi_comm"):
+            return self.mesh.mpi_comm()
+        return dolfin.MPI.comm_world
 
     @staticmethod
     def default_schema() -> Dict[str, H5Path]:
@@ -289,15 +364,23 @@ class Geometry:
         unlink: bool = True,
     ) -> None:
         path = Path(fname).with_suffix(".h5")
+        logger.debug(f"Save geometry to {path}")
+        dolfin.MPI.barrier(self.comm)
+        file_exist = global_check_condition(path.is_file(), self.comm)
+
         file_mode = "w"
-        if path.is_file():
+        if file_exist:
             if unlink:
-                path.unlink()
+                if self.comm.rank == 0:
+                    path.unlink()
             else:
                 file_mode = "a"
+        logger.debug(f"File already exists: {file_exist}. File mode {file_mode}")
+        dolfin.MPI.barrier(self.comm)
 
+        logger.debug("Save dolfin object")
         with dolfin.HDF5File(
-            dolfin.MPI.comm_world,
+            self.comm,
             path.as_posix(),
             file_mode,
         ) as h5file:
@@ -308,16 +391,23 @@ class Geometry:
                         raise RuntimeError("Cannot write object with empty path")
                     h5file.write(obj, p.h5group)
 
+        logger.debug("Save schema to h5")
         for name, p in self.schema.items():
             obj = getattr(self, name, None)
             if obj is not None and not p.is_dolfin:
                 if p.h5group == "":
                     raise RuntimeError("Cannot write object with empty path")
-                dict_to_h5(obj, path, p.h5group)
+
+                dict_to_h5(obj, path, p.h5group, comm=self.comm)
 
         if schema_path is None:
             schema_path = path.with_suffix(".json")
+        logger.debug(f"Save schema {schema_path}")
+        # dolfin.MPI.barrier(self.comm)
+        print(self.comm.rank, schema_path, self.schema)
         dump_schema(schema_path, schema=self.schema)
+        # dolfin.MPI.barrier(self.comm)
+        logger.debug(f"Geometry saved to path {path} and schema to {schema_path}")
 
     @classmethod
     def from_file(
@@ -325,6 +415,7 @@ class Geometry:
         fname: Union[str, Path],
         schema_path: Optional[Union[str, Path]] = None,
         schema: Optional[Dict[str, H5Path]] = None,
+        comm=None,
     ):
         path = Path(fname)
         if not path.is_file():
@@ -337,61 +428,37 @@ class Geometry:
         if schema is None:
             schema = cls.default_schema()
 
+        if comm is None:
+            comm = dolfin.MPI.comm_world
+
         groups = {}
         data = {}
         signatures = {}
-        with h5pyfile(path, "r") as h5file:
+        import h5py
 
-            for name, p in schema.items():
-                if p.h5group == "":
-                    continue
-                groups[name] = p.h5group in h5file
-
-                if not p.is_dolfin:
-                    if groups[name]:
-                        data[name] = h5_to_dict(h5file[p.h5group])
-                    else:
-                        data[name] = None
-
-                if p.is_function and groups[name]:
-                    signatures[name] = h5file[p.h5group].attrs["signature"].decode()
-
-        required_mesh_keys = extract_mesh_keys(schema)
-        for name, mesh_key in required_mesh_keys:
-            if not groups.get(mesh_key, False):
-                msg = f"Missing mesh key '{mesh_key}' for key {name} in {fname}"
-                raise RuntimeError(msg)
-
-        mesh = dolfin.Mesh()
-        with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "r") as h5file:
-
-            # Meshes
-            for name, p in schema.items():
-                if p.is_mesh and groups[name]:
-                    data[name] = dolfin.Mesh()
-
-                    h5file.read(data[name], p.h5group, True)
-
-            # Meshfunctions
-            for name, p in schema.items():
-                if p.is_meshfunction and groups[name]:
-                    current_mesh = data[p.mesh_key]
-                    data[name] = dolfin.MeshFunction("size_t", current_mesh, p.dim)
-                    h5file.read(data[name], p.h5group)
-                    data[name].array()[data[name].array() == 2**64 - 1] = 0
-                    continue
-
-                if p.is_function and groups[name]:
-                    current_mesh = data[p.mesh_key]
-                    signature = signatures.get(name)
-                    if signature is None:
+        if comm.rank == 0:
+            with h5py.File(path, "r") as h5file:
+                for name, p in schema.items():
+                    if p.h5group == "":
                         continue
-                    sig = eval(signature)
-                    sig._quad_scheme = "default"
-                    V = dolfin.FunctionSpace(current_mesh, sig)
-                    data[name] = dolfin.Function(V)
-                    h5file.read(data[name], p.h5group)
-                    continue
+                    groups[name] = p.h5group in h5file
+
+                    if not p.is_dolfin:
+                        if groups[name]:
+                            data[name] = h5_to_dict(h5file[p.h5group])
+                        else:
+                            data[name] = None
+
+                    if p.is_function and groups[name]:
+                        signatures[name] = h5file[p.h5group].attrs["signature"].decode()
+
+        dolfin.MPI.barrier(comm)
+        signatures = comm.bcast(signatures, root=0)
+        groups = comm.bcast(groups, root=0)
+        data = comm.bcast(data, root=0)
+        dolfin.MPI.barrier(comm)
+
+        populate_data(schema, groups, comm, path, data, signatures)
 
         return cls(**data, schema=schema)
 

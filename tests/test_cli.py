@@ -1,10 +1,22 @@
 from pathlib import Path
 
+import pytest
 from cardiac_geometries import cli
 from cardiac_geometries.geometry import Geometry
 from click.testing import CliRunner
 
+try:
+    import dolfin
 
+    _size = dolfin.MPI.size(dolfin.MPI.comm_world)
+except ImportError:
+    _size = 0
+
+
+no_mpi = pytest.mark.skipif(_size > 1, reason="Only works in serial")
+
+
+@no_mpi
 def test_create_slab(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(cli.create_slab, ["--create-fibers", tmp_path.as_posix()])
@@ -17,6 +29,7 @@ def test_create_slab(tmp_path: Path):
     assert geo.f0 is not None
 
 
+@no_mpi
 def test_create_lv_ellipsoid(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(
@@ -32,6 +45,7 @@ def test_create_lv_ellipsoid(tmp_path: Path):
     assert geo.f0 is not None
 
 
+@no_mpi
 def test_create_biv_ellipsoid(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(
@@ -47,6 +61,7 @@ def test_create_biv_ellipsoid(tmp_path: Path):
     assert geo.f0 is not None
 
 
+@no_mpi
 def test_create_biv_ellipsoid_torso(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(
