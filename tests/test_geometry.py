@@ -75,13 +75,18 @@ def test_load_invalid_schema(mpi_tmp_path):
 
 
 def test_save_load_simple(mpi_tmp_path, example_data):
+    # import logging
+
+    # logging.basicConfig(
+    #     level=logging.DEBUG,
+    #     format="%(process)d - %(levelname)s - %(filename)s: %(lineno)d - %(message)s",
+    # )
     schema = {
         "info": H5Path(h5group="/info", is_dolfin=False),
         "mesh": H5Path(h5group="/mesh", is_mesh=True),
         "ffun": H5Path(h5group="/ffun", is_meshfunction=True, dim=2, mesh_key="mesh"),
         "f0": H5Path(h5group="/f0", is_function=True, mesh_key="mesh"),
     }
-
     geo = Geometry(**example_data._asdict(), schema=schema)
 
     path = mpi_tmp_path / "geo.h5"

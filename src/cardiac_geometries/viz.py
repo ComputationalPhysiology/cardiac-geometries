@@ -98,7 +98,7 @@ scalar_attribute = dedent(
 
 
 @contextlib.contextmanager
-def h5pyfile(h5name, filemode="r", force_serial: bool = False, comm=None):
+def h5pyfile(h5name, filemode="r", comm=None):
     try:
         import h5py
     except ImportError:
@@ -109,10 +109,8 @@ def h5pyfile(h5name, filemode="r", force_serial: bool = False, comm=None):
     if comm is None:
         comm = dolfin.MPI.comm_world
 
-    from mpi4py import MPI
-
-    if h5py.h5.get_config().mpi and dolfin.MPI.size(comm) > 1 and not force_serial:
-        h5file = h5py.File(h5name, filemode, driver="mpio", comm=MPI.COMM_WORLD)
+    if h5py.h5.get_config().mpi and dolfin.MPI.size(comm) > 1:
+        h5file = h5py.File(h5name, filemode, driver="mpio", comm=comm)
     else:
         if dolfin.MPI.size(comm) > 1:
             warnings.warn("h5py is not installed with MPI support")
@@ -126,13 +124,18 @@ def dict_to_h5(data, h5name, h5group, comm=None):
     if comm is None:
         comm = dolfin.MPI.comm_world
     if comm.rank == 0:
-        with h5pyfile(h5name, "a", force_serial=True) as h5file:
+        import h5py
+
+        with h5py.File(h5name, "a") as h5file:
             if h5group == "":
                 group = h5file
             else:
                 group = h5file.create_group(h5group)
             for k, v in data.items():
                 group.create_dataset(k, data=v)
+
+    # Wait for root process to finish
+    dolfin.MPI.barrier(comm)
 
 
 def decode(x):
@@ -152,11 +155,11 @@ def h5_to_dict(h5group):
             v = decode(value[...].tolist())
             group[key] = v
 
-        elif isinstance(value, h5py.Group):
-            group[key] = h5_to_dict(h5group[key])
+        # elif isinstance(value, h5py.Group):
+        #     group[key] = h5_to_dict(h5group[key])
 
-        else:
-            raise ValueError(f"Unknown value type {type(value)} for key {key}.")
+        # else:
+        #     raise ValueError(f"Unknown value type {type(value)} for key {key}.")
 
     return group
 
