@@ -98,7 +98,7 @@ scalar_attribute = dedent(
 
 
 @contextlib.contextmanager
-def h5pyfile(h5name, filemode="r", force_serial: bool = False):
+def h5pyfile(h5name, filemode="r", force_serial: bool = False, comm=None):
     try:
         import h5py
     except ImportError:
@@ -106,16 +106,15 @@ def h5pyfile(h5name, filemode="r", force_serial: bool = False):
         print("python3 -m pip install h5py --no-binary=h5py")
         raise
 
+    if comm is None:
+        comm = dolfin.MPI.comm_world
+
     from mpi4py import MPI
 
-    if (
-        h5py.h5.get_config().mpi
-        and dolfin.MPI.size(dolfin.MPI.comm_world) > 1
-        and not force_serial
-    ):
+    if h5py.h5.get_config().mpi and dolfin.MPI.size(comm) > 1 and not force_serial:
         h5file = h5py.File(h5name, filemode, driver="mpio", comm=MPI.COMM_WORLD)
     else:
-        if dolfin.MPI.size(dolfin.MPI.comm_world) > 1:
+        if dolfin.MPI.size(comm) > 1:
             warnings.warn("h5py is not installed with MPI support")
         h5file = h5py.File(h5name, filemode)
     yield h5file
@@ -123,18 +122,17 @@ def h5pyfile(h5name, filemode="r", force_serial: bool = False):
     h5file.close()
 
 
-def dict_to_h5(data, h5name, h5group, force_serial: bool = False, comm=None):
+def dict_to_h5(data, h5name, h5group, comm=None):
     if comm is None:
         comm = dolfin.MPI.comm_world
     if comm.rank == 0:
-        with h5pyfile(h5name, "a", force_serial=force_serial) as h5file:
+        with h5pyfile(h5name, "a", force_serial=True) as h5file:
             if h5group == "":
                 group = h5file
             else:
                 group = h5file.create_group(h5group)
             for k, v in data.items():
                 group.create_dataset(k, data=v)
-    dolfin.MPI.barrier(comm)
 
 
 def decode(x):

@@ -294,15 +294,23 @@ class Geometry:
         unlink: bool = True,
     ) -> None:
         path = Path(fname).with_suffix(".h5")
+
+        dolfin.MPI.barrier(self.comm)
+        file_exist = False
+        if self.comm.rank == 0:
+            file_exist = path.is_file()
+        file_exist = self.comm.bcast(file_exist, root=0)
+
         file_mode = "w"
-        if path.is_file():
+        if file_exist:
             if unlink:
-                path.unlink()
+                if self.comm.rank == 0:
+                    path.unlink()
             else:
                 file_mode = "a"
 
-        # Lets synchronize before writing
         dolfin.MPI.barrier(self.comm)
+
         with dolfin.HDF5File(
             self.comm,
             path.as_posix(),
@@ -321,11 +329,13 @@ class Geometry:
                 if p.h5group == "":
                     raise RuntimeError("Cannot write object with empty path")
 
-                dict_to_h5(obj, path, p.h5group, force_serial=True, comm=self.comm)
+                dict_to_h5(obj, path, p.h5group, comm=self.comm)
 
         if schema_path is None:
             schema_path = path.with_suffix(".json")
-        dump_schema(schema_path, schema=self.schema)
+        if self.comm.rank == 0:
+            dump_schema(schema_path, schema=self.schema)
+        dolfin.MPI.barrier(self.comm)
 
     @classmethod
     def from_file(
@@ -348,7 +358,8 @@ class Geometry:
         groups = {}
         data = {}
         signatures = {}
-        with h5pyfile(path, "r") as h5file:
+        mesh = dolfin.Mesh()
+        with h5pyfile(path, "r", comm=mesh.mpi_comm()) as h5file:
             for name, p in schema.items():
                 if p.h5group == "":
                     continue
@@ -363,13 +374,13 @@ class Geometry:
                 if p.is_function and groups[name]:
                     signatures[name] = h5file[p.h5group].attrs["signature"].decode()
 
+        dolfin.MPI.barrier(mesh.mpi_comm())
         required_mesh_keys = extract_mesh_keys(schema)
         for name, mesh_key in required_mesh_keys:
             if not groups.get(mesh_key, False):
                 msg = f"Missing mesh key '{mesh_key}' for key {name} in {fname}"
                 raise RuntimeError(msg)
 
-        mesh = dolfin.Mesh()
         with dolfin.HDF5File(mesh.mpi_comm(), path.as_posix(), "r") as h5file:
             # Meshes
             for name, p in schema.items():

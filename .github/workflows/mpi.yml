@@ -1,0 +1,22 @@
+name: CI mpi
+
+on: [push]
+
+jobs:
+  test:
+    name: Run tests with in paralell
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/scientificcomputing/fenics-gmsh:2023-03-01a
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e ".[test]"
+
+      - name: Test with pytest
+        run: |
+          mpirun -n 2 python3 -m pytest --no-cov

@@ -4,8 +4,16 @@ import pytest
 from cardiac_geometries import gmsh
 from cardiac_geometries import has_gmsh
 
+try:
+    import dolfin
+
+    _size = dolfin.MPI.size(dolfin.MPI.comm_world)
+except ImportError:
+    _size = 0
+
+
 require_gmsh = pytest.mark.skipif(
-    not has_gmsh(),
+    not has_gmsh() or _size > 1,
     reason="gmsh is required to run the test",
 )
 
