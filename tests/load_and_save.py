@@ -65,5 +65,8 @@ def main(path: Path) -> int:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="[Process %(process)d]: %(message)s")
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="[Process %(process)d]: %(message)s",
+    )
     raise SystemExit(main(Path.cwd() / Path(sys.argv[1])))
