@@ -403,10 +403,9 @@ class Geometry:
         if schema_path is None:
             schema_path = path.with_suffix(".json")
         logger.debug(f"Save schema {schema_path}")
-        # dolfin.MPI.barrier(self.comm)
-        print(self.comm.rank, schema_path, self.schema)
+
         dump_schema(schema_path, schema=self.schema)
-        # dolfin.MPI.barrier(self.comm)
+        dolfin.MPI.barrier(self.comm)
         logger.debug(f"Geometry saved to path {path} and schema to {schema_path}")
 
     @classmethod

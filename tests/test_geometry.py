@@ -10,12 +10,6 @@ from cardiac_geometries.geometry import H5Path
 from cardiac_geometries.geometry import load_schema
 
 
-no_mpi = pytest.mark.skipif(
-    dolfin.MPI.size(dolfin.MPI.comm_world) > 1,
-    reason="Only works in serial",
-)
-
-
 class ExampleData(NamedTuple):
     info: Dict[str, Any]
     mesh: dolfin.Mesh
@@ -57,7 +51,6 @@ def example_data():
     )
 
 
-@no_mpi
 def test_load_invalid_schema(mpi_tmp_path):
     schema = {
         "mesh": dict(h5group="/mesh", is_mesh=True, invalid_key=42),
@@ -103,7 +96,6 @@ def test_save_load_simple(mpi_tmp_path, example_data):
     assert (new_geo.f0.vector().get_local() == geo.f0.vector().get_local()).all()
 
 
-@no_mpi
 def test_save_load_multiple_meshes(tmp_path, example_data):
     schema = {
         "info": H5Path(h5group="/group1/info", is_dolfin=False),

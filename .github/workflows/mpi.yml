@@ -17,6 +17,10 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install -e ".[test]"
 
-      - name: Test with pytest
+      - name: Create a geometry in serial
         run: |
-          mpirun -n 2 python3 -m pytest --no-cov
+          cardiac-geometries create-biv-ellipsoid biv
+
+      - name: Load and save mesh in paralell
+        run: |
+          mpirun -n 2 python3 tests/load_and_save.py biv/biv_ellipsoid.h5
