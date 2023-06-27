@@ -49,12 +49,19 @@ def main(path: Path) -> int:
     logging.info("Save geometry to outpath")
     geo.save(outpath)
 
-    if outpath.is_file() and outpath.with_suffix(".json").is_file():
-        logging.info("Success! File exist")
-        unlink_geofile(comm, path=outpath)
-        return 0  # Success
-    logging.info("Failure")
-    return 1  # Failure
+    ret = 0
+    if not outpath.is_file():
+        logging.info(f"File {outpath} does not exist")
+        ret += 1
+
+    if not outpath.with_suffix(".json").is_file():
+        logging.info(f"File {outpath.with_suffix('.json')} does not exist")
+        ret += 1
+
+    unlink_geofile(comm, path=outpath)
+
+    logging.info("Done")
+    return ret
 
 
 if __name__ == "__main__":
