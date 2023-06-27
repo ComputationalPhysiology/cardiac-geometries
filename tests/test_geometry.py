@@ -51,13 +51,13 @@ def example_data():
     )
 
 
-def test_load_invalid_schema(mpi_tmp_path):
+def test_load_invalid_schema(tmp_path):
     schema = {
         "mesh": dict(h5group="/mesh", is_mesh=True, invalid_key=42),
         "ffun": dict(h5group="/ffun", is_meshfunction=True, dim=2),
         "f0": dict(h5group="/f0", is_function=True),
     }
-    path = mpi_tmp_path / "schema.json"
+    path = tmp_path / "schema.json"
     path.write_text(json.dumps(schema, indent=2))
     new_schema = load_schema(path)
     for name, d in schema.items():
@@ -67,7 +67,7 @@ def test_load_invalid_schema(mpi_tmp_path):
             assert getattr(new_schema[name], k) == v
 
 
-def test_save_load_simple(mpi_tmp_path, example_data):
+def test_save_load_simple(tmp_path, example_data):
     # import logging
 
     # logging.basicConfig(
@@ -82,7 +82,7 @@ def test_save_load_simple(mpi_tmp_path, example_data):
     }
     geo = Geometry(**example_data._asdict(), schema=schema)
 
-    path = mpi_tmp_path / "geo.h5"
+    path = tmp_path / "geo.h5"
     schema_path = path.with_suffix(".json")
     geo.save(path, schema_path=schema_path)
 
