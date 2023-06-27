@@ -58,6 +58,7 @@ def main(path: Path) -> int:
         logging.info(f"File {outpath.with_suffix('.json')} does not exist")
         ret += 1
 
+    dolfin.MPI.barrier(comm)
     unlink_geofile(comm, path=outpath)
 
     logging.info("Done")
