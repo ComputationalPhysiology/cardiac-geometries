@@ -332,6 +332,7 @@ document.write(`
     <span class="n">outdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">char_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">center_lv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">center_lv_z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">a_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span>
     <span class="n">b_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">c_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -339,6 +340,7 @@ document.write(`
     <span class="n">b_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">c_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">center_rv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">center_rv_z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">a_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
     <span class="n">b_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">c_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
@@ -361,6 +363,8 @@ document.write(`
 <span class="sd">        Characteristic length of mesh, by default 0.5</span>
 <span class="sd">    center_lv_y : float, optional</span>
 <span class="sd">        Y-coordinate for the center of the lv, by default 0.0</span>
+<span class="sd">    center_lv_z : float, optional</span>
+<span class="sd">        Z-coordinate for the center of the lv, by default 0.0</span>
 <span class="sd">    a_endo_lv : float, optional</span>
 <span class="sd">        Dilation of lv endo ellipsoid in the x-direction, by default 2.5</span>
 <span class="sd">    b_endo_lv : float, optional</span>
@@ -375,6 +379,8 @@ document.write(`
 <span class="sd">        Dilation of lv epi ellipsoid in the z-direction, by default 1.5</span>
 <span class="sd">    center_rv_y : float, optional</span>
 <span class="sd">        Y-coordinate for the center of the rv, by default 0.5</span>
+<span class="sd">    center_rv_z : float, optional</span>
+<span class="sd">        Z-coordinate for the center of the rv, by default 0.0</span>
 <span class="sd">    a_endo_rv : float, optional</span>
 <span class="sd">       Dilation of rv endo ellipsoid in the x-direction, by default 3.0</span>
 <span class="sd">    b_endo_rv : float, optional</span>
@@ -424,14 +430,14 @@ document.write(`
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;char_length&quot;</span><span class="p">:</span> <span class="n">char_length</span><span class="p">,</span>
-                <span class="s2">&quot;center_lv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;center_lv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="n">center_lv_z</span><span class="p">),</span>
                 <span class="s2">&quot;a_endo_lv&quot;</span><span class="p">:</span> <span class="n">a_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;b_endo_lv&quot;</span><span class="p">:</span> <span class="n">b_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;c_endo_lv&quot;</span><span class="p">:</span> <span class="n">c_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;a_epi_lv&quot;</span><span class="p">:</span> <span class="n">a_epi_lv</span><span class="p">,</span>
                 <span class="s2">&quot;b_epi_lv&quot;</span><span class="p">:</span> <span class="n">b_epi_lv</span><span class="p">,</span>
                 <span class="s2">&quot;c_epi_lv&quot;</span><span class="p">:</span> <span class="n">c_epi_lv</span><span class="p">,</span>
-                <span class="s2">&quot;center_rv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;center_rv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="n">center_rv_z</span><span class="p">),</span>
                 <span class="s2">&quot;a_endo_rv&quot;</span><span class="p">:</span> <span class="n">a_endo_rv</span><span class="p">,</span>
                 <span class="s2">&quot;b_endo_rv&quot;</span><span class="p">:</span> <span class="n">b_endo_rv</span><span class="p">,</span>
                 <span class="s2">&quot;c_endo_rv&quot;</span><span class="p">:</span> <span class="n">c_endo_rv</span><span class="p">,</span>
@@ -456,14 +462,14 @@ document.write(`
     <span class="n">biv_ellipsoid</span><span class="p">(</span>
         <span class="n">mesh_name</span><span class="o">=</span><span class="n">mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
         <span class="n">char_length</span><span class="o">=</span><span class="n">char_length</span><span class="p">,</span>
-        <span class="n">center_lv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">center_lv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="n">center_lv_z</span><span class="p">),</span>
         <span class="n">a_endo_lv</span><span class="o">=</span><span class="n">a_endo_lv</span><span class="p">,</span>
         <span class="n">b_endo_lv</span><span class="o">=</span><span class="n">b_endo_lv</span><span class="p">,</span>
         <span class="n">c_endo_lv</span><span class="o">=</span><span class="n">c_endo_lv</span><span class="p">,</span>
         <span class="n">a_epi_lv</span><span class="o">=</span><span class="n">a_epi_lv</span><span class="p">,</span>
         <span class="n">b_epi_lv</span><span class="o">=</span><span class="n">b_epi_lv</span><span class="p">,</span>
         <span class="n">c_epi_lv</span><span class="o">=</span><span class="n">c_epi_lv</span><span class="p">,</span>
-        <span class="n">center_rv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">center_rv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="n">center_rv_z</span><span class="p">),</span>
         <span class="n">a_endo_rv</span><span class="o">=</span><span class="n">a_endo_rv</span><span class="p">,</span>
         <span class="n">b_endo_rv</span><span class="o">=</span><span class="n">b_endo_rv</span><span class="p">,</span>
         <span class="n">c_endo_rv</span><span class="o">=</span><span class="n">c_endo_rv</span><span class="p">,</span>
@@ -512,6 +518,7 @@ document.write(`
     <span class="n">torso_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
     <span class="n">rotation_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>
     <span class="n">center_lv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">center_lv_z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">a_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span>
     <span class="n">b_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">c_endo_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -519,6 +526,7 @@ document.write(`
     <span class="n">b_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">c_epi_lv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">center_rv_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">center_rv_z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">a_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
     <span class="n">b_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="n">c_endo_rv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
@@ -553,6 +561,8 @@ document.write(`
 <span class="sd">        the heart in a torso, by default pi / 6</span>
 <span class="sd">    center_lv_y : float, optional</span>
 <span class="sd">        Y-coordinate for the center of the lv, by default 0.0</span>
+<span class="sd">    center_lv_z : float, optional</span>
+<span class="sd">        Z-coordinate for the center of the lv, by default 0.0</span>
 <span class="sd">    a_endo_lv : float, optional</span>
 <span class="sd">        Dilation of lv endo ellipsoid in the x-direction, by default 2.5</span>
 <span class="sd">    b_endo_lv : float, optional</span>
@@ -567,6 +577,8 @@ document.write(`
 <span class="sd">        Dilation of lv epi ellipsoid in the z-direction, by default 1.5</span>
 <span class="sd">    center_rv_y : float, optional</span>
 <span class="sd">        Y-coordinate for the center of the rv, by default 0.5</span>
+<span class="sd">    center_rv_z : float, optional</span>
+<span class="sd">        Z-coordinate for the center of the rv, by default 0.0</span>
 <span class="sd">    a_endo_rv : float, optional</span>
 <span class="sd">       Dilation of rv endo ellipsoid in the x-direction, by default 3.0</span>
 <span class="sd">    b_endo_rv : float, optional</span>
@@ -621,14 +633,14 @@ document.write(`
                 <span class="s2">&quot;torso_width&quot;</span><span class="p">:</span> <span class="n">torso_width</span><span class="p">,</span>
                 <span class="s2">&quot;torso_height&quot;</span><span class="p">:</span> <span class="n">torso_height</span><span class="p">,</span>
                 <span class="s2">&quot;rotation_angle&quot;</span><span class="p">:</span> <span class="n">rotation_angle</span><span class="p">,</span>
-                <span class="s2">&quot;center_lv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;center_lv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="n">center_lv_z</span><span class="p">),</span>
                 <span class="s2">&quot;a_endo_lv&quot;</span><span class="p">:</span> <span class="n">a_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;b_endo_lv&quot;</span><span class="p">:</span> <span class="n">b_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;c_endo_lv&quot;</span><span class="p">:</span> <span class="n">c_endo_lv</span><span class="p">,</span>
                 <span class="s2">&quot;a_epi_lv&quot;</span><span class="p">:</span> <span class="n">a_epi_lv</span><span class="p">,</span>
                 <span class="s2">&quot;b_epi_lv&quot;</span><span class="p">:</span> <span class="n">b_epi_lv</span><span class="p">,</span>
                 <span class="s2">&quot;c_epi_lv&quot;</span><span class="p">:</span> <span class="n">c_epi_lv</span><span class="p">,</span>
-                <span class="s2">&quot;center_rv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="s2">&quot;center_rv&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="n">center_rv_z</span><span class="p">),</span>
                 <span class="s2">&quot;a_endo_rv&quot;</span><span class="p">:</span> <span class="n">a_endo_rv</span><span class="p">,</span>
                 <span class="s2">&quot;b_endo_rv&quot;</span><span class="p">:</span> <span class="n">b_endo_rv</span><span class="p">,</span>
                 <span class="s2">&quot;c_endo_rv&quot;</span><span class="p">:</span> <span class="n">c_endo_rv</span><span class="p">,</span>
@@ -658,14 +670,14 @@ document.write(`
         <span class="n">torso_height</span><span class="o">=</span><span class="n">torso_height</span><span class="p">,</span>
         <span class="n">torso_width</span><span class="o">=</span><span class="n">torso_width</span><span class="p">,</span>
         <span class="n">rotation_angle</span><span class="o">=</span><span class="n">rotation_angle</span><span class="p">,</span>
-        <span class="n">center_lv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">center_lv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_lv_y</span><span class="p">,</span> <span class="n">center_lv_z</span><span class="p">),</span>
         <span class="n">a_endo_lv</span><span class="o">=</span><span class="n">a_endo_lv</span><span class="p">,</span>
         <span class="n">b_endo_lv</span><span class="o">=</span><span class="n">b_endo_lv</span><span class="p">,</span>
         <span class="n">c_endo_lv</span><span class="o">=</span><span class="n">c_endo_lv</span><span class="p">,</span>
         <span class="n">a_epi_lv</span><span class="o">=</span><span class="n">a_epi_lv</span><span class="p">,</span>
         <span class="n">b_epi_lv</span><span class="o">=</span><span class="n">b_epi_lv</span><span class="p">,</span>
         <span class="n">c_epi_lv</span><span class="o">=</span><span class="n">c_epi_lv</span><span class="p">,</span>
-        <span class="n">center_rv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">center_rv</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_rv_y</span><span class="p">,</span> <span class="n">center_rv_z</span><span class="p">),</span>
         <span class="n">a_endo_rv</span><span class="o">=</span><span class="n">a_endo_rv</span><span class="p">,</span>
         <span class="n">b_endo_rv</span><span class="o">=</span><span class="n">b_endo_rv</span><span class="p">,</span>
         <span class="n">c_endo_rv</span><span class="o">=</span><span class="n">c_endo_rv</span><span class="p">,</span>
@@ -1003,7 +1015,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 27, 2023.
+  Last updated on Jul 22, 2023.
   <br/>
 </p>
   </div>
