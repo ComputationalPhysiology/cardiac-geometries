@@ -21,6 +21,7 @@ def create_biv_ellipsoid(
     outdir: Union[str, Path, None] = None,
     char_length: float = 0.5,
     center_lv_y: float = 0.0,
+    center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
     b_endo_lv: float = 1.0,
     c_endo_lv: float = 1.0,
@@ -28,6 +29,7 @@ def create_biv_ellipsoid(
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
     center_rv_y: float = 0.5,
+    center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
     b_endo_rv: float = 1.5,
     c_endo_rv: float = 1.5,
@@ -50,6 +52,8 @@ def create_biv_ellipsoid(
         Characteristic length of mesh, by default 0.5
     center_lv_y : float, optional
         Y-coordinate for the center of the lv, by default 0.0
+    center_lv_z : float, optional
+        Z-coordinate for the center of the lv, by default 0.0
     a_endo_lv : float, optional
         Dilation of lv endo ellipsoid in the x-direction, by default 2.5
     b_endo_lv : float, optional
@@ -64,6 +68,8 @@ def create_biv_ellipsoid(
         Dilation of lv epi ellipsoid in the z-direction, by default 1.5
     center_rv_y : float, optional
         Y-coordinate for the center of the rv, by default 0.5
+    center_rv_z : float, optional
+        Z-coordinate for the center of the rv, by default 0.0
     a_endo_rv : float, optional
        Dilation of rv endo ellipsoid in the x-direction, by default 3.0
     b_endo_rv : float, optional
@@ -113,14 +119,14 @@ def create_biv_ellipsoid(
         json.dump(
             {
                 "char_length": char_length,
-                "center_lv": (0.0, center_lv_y, 0.0),
+                "center_lv": (0.0, center_lv_y, center_lv_z),
                 "a_endo_lv": a_endo_lv,
                 "b_endo_lv": b_endo_lv,
                 "c_endo_lv": c_endo_lv,
                 "a_epi_lv": a_epi_lv,
                 "b_epi_lv": b_epi_lv,
                 "c_epi_lv": c_epi_lv,
-                "center_rv": (0.0, center_rv_y, 0.0),
+                "center_rv": (0.0, center_rv_y, center_rv_z),
                 "a_endo_rv": a_endo_rv,
                 "b_endo_rv": b_endo_rv,
                 "c_endo_rv": c_endo_rv,
@@ -145,14 +151,14 @@ def create_biv_ellipsoid(
     biv_ellipsoid(
         mesh_name=mesh_name.as_posix(),
         char_length=char_length,
-        center_lv=(0.0, center_lv_y, 0.0),
+        center_lv=(0.0, center_lv_y, center_lv_z),
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
-        center_rv=(0.0, center_rv_y, 0.0),
+        center_rv=(0.0, center_rv_y, center_rv_z),
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
@@ -201,6 +207,7 @@ def create_biv_ellipsoid_torso(
     torso_height: float = 20.0,
     rotation_angle: float = math.pi / 6,
     center_lv_y: float = 0.0,
+    center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
     b_endo_lv: float = 1.0,
     c_endo_lv: float = 1.0,
@@ -208,6 +215,7 @@ def create_biv_ellipsoid_torso(
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
     center_rv_y: float = 0.5,
+    center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
     b_endo_rv: float = 1.5,
     c_endo_rv: float = 1.5,
@@ -242,6 +250,8 @@ def create_biv_ellipsoid_torso(
         the heart in a torso, by default pi / 6
     center_lv_y : float, optional
         Y-coordinate for the center of the lv, by default 0.0
+    center_lv_z : float, optional
+        Z-coordinate for the center of the lv, by default 0.0
     a_endo_lv : float, optional
         Dilation of lv endo ellipsoid in the x-direction, by default 2.5
     b_endo_lv : float, optional
@@ -256,6 +266,8 @@ def create_biv_ellipsoid_torso(
         Dilation of lv epi ellipsoid in the z-direction, by default 1.5
     center_rv_y : float, optional
         Y-coordinate for the center of the rv, by default 0.5
+    center_rv_z : float, optional
+        Z-coordinate for the center of the rv, by default 0.0
     a_endo_rv : float, optional
        Dilation of rv endo ellipsoid in the x-direction, by default 3.0
     b_endo_rv : float, optional
@@ -310,14 +322,14 @@ def create_biv_ellipsoid_torso(
                 "torso_width": torso_width,
                 "torso_height": torso_height,
                 "rotation_angle": rotation_angle,
-                "center_lv": (0.0, center_lv_y, 0.0),
+                "center_lv": (0.0, center_lv_y, center_lv_z),
                 "a_endo_lv": a_endo_lv,
                 "b_endo_lv": b_endo_lv,
                 "c_endo_lv": c_endo_lv,
                 "a_epi_lv": a_epi_lv,
                 "b_epi_lv": b_epi_lv,
                 "c_epi_lv": c_epi_lv,
-                "center_rv": (0.0, center_rv_y, 0.0),
+                "center_rv": (0.0, center_rv_y, center_rv_z),
                 "a_endo_rv": a_endo_rv,
                 "b_endo_rv": b_endo_rv,
                 "c_endo_rv": c_endo_rv,
@@ -347,14 +359,14 @@ def create_biv_ellipsoid_torso(
         torso_height=torso_height,
         torso_width=torso_width,
         rotation_angle=rotation_angle,
-        center_lv=(0.0, center_lv_y, 0.0),
+        center_lv=(0.0, center_lv_y, center_lv_z),
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
-        center_rv=(0.0, center_rv_y, 0.0),
+        center_rv=(0.0, center_rv_y, center_rv_z),
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
