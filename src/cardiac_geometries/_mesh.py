@@ -654,3 +654,100 @@ def create_slab(
         _tmpfile.__exit__(None, None, None)
 
     return geo
+
+
+def create_slab_in_bath(
+    outdir: Optional[Union[Path, str]] = None,
+    lx: float = 1.0,
+    ly: float = 0.01,
+    lz: float = 0.5,
+    bx: float = 0.0,
+    by: float = 0.0,
+    bz: float = 0.1,
+    dx: float = 0.001,
+) -> Optional[Geometry]:
+    """Create slab geometry
+
+    Parameters
+    ----------
+    outdir : Optional[Path], optional
+        Directory where to save the results. If not provided a temporary
+        directory will be created, by default None
+    lx : float, optional
+        Length of slab the x-direction, by default 1.0
+    ly : float, optional
+        Length of slab the x-direction, by default 0.5
+    lz : float, optional
+        Length of slab the z-direction, by default 0.01
+    bx : float, optional
+        Thickness of bath the x-direction, by default 0.0
+    by : float, optional
+        Thickness of bath the x-direction, by default 0.0
+    bz : float, optional
+        Thickness of bath the z-direction, by default 0.1
+    dx : float, optional
+        Element size, by default 0.001
+
+    Returns
+    -------
+    Optional[Geometry]
+        A Geometry with the mesh, markers, markers functions and fibers.
+        Returns None if dolfin is not installed.
+
+    Raises
+    ------
+    ImportError
+        If gmsh is not installed
+    """
+
+    if not has_gmsh():
+        raise ImportError("Cannot create BiV ellipsoid. Gmsh is not installed")
+
+    _tmpfile = None
+    if outdir is None:
+        _tmpfile = tempfile.TemporaryDirectory()
+        outdir = _tmpfile.__enter__()
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True, parents=True)
+
+    with open(outdir / "info.json", "w") as f:
+        json.dump(
+            {
+                "lx": lx,
+                "ly": ly,
+                "lz": lz,
+                "bx": bx,
+                "by": by,
+                "bz": bz,
+                "dx": dx,
+                "mesh_type": MeshTypes.slab.value,
+                "cardiac_geometry_version": __version__,
+                "timestamp": datetime.datetime.now().isoformat(),
+            },
+            f,
+            indent=2,
+            default=json_serial,
+        )
+
+    from ._gmsh import slab_in_bath
+
+    mesh_name = outdir / "slab_in_bath.msh"
+    slab_in_bath(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+
+    if not has_dolfin():
+        return None
+
+    from .dolfin_utils import gmsh2dolfin
+
+    geometry = gmsh2dolfin(mesh_name, unlink=False)
+
+    with open(outdir / "markers.json", "w") as f:
+        json.dump(geometry.markers, f, default=json_serial)
+
+    geo = Geometry.from_folder(outdir)
+
+    if _tmpfile is not None:
+        _tmpfile.__exit__(None, None, None)
+
+    return geo

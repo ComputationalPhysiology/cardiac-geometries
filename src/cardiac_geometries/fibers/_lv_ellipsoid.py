@@ -59,14 +59,39 @@ def normalize(u):
 
 def compute_system(
     t_func: dolfin.Function,
-    r_short_endo,
-    r_short_epi,
-    r_long_endo,
-    r_long_epi,
+    r_short_endo: float,
+    r_short_epi: float,
+    r_long_endo: float,
+    r_long_epi: float,
     alpha_endo: float = -60,
     alpha_epi: float = 60,
     **kwargs,
-):
+) -> Microstructure:
+    """Compute ldrb system for idealized prolate
+    ellipsoid
+
+    Parameters
+    ----------
+    t_func : dolfin.Function
+        Solution to laplace equation
+    r_short_endo : float, optional
+        Shortest radius on the endocardium layer
+    r_short_epi : float, optional
+       Shortest radius on the epicardium layer
+    r_long_endo : float, optional
+        Longest radius on the endocardium layer
+    r_long_epi : float, optional
+        Longest radius on the epicardium layer
+    alpha_endo : float, optional
+        Fiber angle on endocardium, by default -60
+    alpha_epi : float, optional
+        Fiber angle on epi cardium, by default 60
+
+    Returns
+    -------
+    Microstructure
+        (fiber, sheet, sheet_normal)
+    """
 
     V = t_func.function_space()
     element = V.ufl_element()

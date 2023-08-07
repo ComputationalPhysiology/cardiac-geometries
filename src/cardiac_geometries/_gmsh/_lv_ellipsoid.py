@@ -151,7 +151,7 @@ def lv_ellipsoid_flat_base(
     Returns
     -------
     Path
-        _description_
+        Path to file
     """
     mu_base_endo = math.acos(quota_base / r_long_endo)
     mu_base_epi = math.acos(quota_base / r_long_epi)

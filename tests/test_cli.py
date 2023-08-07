@@ -17,6 +17,21 @@ def test_create_slab(tmp_path: Path):
     assert geo.f0 is not None
 
 
+def test_create_slab_in_bath(tmp_path: Path):
+    runner = CliRunner()
+    res1 = runner.invoke(cli.create_slab_in_bath, [tmp_path.as_posix()])
+    assert res1.exit_code == 0
+    outfile = tmp_path / "geo.h5"
+    res2 = runner.invoke(cli.folder2h5, [tmp_path.as_posix(), "--outfile", outfile])
+    assert res2.exit_code == 0
+    assert outfile.is_file()
+    geo = Geometry.from_file(outfile)
+
+    assert "Bath" in geo.markers
+    bath_marker = geo.markers["Bath"][0]
+    assert bath_marker in geo.cfun.array()
+
+
 def test_create_lv_ellipsoid(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(
