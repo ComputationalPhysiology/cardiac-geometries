@@ -62,7 +62,25 @@ def compute_system(
     alpha_endo: float = -60,
     alpha_epi: float = 60,
     **kwargs,
-):
+) -> Microstructure:
+    """Compute ldrb system for slab, assuming linear
+    angle between endo and epi
+
+    Parameters
+    ----------
+    t_func : dolfin.Function
+        Solution to laplace equation with 0 on endo
+        and 1 on epi
+    alpha_endo : float, optional
+        Angle on endocardium, by default -60
+    alpha_epi : float, optional
+        Angle on epicardium, by default 60
+
+    Returns
+    -------
+    Microstructure
+        Tuple with fiber, sheet and sheet normal
+    """
 
     V = t_func.function_space()
     element = V.ufl_element()
@@ -148,14 +166,43 @@ def compute_system(
 
 
 def create_microstructure(
-    mesh,
-    ffun,
-    markers,
-    alpha_endo,
-    alpha_epi,
-    function_space,
+    mesh: dolfin.Mesh,
+    ffun: dolfin.MeshFunction,
+    markers: Dict[str, Tuple[int, int]],
+    alpha_endo: float,
+    alpha_epi: float,
+    function_space: str = "P_1",
     outdir: Optional[Union[str, Path]] = None,
 ) -> Microstructure:
+    """Generate microstructure for slab using LDRB algorithm
+
+    Parameters
+    ----------
+    mesh : dolfin.Mesh
+        A slab mesh
+    ffun : dolfin.MeshFunction
+        Facet function defining the boundaries
+    markers: Dict[str, Tuple[int, int]]
+        Markers with keys Y0 and Y1 representing the endo and
+        epi planes respectively. The values should be a tuple
+        whose first value is the value of the marker (corresponding
+        to ffun) and the second value is the dimension
+    alpha_endo : float
+        Angle on the endocardium
+    alpha_epi : float
+        Angle on the epicardium
+    function_space : str
+        Function space to interpolate the fibers, by default P_1
+    outdir : Optional[Union[str, Path]], optional
+        Output directory to store the results, by default None.
+        If no output directory is specified the results will not be stored,
+        but only returned.
+
+    Returns
+    -------
+    Microstructure
+        Tuple with fiber, sheet and sheet normal
+    """
 
     t = laplace(mesh, ffun, markers, function_space=function_space)
 

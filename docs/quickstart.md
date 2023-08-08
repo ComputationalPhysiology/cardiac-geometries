@@ -205,6 +205,24 @@ geo = Geometry(
 geo.save("double_slab.h5")
 ```
 
+## Creating a slab in a bath
+In many applications of cardiac electrophysiology it is common to study the bath-loading effects, see e.g
+
+> Bishop, Martin J., and Gernot Plank. "Representing cardiac bidomain bath-loading effects by an augmented monodomain approach: application to complex ventricular models." IEEE Transactions on Biomedical Engineering 58.4 (2011): 1066-1075.
+
+In this case it is of interest to create a slab surrounded by a conducting media. This can be done with the following command
+
+```
+cardiac-geometries create-slab-in-bath slab_in_bath --lx=1.0 --ly=2.0 --ly=3.0 --bx=0.1 --by=0.2 --bz=0.3 --dx=0.05
+```
+
+```{figure} slab_in_bath.png
+---
+name: slab_in_bath
+---
+Slab geometry of dimension $[0, l_x] \times [0, ly] \times [0, lz] = [0, 1] \times [0, 2] \times [0, 2]$ embedded in a bath of width $b_x = 0.1$, $b_y = 0.2$ and $b_z = 0.3$ respectively in the $x-, y-$ and $z$ direction.
+```
+
 ## Creating a lv ellipsoid
 
 You can create a left ellipsoidal ventricular geometry by using the following command

@@ -197,6 +197,13 @@ def create_lv_ellipsoid(
     show_default=True,
 )
 @click.option(
+    "--center-lv-z",
+    default=0.0,
+    type=float,
+    help="Z-coordinate for the center of the lv",
+    show_default=True,
+)
+@click.option(
     "--a-endo-lv",
     default=2.5,
     type=float,
@@ -243,6 +250,13 @@ def create_lv_ellipsoid(
     default=0.5,
     type=float,
     help="Y-coordinate for the center of the rv",
+    show_default=True,
+)
+@click.option(
+    "--center-rv-z",
+    default=0.0,
+    type=float,
+    help="Z-coordinate for the center of the rv",
     show_default=True,
 )
 @click.option(
@@ -320,6 +334,7 @@ def create_biv_ellipsoid(
     outdir: Path,
     char_length: float = 0.5,
     center_lv_y: float = 0.0,
+    center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
     b_endo_lv: float = 1.0,
     c_endo_lv: float = 1.0,
@@ -327,6 +342,7 @@ def create_biv_ellipsoid(
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
     center_rv_y: float = 0.5,
+    center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
     b_endo_rv: float = 1.5,
     c_endo_rv: float = 1.5,
@@ -347,6 +363,7 @@ def create_biv_ellipsoid(
         outdir=outdir,
         char_length=char_length,
         center_lv_y=center_lv_y,
+        center_lv_z=center_lv_z,
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
@@ -354,6 +371,7 @@ def create_biv_ellipsoid(
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
         center_rv_y=center_rv_y,
+        center_rv_z=center_rv_z,
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
@@ -714,6 +732,95 @@ def create_slab(
     geo.save(outdir / "slab.h5")
 
 
+@click.command()
+@click.argument(
+    "outdir",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+)
+@click.option(
+    "--lx",
+    default=1.0,
+    type=float,
+    help="Length of slab in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--ly",
+    default=0.01,
+    type=float,
+    help="Length of slab in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--lz",
+    default=0.5,
+    type=float,
+    help="Length of slab in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--bx",
+    default=0.0,
+    type=float,
+    help="Thickness of bath in the x-direction",
+    show_default=True,
+)
+@click.option(
+    "--by",
+    default=0.0,
+    type=float,
+    help="Thickness of bath in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--bz",
+    default=0.1,
+    type=float,
+    help="Thickness of bath in the z-direction",
+    show_default=True,
+)
+@click.option(
+    "--dx",
+    default=0.01,
+    type=float,
+    help="Element size",
+    show_default=True,
+)
+def create_slab_in_bath(
+    outdir: Path,
+    lx: float = 1.0,
+    ly: float = 0.01,
+    lz: float = 0.5,
+    bx: float = 0.0,
+    by: float = 0.0,
+    bz: float = 0.1,
+    dx: float = 0.01,
+):
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    from ._mesh import create_slab_in_bath
+
+    geo = create_slab_in_bath(
+        outdir=outdir,
+        lx=lx,
+        ly=ly,
+        lz=lz,
+        bx=bx,
+        by=by,
+        bz=bz,
+        dx=dx,
+    )
+    geo.save(outdir / "slab_in_bath.h5")
+
+
 @click.command(
     help=(
         "Convert microstructure.h5 into separate .xdmf-files for f0, s0, and n0. "
@@ -849,6 +956,7 @@ app.add_command(create_lv_ellipsoid)
 app.add_command(create_biv_ellipsoid)
 app.add_command(create_biv_ellipsoid_torso)
 app.add_command(create_slab)
+app.add_command(create_slab_in_bath)
 app.add_command(fibers_to_xdmf)
 app.add_command(folder2h5)
 app.add_command(info)
