@@ -965,6 +965,112 @@ document.write(`
         <span class="n">_tmpfile</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">geo</span></div>
+
+
+<div class="viewcode-block" id="create_slab_in_bath"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_slab_in_bath">[docs]</a><span class="k">def</span> <span class="nf">create_slab_in_bath</span><span class="p">(</span>
+    <span class="n">outdir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">ly</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">lz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">bx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">by</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">bz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Geometry</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create slab geometry</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outdir : Optional[Path], optional</span>
+<span class="sd">        Directory where to save the results. If not provided a temporary</span>
+<span class="sd">        directory will be created, by default None</span>
+<span class="sd">    lx : float, optional</span>
+<span class="sd">        Length of slab the x-direction, by default 1.0</span>
+<span class="sd">    ly : float, optional</span>
+<span class="sd">        Length of slab the x-direction, by default 0.5</span>
+<span class="sd">    lz : float, optional</span>
+<span class="sd">        Length of slab the z-direction, by default 0.01</span>
+<span class="sd">    bx : float, optional</span>
+<span class="sd">        Thickness of bath the x-direction, by default 0.0</span>
+<span class="sd">    by : float, optional</span>
+<span class="sd">        Thickness of bath the x-direction, by default 0.0</span>
+<span class="sd">    bz : float, optional</span>
+<span class="sd">        Thickness of bath the z-direction, by default 0.1</span>
+<span class="sd">    dx : float, optional</span>
+<span class="sd">        Element size, by default 0.001</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Optional[Geometry]</span>
+<span class="sd">        A Geometry with the mesh, markers, markers functions and fibers.</span>
+<span class="sd">        Returns None if dolfin is not installed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ImportError</span>
+<span class="sd">        If gmsh is not installed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_gmsh</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Cannot create BiV ellipsoid. Gmsh is not installed&quot;</span><span class="p">)</span>
+
+    <span class="n">_tmpfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">outdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_tmpfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="n">_tmpfile</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+    <span class="n">outdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;info.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;lx&quot;</span><span class="p">:</span> <span class="n">lx</span><span class="p">,</span>
+                <span class="s2">&quot;ly&quot;</span><span class="p">:</span> <span class="n">ly</span><span class="p">,</span>
+                <span class="s2">&quot;lz&quot;</span><span class="p">:</span> <span class="n">lz</span><span class="p">,</span>
+                <span class="s2">&quot;bx&quot;</span><span class="p">:</span> <span class="n">bx</span><span class="p">,</span>
+                <span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="n">by</span><span class="p">,</span>
+                <span class="s2">&quot;bz&quot;</span><span class="p">:</span> <span class="n">bz</span><span class="p">,</span>
+                <span class="s2">&quot;dx&quot;</span><span class="p">:</span> <span class="n">dx</span><span class="p">,</span>
+                <span class="s2">&quot;mesh_type&quot;</span><span class="p">:</span> <span class="n">MeshTypes</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;cardiac_geometry_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="p">},</span>
+            <span class="n">f</span><span class="p">,</span>
+            <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">json_serial</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">._gmsh</span> <span class="kn">import</span> <span class="n">slab_in_bath</span>
+
+    <span class="n">mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;slab_in_bath.msh&quot;</span>
+    <span class="n">slab_in_bath</span><span class="p">(</span>
+        <span class="n">mesh_name</span><span class="o">=</span><span class="n">mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+        <span class="n">lx</span><span class="o">=</span><span class="n">lx</span><span class="p">,</span>
+        <span class="n">ly</span><span class="o">=</span><span class="n">ly</span><span class="p">,</span>
+        <span class="n">lz</span><span class="o">=</span><span class="n">lz</span><span class="p">,</span>
+        <span class="n">bx</span><span class="o">=</span><span class="n">bx</span><span class="p">,</span>
+        <span class="n">by</span><span class="o">=</span><span class="n">by</span><span class="p">,</span>
+        <span class="n">bz</span><span class="o">=</span><span class="n">bz</span><span class="p">,</span>
+        <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_dolfin</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="kn">from</span> <span class="nn">.dolfin_utils</span> <span class="kn">import</span> <span class="n">gmsh2dolfin</span>
+
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">gmsh2dolfin</span><span class="p">(</span><span class="n">mesh_name</span><span class="p">,</span> <span class="n">unlink</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;markers.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">markers</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">json_serial</span><span class="p">)</span>
+
+    <span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_tmpfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_tmpfile</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">geo</span></div>
 </pre></div>
 
                 </article>
@@ -1015,7 +1121,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 22, 2023.
+  Last updated on Aug 08, 2023.
   <br/>
 </p>
   </div>

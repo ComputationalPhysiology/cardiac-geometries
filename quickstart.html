@@ -367,6 +367,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-the-data-in-another-format">Saving the data in another format</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-slab-in-a-bath">Creating a slab in a bath</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-lv-ellipsoid">Creating a lv ellipsoid</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">Creating the mesh from the Land Cardiac Mechanics Benchmark paper</a></li>
 </ul>
@@ -578,6 +579,23 @@ Notice also that the schema now has entries for the microstructure, for example 
 </div>
 </section>
 </section>
+<section id="creating-a-slab-in-a-bath">
+<h2>Creating a slab in a bath<a class="headerlink" href="#creating-a-slab-in-a-bath" title="Permalink to this heading">#</a></h2>
+<p>In many applications of cardiac electrophysiology it is common to study the bath-loading effects, see e.g</p>
+<blockquote>
+<div><p>Bishop, Martin J., and Gernot Plank. “Representing cardiac bidomain bath-loading effects by an augmented monodomain approach: application to complex ventricular models.” IEEE Transactions on Biomedical Engineering 58.4 (2011): 1066-1075.</p>
+</div></blockquote>
+<p>In this case it is of interest to create a slab surrounded by a conducting media. This can be done with the following command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cardiac</span><span class="o">-</span><span class="n">geometries</span> <span class="n">create</span><span class="o">-</span><span class="n">slab</span><span class="o">-</span><span class="ow">in</span><span class="o">-</span><span class="n">bath</span> <span class="n">slab_in_bath</span> <span class="o">--</span><span class="n">lx</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">--</span><span class="n">ly</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">--</span><span class="n">ly</span><span class="o">=</span><span class="mf">3.0</span> <span class="o">--</span><span class="n">bx</span><span class="o">=</span><span class="mf">0.1</span> <span class="o">--</span><span class="n">by</span><span class="o">=</span><span class="mf">0.2</span> <span class="o">--</span><span class="n">bz</span><span class="o">=</span><span class="mf">0.3</span> <span class="o">--</span><span class="n">dx</span><span class="o">=</span><span class="mf">0.05</span>
+</pre></div>
+</div>
+<figure class="align-default" id="slab-in-bath">
+<img alt="_images/slab_in_bath.png" src="_images/slab_in_bath.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Slab geometry of dimension <span class="math notranslate nohighlight">\([0, l_x] \times [0, ly] \times [0, lz] = [0, 1] \times [0, 2] \times [0, 2]\)</span> embedded in a bath of width <span class="math notranslate nohighlight">\(b_x = 0.1\)</span>, <span class="math notranslate nohighlight">\(b_y = 0.2\)</span> and <span class="math notranslate nohighlight">\(b_z = 0.3\)</span> respectively in the <span class="math notranslate nohighlight">\(x-, y-\)</span> and <span class="math notranslate nohighlight">\(z\)</span> direction.</span><a class="headerlink" href="#slab-in-bath" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
 <section id="creating-a-lv-ellipsoid">
 <h2>Creating a lv ellipsoid<a class="headerlink" href="#creating-a-lv-ellipsoid" title="Permalink to this heading">#</a></h2>
 <p>You can create a left ellipsoidal ventricular geometry by using the following command</p>
@@ -588,7 +606,7 @@ Notice also that the schema now has entries for the microstructure, for example 
 <figure class="align-default" id="fiber-lv">
 <img alt="_images/fiber_lv.png" src="_images/fiber_lv.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 2 </span><span class="caption-text">LV-ellipsoidal mesh and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#fiber-lv" title="Permalink to this image">#</a></p>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">LV-ellipsoidal mesh and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#fiber-lv" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 <section id="creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">
@@ -629,7 +647,7 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 <figure class="align-default" id="biv">
 <img alt="_images/biv.png" src="_images/biv.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 3 </span><span class="caption-text">BiV-ellipsoidal mesh, facet markers and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#biv" title="Permalink to this image">#</a></p>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">BiV-ellipsoidal mesh, facet markers and fibers with <span class="math notranslate nohighlight">\(-60^{\circ}\)</span> angle on the endocardium and <span class="math notranslate nohighlight">\(60^{\circ}\)</span> angle on the epicardium.</span><a class="headerlink" href="#biv" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -642,13 +660,13 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 <figure class="align-default" id="biv-torso">
 <img alt="https://user-images.githubusercontent.com/2010323/233998680-2691f4b3-d004-4225-b57a-21e9da67f4ef.png" src="https://user-images.githubusercontent.com/2010323/233998680-2691f4b3-d004-4225-b57a-21e9da67f4ef.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Idealized BiV embedded in an idealized torso</span><a class="headerlink" href="#biv-torso" title="Permalink to this image">#</a></p>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Idealized BiV embedded in an idealized torso</span><a class="headerlink" href="#biv-torso" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="biv-torso-markers">
 <img alt="https://user-images.githubusercontent.com/2010323/233997154-379e5845-c220-4daf-b111-73d30b33c12c.png" src="https://user-images.githubusercontent.com/2010323/233997154-379e5845-c220-4daf-b111-73d30b33c12c.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Showing the facet markers for the biv embedded in a torso</span><a class="headerlink" href="#biv-torso-markers" title="Permalink to this image">#</a></p>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">Showing the facet markers for the biv embedded in a torso</span><a class="headerlink" href="#biv-torso-markers" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -729,6 +747,7 @@ behaviour. Proc. R. Soc. A. 2015 Dec 8;471(2184):20150641.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-the-data-in-another-format">Saving the data in another format</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-slab-in-a-bath">Creating a slab in a bath</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-lv-ellipsoid">Creating a lv ellipsoid</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-mesh-from-the-land-cardiac-mechanics-benchmark-paper">Creating the mesh from the Land Cardiac Mechanics Benchmark paper</a></li>
 </ul>
@@ -767,7 +786,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 22, 2023.
+  Last updated on Aug 08, 2023.
   <br/>
 </p>
   </div>
