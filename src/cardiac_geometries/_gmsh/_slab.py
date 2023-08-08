@@ -77,6 +77,32 @@ def slab_in_bath(
     bz=0.1,
     dx=0.001,
 ):
+    """Create slab inside a bath
+
+    Parameters
+    ----------
+    mesh_name : str, optional
+        Name of o, by default ""
+    lx : float, optional
+        _description_, by default 1.0
+    ly : float, optional
+        _description_, by default 0.01
+    lz : float, optional
+        _description_, by default 0.5
+    bx : float, optional
+        _description_, by default 0.0
+    by : float, optional
+        _description_, by default 0.0
+    bz : float, optional
+        _description_, by default 0.1
+    dx : float, optional
+        _description_, by default 0.001
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
 
     path = utils.handle_mesh_name(mesh_name=mesh_name)
     # Initialize gmsh:

@@ -733,7 +733,16 @@ def create_slab_in_bath(
     from ._gmsh import slab_in_bath
 
     mesh_name = outdir / "slab_in_bath.msh"
-    slab_in_bath(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
+    slab_in_bath(
+        mesh_name=mesh_name.as_posix(),
+        lx=lx,
+        ly=ly,
+        lz=lz,
+        bx=bx,
+        by=by,
+        bz=bz,
+        dx=dx,
+    )
 
     if not has_dolfin():
         return None
