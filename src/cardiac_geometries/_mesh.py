@@ -385,6 +385,20 @@ def create_biv_ellipsoid_torso(
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
 
+    if create_fibers:
+        from .fibers._biv_ellipsoid import create_biv_in_torso_fibers
+
+        create_biv_in_torso_fibers(
+            mesh=geometry.mesh,
+            ffun=geometry.marker_functions.ffun,
+            cfun=geometry.marker_functions.cfun,
+            markers=geometry.markers,
+            fiber_space=fiber_space,
+            alpha_endo=fiber_angle_endo,
+            alpha_epi=fiber_angle_epi,
+            outdir=outdir,
+        )
+
     geo = Geometry.from_folder(outdir)
 
     if _tmpfile is not None:
