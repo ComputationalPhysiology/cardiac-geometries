@@ -408,7 +408,7 @@ def create_biv_ellipsoid(
 )
 @click.option(
     "--heart-as-surface/--heart-as-volume",
-    default=True,
+    default=False,
     help="Whether the heart should be a surface of a volume inside the torso",
     show_default=True,
 )

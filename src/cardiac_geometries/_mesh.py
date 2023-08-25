@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import math
 import tempfile
 from importlib.metadata import metadata
@@ -15,6 +16,7 @@ from .utils import json_serial
 
 meta = metadata("cardiac_geometries")
 __version__ = meta["Version"]
+logger = logging.getLogger(__name__)
 
 
 def create_biv_ellipsoid(
@@ -201,7 +203,7 @@ def create_biv_ellipsoid(
 def create_biv_ellipsoid_torso(
     outdir: Union[str, Path, None] = None,
     char_length: float = 0.5,
-    heart_as_surface: bool = True,
+    heart_as_surface: bool = False,
     torso_length: float = 20.0,
     torso_width: float = 20.0,
     torso_height: float = 20.0,
@@ -384,6 +386,23 @@ def create_biv_ellipsoid_torso(
 
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
+
+    if create_fibers:
+        if heart_as_surface:
+            logger.warning("Can only create fibers when heart is a volume.")
+        else:
+            from .fibers._biv_ellipsoid import create_biv_in_torso_fibers
+
+            create_biv_in_torso_fibers(
+                mesh=geometry.mesh,
+                ffun=geometry.marker_functions.ffun,
+                cfun=geometry.marker_functions.cfun,
+                markers=geometry.markers,
+                fiber_space=fiber_space,
+                alpha_endo=fiber_angle_endo,
+                alpha_epi=fiber_angle_epi,
+                outdir=outdir,
+            )
 
     geo = Geometry.from_folder(outdir)
 
