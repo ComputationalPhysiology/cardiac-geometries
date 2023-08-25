@@ -66,7 +66,7 @@ def test_create_biv_ellipsoid_torso(tmp_path: Path):
     runner = CliRunner()
     res1 = runner.invoke(
         cli.create_biv_ellipsoid_torso,
-        [tmp_path.as_posix()],
+        ["--create-fibers", tmp_path.as_posix()],
     )
     assert res1.exit_code == 0
     outfile = tmp_path / "geo.h5"

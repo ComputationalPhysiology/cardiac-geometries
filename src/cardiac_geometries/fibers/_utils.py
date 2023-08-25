@@ -26,8 +26,10 @@ def save_microstructure(
         h5file.write(system.s0, "s0")
         h5file.write(system.n0, "n0")
 
+
 def facet_function_from_heart_mesh(
-    ffun: dolfin.MeshFunction, heart_mesh: dolfin.Mesh
+    ffun: dolfin.MeshFunction,
+    heart_mesh: dolfin.Mesh,
 ) -> dolfin.MeshFunction:
     try:
         from scipy.spatial import KDTree

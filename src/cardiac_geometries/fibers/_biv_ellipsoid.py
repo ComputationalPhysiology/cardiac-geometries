@@ -9,8 +9,9 @@ import numpy as np
 import ufl
 
 from .._import_checks import has_ldrb
+from ._utils import facet_function_from_heart_mesh
 from ._utils import Microstructure
-from ._utils import save_microstructure, facet_function_from_heart_mesh
+from ._utils import save_microstructure
 
 
 def create_biv_fibers(
