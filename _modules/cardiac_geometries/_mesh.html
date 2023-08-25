@@ -311,6 +311,7 @@ document.write(`
   <h1>Source code for cardiac_geometries._mesh</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">metadata</span>
@@ -326,6 +327,7 @@ document.write(`
 
 <span class="n">meta</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">(</span><span class="s2">&quot;cardiac_geometries&quot;</span><span class="p">)</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Version&quot;</span><span class="p">]</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="create_biv_ellipsoid"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_biv_ellipsoid">[docs]</a><span class="k">def</span> <span class="nf">create_biv_ellipsoid</span><span class="p">(</span>
@@ -512,7 +514,7 @@ document.write(`
 <div class="viewcode-block" id="create_biv_ellipsoid_torso"><a class="viewcode-back" href="../../api.html#cardiac_geometries._mesh.create_biv_ellipsoid_torso">[docs]</a><span class="k">def</span> <span class="nf">create_biv_ellipsoid_torso</span><span class="p">(</span>
     <span class="n">outdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">char_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">heart_as_surface</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">heart_as_surface</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">torso_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
     <span class="n">torso_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
     <span class="n">torso_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
@@ -695,6 +697,23 @@ document.write(`
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;markers.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">markers</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">json_serial</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">create_fibers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">heart_as_surface</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can only create fibers when heart is a volume.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.fibers._biv_ellipsoid</span> <span class="kn">import</span> <span class="n">create_biv_in_torso_fibers</span>
+
+            <span class="n">create_biv_in_torso_fibers</span><span class="p">(</span>
+                <span class="n">mesh</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span>
+                <span class="n">ffun</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">marker_functions</span><span class="o">.</span><span class="n">ffun</span><span class="p">,</span>
+                <span class="n">cfun</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">marker_functions</span><span class="o">.</span><span class="n">cfun</span><span class="p">,</span>
+                <span class="n">markers</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">markers</span><span class="p">,</span>
+                <span class="n">fiber_space</span><span class="o">=</span><span class="n">fiber_space</span><span class="p">,</span>
+                <span class="n">alpha_endo</span><span class="o">=</span><span class="n">fiber_angle_endo</span><span class="p">,</span>
+                <span class="n">alpha_epi</span><span class="o">=</span><span class="n">fiber_angle_epi</span><span class="p">,</span>
+                <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
 
