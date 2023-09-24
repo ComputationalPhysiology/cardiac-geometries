@@ -8,7 +8,11 @@ from typing import Union
 
 import dolfin
 import numpy as np
-import ufl
+
+try:
+    import ufl_legacy as ufl
+except ImportError:
+    import ufl
 
 
 def value_size(obj: ufl.Coefficient) -> Union[List[int], int]:
