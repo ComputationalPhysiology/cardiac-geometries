@@ -6,7 +6,11 @@ from typing import Union
 
 import dolfin
 import numpy as np
-import ufl
+
+try:
+    import ufl_legacy as ufl
+except ImportError:
+    import ufl
 
 from .._import_checks import has_ldrb
 from ._utils import facet_function_from_heart_mesh
