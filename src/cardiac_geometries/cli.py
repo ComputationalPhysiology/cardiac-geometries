@@ -130,7 +130,7 @@ def app():
     show_default=True,
 )
 @click.option(
-    "--aha",
+    "--aha/--no-aha",
     default=True,
     is_flag=True,
     type=bool,

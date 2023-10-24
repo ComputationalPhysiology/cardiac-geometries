@@ -30,7 +30,8 @@ def cartesian_to_prolate_ellipsoidal(x, y, z, a):
 
 def get_level(regions, mu):
     A = np.intersect1d(
-        np.where((regions.T[3] <= mu))[0], np.where((mu <= regions.T[0]))[0]
+        np.where((regions.T[3] <= mu))[0],
+        np.where((mu <= regions.T[0]))[0],
     )
     if len(A) == 0:
         return [np.shape(regions)[0] + 1]
@@ -120,7 +121,10 @@ class AHA_LV_17(dolfin.UserExpression):
 
 
 def lv_aha(
-    geometry: Geometry, r_long_endo: float, r_short_endo: float, mu_base: float
+    geometry: Geometry,
+    r_long_endo: float,
+    r_short_endo: float,
+    mu_base: float,
 ) -> Geometry:
     foc = focal(r_long_endo=r_long_endo, r_short_endo=r_short_endo)
 

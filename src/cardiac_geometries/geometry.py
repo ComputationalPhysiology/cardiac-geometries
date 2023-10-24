@@ -112,6 +112,19 @@ class H5Path(NamedTuple):
         return self._asdict()
 
 
+def find_schema_in_folder(folder: Path) -> Optional[Dict[str, H5Path]]:
+    # First look for a schema file
+    for f in folder.iterdir():
+        if f.suffix == ".json":
+            try:
+                schema = load_schema(f)
+            except Exception:
+                pass
+            else:
+                return schema
+    return None
+
+
 def load_schema(path: Path) -> Optional[Dict[str, H5Path]]:
     if not path.is_file():
         return None
@@ -174,7 +187,10 @@ def read(
         raise RuntimeError(f"Unknown file format for {fname}")
 
 
-def extract_fname_group(fname: str, folder=".") -> Tuple[Path, Optional[str]]:
+def extract_fname_group(
+    fname: str,
+    folder: Union[Path, str] = ".",
+) -> Tuple[Path, Optional[str]]:
     fg = fname.split(":")
     if len(fg) == 1:
         return Path(folder) / fg[0], None
@@ -466,24 +482,13 @@ class Geometry:
         folder = Path(folder)
 
         if schema is None:
-            # First look for a schema file
-            for f in folder.iterdir():
-                if f.suffix == ".json":
-                    try:
-                        schema = load_schema(f)
-                    except Exception:
-                        continue
-                    else:
-                        break
-
-            else:
+            if (schema := find_schema_in_folder(folder)) is None:
                 schema = cls.default_schema()
-
+        assert schema is not None
         # Load mesh first
         data = {}
 
         for name, p in schema.items():
-            print(name, p)
             if p.fname == "":
                 continue
             if not p.is_mesh:
