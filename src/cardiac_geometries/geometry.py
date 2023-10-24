@@ -466,12 +466,24 @@ class Geometry:
         folder = Path(folder)
 
         if schema is None:
-            schema = cls.default_schema()
+            # First look for a schema file
+            for f in folder.iterdir():
+                if f.suffix == ".json":
+                    try:
+                        schema = load_schema(f)
+                    except Exception:
+                        continue
+                    else:
+                        break
+
+            else:
+                schema = cls.default_schema()
 
         # Load mesh first
         data = {}
 
         for name, p in schema.items():
+            print(name, p)
             if p.fname == "":
                 continue
             if not p.is_mesh:

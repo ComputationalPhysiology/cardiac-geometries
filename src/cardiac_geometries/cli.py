@@ -129,6 +129,14 @@ def app():
     help="Function space for fibers of the form family_degree",
     show_default=True,
 )
+@click.option(
+    "--aha",
+    default=True,
+    is_flag=True,
+    type=bool,
+    help="If True create 17-segment AHA regions",
+    show_default=True,
+)
 def create_lv_ellipsoid(
     outdir: Path,
     r_short_endo: float = 7.0,
@@ -144,6 +152,7 @@ def create_lv_ellipsoid(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
+    aha: bool = True,
 ):
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
@@ -165,6 +174,7 @@ def create_lv_ellipsoid(
         fiber_angle_endo=fiber_angle_endo,
         fiber_angle_epi=fiber_angle_epi,
         fiber_space=fiber_space,
+        aha=aha,
     )
     if geo is not None:
         geo.save(outdir / "lv_ellipsoid.h5")
