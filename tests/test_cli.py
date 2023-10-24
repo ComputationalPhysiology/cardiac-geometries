@@ -46,6 +46,16 @@ def test_create_lv_ellipsoid(tmp_path: Path):
     geo = Geometry.from_file(outfile)
     assert geo.f0 is not None
 
+    # Make sure all aha regions have nonzero volume
+    import dolfin
+
+    dx = dolfin.dx(domain=geo.mesh, subdomain_data=geo.cfun)
+    for k, v in geo.markers.items():
+        if v[1] != 3:
+            continue
+        vol = dolfin.assemble(dolfin.Constant(1.0) * dx(v[0]))
+        assert vol > 0, k
+
 
 def test_create_biv_ellipsoid(tmp_path: Path):
     runner = CliRunner()

@@ -427,6 +427,7 @@ def create_lv_ellipsoid(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
+    aha: bool = True,
 ) -> Optional[Geometry]:
     """Create an LV ellipsoidal geometry
 
@@ -461,6 +462,8 @@ def create_lv_ellipsoid(
         Angle for the epicardium, by default +60
     fiber_space : str, optional
         Function space for fibers of the form family_degree, by default "P_1"
+    aha : bool, optional
+        If True create 17-segment AHA regions
 
     Returns
     -------
@@ -501,6 +504,7 @@ def create_lv_ellipsoid(
                 "fibers_angle_endo": fiber_angle_endo,
                 "fibers_angle_epi": fiber_angle_epi,
                 "fiber_space": fiber_space,
+                "aha": aha,
                 "mesh_type": MeshTypes.lv_ellipsoid.value,
                 "cardiac_geometry_version": __version__,
                 "timestamp": datetime.datetime.now().isoformat(),
@@ -533,6 +537,20 @@ def create_lv_ellipsoid(
 
     geometry = gmsh2dolfin(mesh_name, unlink=False)
 
+    if aha:
+        from .aha import lv_aha
+
+        geometry = lv_aha(
+            geometry=geometry,
+            r_long_endo=r_long_endo,
+            r_short_endo=r_short_endo,
+            mu_base=mu_base_endo,
+        )
+        from dolfin import XDMFFile
+
+        with XDMFFile((outdir / "cfun.xdmf").as_posix()) as xdmf:
+            xdmf.write(geometry.marker_functions.cfun)
+
     with open(outdir / "markers.json", "w") as f:
         json.dump(geometry.markers, f, default=json_serial)
 
@@ -554,6 +572,13 @@ def create_lv_ellipsoid(
         )
 
     geo = Geometry.from_folder(outdir)
+    if aha:
+        # Update schema
+        from .geometry import H5Path
+
+        cfun = geo.schema["cfun"].to_dict()
+        cfun["fname"] = "cfun.xdmf:f"
+        geo.schema["cfun"] = H5Path(**cfun)
 
     if _tmpfile is not None:
         _tmpfile.__exit__(None, None, None)
