@@ -22,13 +22,6 @@ except (ImportError, OSError):
     _has_gmsh = False
 
 try:
-    import mshr  # noqa: F401
-
-    _has_mshr = True
-except (ImportError, OSError):
-    _has_mshr = False
-
-try:
     import ldrb  # noqa: F401
 
     _has_ldrb = True
@@ -50,7 +43,3 @@ def has_gmsh() -> bool:
 
 def has_ldrb() -> bool:
     return _has_ldrb
-
-
-def has_mshr() -> bool:
-    return _has_mshr

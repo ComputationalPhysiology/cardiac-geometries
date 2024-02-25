@@ -3,11 +3,10 @@ from ._import_checks import has_dolfin
 from ._import_checks import has_gmsh
 from ._import_checks import has_ldrb
 from ._import_checks import has_meshio
-from ._import_checks import has_mshr
 
 
 if has_gmsh():
-    from . import _gmsh as gmsh
+    import cardiac_geometries_core as gmsh
 else:
     gmsh = None  # type: ignore
 
@@ -37,19 +36,13 @@ else:
     lv_aha = None  # type: ignore
     biv_aha = None  # type: ignore
 
-if has_mshr():
-    from . import _mshr as mshr
-else:
-    mshr = None  # type: ignore
 
 __all__ = [
     "has_dolfin",
     "has_gmsh",
     "has_ldrb",
     "has_meshio",
-    "has_mshr",
     "calculus",
-    "mshr",
     "gmsh",
     "gmsh2dolfin",
     "slab_fibers",

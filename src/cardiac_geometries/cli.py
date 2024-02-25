@@ -200,6 +200,13 @@ def create_lv_ellipsoid(
     show_default=True,
 )
 @click.option(
+    "--center-lv-x",
+    default=0.0,
+    type=float,
+    help="X-coordinate for the center of the lv",
+    show_default=True,
+)
+@click.option(
     "--center-lv-y",
     default=0.0,
     type=float,
@@ -253,6 +260,13 @@ def create_lv_ellipsoid(
     default=1.5,
     type=float,
     help="Dilation of lv epi ellipsoid in the y-direction",
+    show_default=True,
+)
+@click.option(
+    "--center-rv-x",
+    default=0.0,
+    type=float,
+    help="X-coordinate for the center of the rv",
     show_default=True,
 )
 @click.option(
@@ -343,6 +357,7 @@ def create_lv_ellipsoid(
 def create_biv_ellipsoid(
     outdir: Path,
     char_length: float = 0.5,
+    center_lv_x: float = 0.0,
     center_lv_y: float = 0.0,
     center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
@@ -351,6 +366,7 @@ def create_biv_ellipsoid(
     a_epi_lv: float = 3.0,
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
+    center_rv_x: float = 0.0,
     center_rv_y: float = 0.5,
     center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
@@ -454,10 +470,24 @@ def create_biv_ellipsoid(
     show_default=True,
 )
 @click.option(
+    "--center-lv-x",
+    default=0.0,
+    type=float,
+    help="X-coordinate for the center of the lv",
+    show_default=True,
+)
+@click.option(
     "--center-lv-y",
     default=0.0,
     type=float,
     help="Y-coordinate for the center of the lv",
+    show_default=True,
+)
+@click.option(
+    "--center-lv-z",
+    default=0.0,
+    type=float,
+    help="Z-coordinate for the center of the lv",
     show_default=True,
 )
 @click.option(
@@ -503,10 +533,24 @@ def create_biv_ellipsoid(
     show_default=True,
 )
 @click.option(
+    "--center-rv-x",
+    default=0.0,
+    type=float,
+    help="X-coordinate for the center of the rv",
+    show_default=True,
+)
+@click.option(
     "--center-rv-y",
     default=0.5,
     type=float,
     help="Y-coordinate for the center of the rv",
+    show_default=True,
+)
+@click.option(
+    "--center-rv-z",
+    default=0.0,
+    type=float,
+    help="Z-coordinate for the center of the rv",
     show_default=True,
 )
 @click.option(
@@ -588,14 +632,18 @@ def create_biv_ellipsoid_torso(
     torso_width: float = 20.0,
     torso_height: float = 20.0,
     rotation_angle: float = math.pi / 6,
+    center_lv_x: float = 0.0,
     center_lv_y: float = 0.0,
+    center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
     b_endo_lv: float = 1.0,
     c_endo_lv: float = 1.0,
     a_epi_lv: float = 3.0,
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
+    center_rv_x: float = 0.0,
     center_rv_y: float = 0.5,
+    center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
     b_endo_rv: float = 1.5,
     c_endo_rv: float = 1.5,
@@ -620,14 +668,18 @@ def create_biv_ellipsoid_torso(
         torso_height=torso_height,
         torso_width=torso_width,
         rotation_angle=rotation_angle,
+        center_lv_x=center_lv_x,
         center_lv_y=center_lv_y,
+        center_lv_z=center_lv_z,
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
+        center_rv_x=center_rv_x,
         center_rv_y=center_rv_y,
+        center_rv_z=center_rv_z,
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
