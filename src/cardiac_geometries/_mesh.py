@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 def create_biv_ellipsoid(
     outdir: Union[str, Path, None] = None,
     char_length: float = 0.5,
+    center_lv_x: float = 0.0,
     center_lv_y: float = 0.0,
     center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
@@ -30,6 +31,7 @@ def create_biv_ellipsoid(
     a_epi_lv: float = 3.0,
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
+    center_rv_x: float = 0.0,
     center_rv_y: float = 0.5,
     center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
@@ -53,6 +55,8 @@ def create_biv_ellipsoid(
     char_length : float, optional
         Characteristic length of mesh, by default 0.5
     center_lv_y : float, optional
+        X-coordinate for the center of the lv, by default 0.0
+    center_lv_y : float, optional
         Y-coordinate for the center of the lv, by default 0.0
     center_lv_z : float, optional
         Z-coordinate for the center of the lv, by default 0.0
@@ -68,6 +72,8 @@ def create_biv_ellipsoid(
         Dilation of lv epi ellipsoid in the y-direction, by default 1.5
     c_epi_lv : float, optional
         Dilation of lv epi ellipsoid in the z-direction, by default 1.5
+    center_rv_x : float, optional
+        X-coordinate for the center of the rv, by default 0.0
     center_rv_y : float, optional
         Y-coordinate for the center of the rv, by default 0.5
     center_rv_z : float, optional
@@ -112,7 +118,7 @@ def create_biv_ellipsoid(
         _tmpfile = tempfile.TemporaryDirectory()
         outdir = _tmpfile.__enter__()
 
-    from ._gmsh import biv_ellipsoid
+    from cardiac_geometries_core import biv_ellipsoid
 
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True, parents=True)
@@ -121,14 +127,18 @@ def create_biv_ellipsoid(
         json.dump(
             {
                 "char_length": char_length,
-                "center_lv": (0.0, center_lv_y, center_lv_z),
+                "center_lv_x": center_lv_x,
+                "center_lv_y": center_lv_y,
+                "center_lv_z": center_lv_z,
                 "a_endo_lv": a_endo_lv,
                 "b_endo_lv": b_endo_lv,
                 "c_endo_lv": c_endo_lv,
                 "a_epi_lv": a_epi_lv,
                 "b_epi_lv": b_epi_lv,
                 "c_epi_lv": c_epi_lv,
-                "center_rv": (0.0, center_rv_y, center_rv_z),
+                "center_rv_x": center_rv_x,
+                "center_rv_y": center_rv_y,
+                "center_rv_z": center_rv_z,
                 "a_endo_rv": a_endo_rv,
                 "b_endo_rv": b_endo_rv,
                 "c_endo_rv": c_endo_rv,
@@ -153,14 +163,18 @@ def create_biv_ellipsoid(
     biv_ellipsoid(
         mesh_name=mesh_name.as_posix(),
         char_length=char_length,
-        center_lv=(0.0, center_lv_y, center_lv_z),
+        center_lv_x=center_lv_x,
+        center_lv_y=center_lv_y,
+        center_lv_z=center_lv_z,
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
-        center_rv=(0.0, center_rv_y, center_rv_z),
+        center_rv_x=center_rv_x,
+        center_rv_y=center_rv_y,
+        center_rv_z=center_rv_z,
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
@@ -208,6 +222,7 @@ def create_biv_ellipsoid_torso(
     torso_width: float = 20.0,
     torso_height: float = 20.0,
     rotation_angle: float = math.pi / 6,
+    center_lv_x: float = 0.0,
     center_lv_y: float = 0.0,
     center_lv_z: float = 0.0,
     a_endo_lv: float = 2.5,
@@ -216,6 +231,7 @@ def create_biv_ellipsoid_torso(
     a_epi_lv: float = 3.0,
     b_epi_lv: float = 1.5,
     c_epi_lv: float = 1.5,
+    center_rv_x: float = 0.0,
     center_rv_y: float = 0.5,
     center_rv_z: float = 0.0,
     a_endo_rv: float = 3.0,
@@ -250,6 +266,8 @@ def create_biv_ellipsoid_torso(
     rotation_angle: float, optional
         Angle to rotate the torso in order to object realistic position of
         the heart in a torso, by default pi / 6
+    center_lv_x : float, optional
+        X-coordinate for the center of the lv, by default 0.0
     center_lv_y : float, optional
         Y-coordinate for the center of the lv, by default 0.0
     center_lv_z : float, optional
@@ -266,6 +284,8 @@ def create_biv_ellipsoid_torso(
         Dilation of lv epi ellipsoid in the y-direction, by default 1.5
     c_epi_lv : float, optional
         Dilation of lv epi ellipsoid in the z-direction, by default 1.5
+    center_rv_x : float, optional
+        X-coordinate for the center of the rv, by default 0.0
     center_rv_y : float, optional
         Y-coordinate for the center of the rv, by default 0.5
     center_rv_z : float, optional
@@ -310,7 +330,7 @@ def create_biv_ellipsoid_torso(
         _tmpfile = tempfile.TemporaryDirectory()
         outdir = _tmpfile.__enter__()
 
-    from ._gmsh import biv_ellipsoid_torso
+    from cardiac_geometries_core import biv_ellipsoid_torso
 
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True, parents=True)
@@ -324,14 +344,18 @@ def create_biv_ellipsoid_torso(
                 "torso_width": torso_width,
                 "torso_height": torso_height,
                 "rotation_angle": rotation_angle,
-                "center_lv": (0.0, center_lv_y, center_lv_z),
+                "center_lv_x": center_lv_x,
+                "center_lv_y": center_lv_y,
+                "center_lv_z": center_lv_z,
                 "a_endo_lv": a_endo_lv,
                 "b_endo_lv": b_endo_lv,
                 "c_endo_lv": c_endo_lv,
                 "a_epi_lv": a_epi_lv,
                 "b_epi_lv": b_epi_lv,
                 "c_epi_lv": c_epi_lv,
-                "center_rv": (0.0, center_rv_y, center_rv_z),
+                "center_rv_x": center_rv_x,
+                "center_rv_y": center_rv_y,
+                "center_rv_z": center_rv_z,
                 "a_endo_rv": a_endo_rv,
                 "b_endo_rv": b_endo_rv,
                 "c_endo_rv": c_endo_rv,
@@ -361,14 +385,18 @@ def create_biv_ellipsoid_torso(
         torso_height=torso_height,
         torso_width=torso_width,
         rotation_angle=rotation_angle,
-        center_lv=(0.0, center_lv_y, center_lv_z),
+        center_lv_x=center_lv_x,
+        center_lv_y=center_lv_y,
+        center_lv_z=center_lv_z,
         a_endo_lv=a_endo_lv,
         b_endo_lv=b_endo_lv,
         c_endo_lv=c_endo_lv,
         a_epi_lv=a_epi_lv,
         b_epi_lv=b_epi_lv,
         c_epi_lv=c_epi_lv,
-        center_rv=(0.0, center_rv_y, center_rv_z),
+        center_rv_x=center_rv_x,
+        center_rv_y=center_rv_y,
+        center_rv_z=center_rv_z,
         a_endo_rv=a_endo_rv,
         b_endo_rv=b_endo_rv,
         c_endo_rv=c_endo_rv,
@@ -514,7 +542,7 @@ def create_lv_ellipsoid(
             default=json_serial,
         )
 
-    from ._gmsh import lv_ellipsoid
+    from cardiac_geometries_core import lv_ellipsoid
 
     mesh_name = outdir / "lv_ellipsoid.msh"
     lv_ellipsoid(
@@ -664,7 +692,7 @@ def create_slab(
             default=json_serial,
         )
 
-    from ._gmsh import slab
+    from cardiac_geometries_core import slab
 
     mesh_name = outdir / "slab.msh"
     slab(mesh_name=mesh_name.as_posix(), lx=lx, ly=ly, lz=lz, dx=dx)
@@ -774,7 +802,7 @@ def create_slab_in_bath(
             default=json_serial,
         )
 
-    from ._gmsh import slab_in_bath
+    from cardiac_geometries_core import slab_in_bath
 
     mesh_name = outdir / "slab_in_bath.msh"
     slab_in_bath(
