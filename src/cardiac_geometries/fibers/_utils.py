@@ -22,9 +22,27 @@ def save_microstructure(
         return
     path = Path(outdir) / "microstructure.h5"
     with dolfin.HDF5File(comm, Path(path).as_posix(), "w") as h5file:
-        h5file.write(system.f0, "f0")
-        h5file.write(system.s0, "s0")
-        h5file.write(system.n0, "n0")
+        h5file.write_checkpoint(
+            system.f0,
+            function_name="f0",
+            time_step=0,
+            encoding=dolfin.XDMFFile.Encoding.HDF5,
+            append=False,
+        )
+        h5file.write_checkpoint(
+            system.s0,
+            function_name="s0",
+            time_step=0,
+            encoding=dolfin.XDMFFile.Encoding.HDF5,
+            append=False,
+        )
+        h5file.write_checkpoint(
+            system.n0,
+            function_name="f0",
+            time_step=0,
+            encoding=dolfin.XDMFFile.Encoding.HDF5,
+            append=False,
+        )
 
 
 def facet_function_from_heart_mesh(
