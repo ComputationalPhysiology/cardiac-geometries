@@ -47,6 +47,7 @@ def gmsh2dolfin(
     msh_file: typing.Union[Path, str],
     outdir: typing.Optional[typing.Union[Path, str]] = None,
     unlink: bool = False,
+    axissymmetric: bool = False,
 ) -> Geometry:
     msh = meshio.gmsh.read(msh_file)
     if outdir is None:
@@ -73,22 +74,29 @@ def gmsh2dolfin(
     if triangle_mesh is not None:
         meshio.write(triangle_mesh_name, triangle_mesh)
 
-    if tetra_mesh is None:
-        raise RuntimeError("Unable to create mesh")
+    tetra_mesh_name = outdir / "tetra_mesh.xdmf"
+    if tetra_mesh is not None:
+        meshio.write(tetra_mesh_name, tetra_mesh)
 
-    tetra_mesh_name = outdir / "mesh.xdmf"
-    meshio.write(
-        tetra_mesh_name,
-        tetra_mesh,
-    )
+    if not axissymmetric and tetra_mesh is None:
+        raise RuntimeError("Unable to create mesh")
+    if axissymmetric and triangle_mesh is None:
+        raise RuntimeError("Unable to create mesh")
 
     mesh = dolfin.Mesh()
 
-    with dolfin.XDMFFile(tetra_mesh_name.as_posix()) as infile:
-        infile.read(mesh)
+    if axissymmetric:
+        with dolfin.XDMFFile(triangle_mesh_name.as_posix()) as infile:
+            infile.read(mesh)
+        meshio.write(outdir / "mesh.xdmf", triangle_mesh)
+        cfun = None
+    else:
+        with dolfin.XDMFFile(tetra_mesh_name.as_posix()) as infile:
+            infile.read(mesh)
+        meshio.write(outdir / "mesh.xdmf", tetra_mesh)
 
-    cfun = dolfin.MeshFunction("size_t", mesh, 3)
-    read_meshfunction(tetra_mesh_name, cfun)
+        cfun = dolfin.MeshFunction("size_t", mesh, 3)
+        read_meshfunction(tetra_mesh_name, cfun)
     if unlink:
         tetra_mesh_name.unlink(missing_ok=True)
         tetra_mesh_name.with_suffix(".h5").unlink(missing_ok=True)

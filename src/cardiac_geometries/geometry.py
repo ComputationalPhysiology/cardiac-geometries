@@ -14,9 +14,10 @@ from typing import Union
 
 try:
     import dolfin
-    from dolfin import FiniteElement  # noqa: F401
-    from dolfin import tetrahedron  # noqa: F401
-    from dolfin import VectorElement  # noqa: F401
+    from ufl_legacy import FiniteElement  # noqa: F401
+    from ufl_legacy import tetrahedron  # noqa: F401
+    from ufl_legacy import Cell  # noqa: F401
+    from ufl_legacy import VectorElement  # noqa: F401
 
     from .viz import dict_to_h5
     from .viz import h5_to_dict
@@ -48,7 +49,7 @@ class H5Paths(str, Enum):
 
 class FileNames(str, Enum):
     mesh = "mesh.xdmf"
-    cfun = "mesh.xdmf:name_to_read"
+    cfun = "tetra_mesh.xdmf:name_to_read"
     ffun = "triangle_mesh.xdmf:name_to_read"
     efun = "line_mesh.xdmf:name_to_read"
     vfun = "vertex_mesh.xdmf:name_to_read"
@@ -523,6 +524,7 @@ class Geometry:
                 if signature is None:
                     continue
                 current_mesh = data[p.mesh_key]
+
                 sig = eval(signature)
                 sig._quad_scheme = "default"
                 V = dolfin.FunctionSpace(current_mesh, sig)

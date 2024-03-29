@@ -455,7 +455,8 @@ def create_lv_ellipsoid(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
-    aha: bool = True,
+    aha: bool = False,
+    axisymmetric: bool = False,
 ) -> Optional[Geometry]:
     """Create an LV ellipsoidal geometry
 
@@ -492,6 +493,8 @@ def create_lv_ellipsoid(
         Function space for fibers of the form family_degree, by default "P_1"
     aha : bool, optional
         If True create 17-segment AHA regions
+    axisymmetric : bool, optional
+        If True create a 2D axisymmetric mesh, by default False
 
     Returns
     -------
@@ -536,13 +539,17 @@ def create_lv_ellipsoid(
                 "mesh_type": MeshTypes.lv_ellipsoid.value,
                 "cardiac_geometry_version": __version__,
                 "timestamp": datetime.datetime.now().isoformat(),
+                "axisymmetric": axisymmetric,
             },
             f,
             indent=2,
             default=json_serial,
         )
 
-    from cardiac_geometries_core import lv_ellipsoid
+    if axisymmetric:
+        from cardiac_geometries_core import lv_ellipsoid_2D as lv_ellipsoid
+    else:
+        from cardiac_geometries_core import lv_ellipsoid
 
     mesh_name = outdir / "lv_ellipsoid.msh"
     lv_ellipsoid(
@@ -563,9 +570,13 @@ def create_lv_ellipsoid(
 
     from .dolfin_utils import gmsh2dolfin
 
-    geometry = gmsh2dolfin(mesh_name, unlink=False)
+    geometry = gmsh2dolfin(mesh_name, unlink=False, axissymmetric=axisymmetric)
 
     if aha:
+        if axisymmetric:
+            raise NotImplementedError(
+                "AHA regions are not supported for 2D meshes (yet).",
+            )
         from .aha import lv_aha
 
         geometry = lv_aha(
@@ -585,9 +596,10 @@ def create_lv_ellipsoid(
     if create_fibers:
         from .fibers._lv_ellipsoid import create_microstructure
 
+        ffun = geometry.marker_functions.efun if axisymmetric else geometry.marker_functions.ffun
         create_microstructure(
             mesh=geometry.mesh,
-            ffun=geometry.marker_functions.ffun,
+            ffun=ffun,
             markers=geometry.markers,
             function_space=fiber_space,
             r_short_endo=r_short_endo,
