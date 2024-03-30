@@ -140,7 +140,7 @@ tag = true
 sign_tags = false
 tag_name = "v{new_version}"
 tag_message = "Bump version: {current_version} → {new_version}"
-current_version = "0.0.1"
+current_version = "1.0.2"
 
 
 [[tool.bumpversion.files]]
