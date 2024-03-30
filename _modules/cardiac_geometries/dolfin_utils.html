@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Feb 26, 2024"/>
+    <meta name="docbuild:last-update" content="Mar 30, 2024"/>
   </head>
   
   
@@ -389,6 +389,7 @@ document.write(`
     <span class="n">msh_file</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">outdir</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">unlink</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">axissymmetric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Geometry</span><span class="p">:</span>
     <span class="n">msh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">gmsh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">msh_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">outdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -415,22 +416,29 @@ document.write(`
     <span class="k">if</span> <span class="n">triangle_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">triangle_mesh_name</span><span class="p">,</span> <span class="n">triangle_mesh</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">tetra_mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unable to create mesh&quot;</span><span class="p">)</span>
+    <span class="n">tetra_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;tetra_mesh.xdmf&quot;</span>
+    <span class="k">if</span> <span class="n">tetra_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="p">,</span> <span class="n">tetra_mesh</span><span class="p">)</span>
 
-    <span class="n">tetra_mesh_name</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;mesh.xdmf&quot;</span>
-    <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-        <span class="n">tetra_mesh_name</span><span class="p">,</span>
-        <span class="n">tetra_mesh</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">axissymmetric</span> <span class="ow">and</span> <span class="n">tetra_mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unable to create mesh&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axissymmetric</span> <span class="ow">and</span> <span class="n">triangle_mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unable to create mesh&quot;</span><span class="p">)</span>
 
     <span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Mesh</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axissymmetric</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">triangle_mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+        <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;mesh.xdmf&quot;</span><span class="p">,</span> <span class="n">triangle_mesh</span><span class="p">)</span>
+        <span class="n">cfun</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+        <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outdir</span> <span class="o">/</span> <span class="s2">&quot;mesh.xdmf&quot;</span><span class="p">,</span> <span class="n">tetra_mesh</span><span class="p">)</span>
 
-    <span class="n">cfun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">read_meshfunction</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="p">,</span> <span class="n">cfun</span><span class="p">)</span>
+        <span class="n">cfun</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">read_meshfunction</span><span class="p">(</span><span class="n">tetra_mesh_name</span><span class="p">,</span> <span class="n">cfun</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">unlink</span><span class="p">:</span>
         <span class="n">tetra_mesh_name</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">tetra_mesh_name</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -548,7 +556,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Feb 26, 2024.
+  Last updated on Mar 30, 2024.
   <br/>
 </p>
   </div>
