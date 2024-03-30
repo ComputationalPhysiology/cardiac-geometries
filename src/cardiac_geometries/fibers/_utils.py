@@ -26,6 +26,14 @@ def save_microstructure(
         h5file.write(system.s0, "s0")
         h5file.write(system.n0, "n0")
 
+    with dolfin.XDMFFile(
+        comm,
+        (Path(outdir) / "microstructure_viz.xdmf").as_posix(),
+    ) as xdmf:
+        xdmf.write_checkpoint(system.f0, "f0", 0, dolfin.XDMFFile.Encoding.HDF5, False)
+        xdmf.write_checkpoint(system.s0, "s0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
+        xdmf.write_checkpoint(system.n0, "n0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
+
 
 def facet_function_from_heart_mesh(
     ffun: dolfin.MeshFunction,

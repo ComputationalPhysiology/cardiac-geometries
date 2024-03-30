@@ -1,0 +1,149 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cardiac_geometries"
+version = "1.0.2"
+description = "A python library for cardiac geometries"
+authors = [{name = "Henrik Finsberg", email = "henriknf@simula.no"}]
+license = {text = "MIT"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+keywords = ["cardiac", "geometry", "mesh", "gmsh"]
+requires-python = ">=3.6"
+dependencies = [
+    "cardiac-geometries-core",
+    "meshio",
+    "numpy",
+    "rich-click",
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/ComputationalPhysiology/cardiac_geometries"
+
+[project.optional-dependencies]
+dev = [
+    "bump2version",
+    "ipython",
+    "pdbpp",
+    "pre-commit",
+]
+docs = [
+    "jupyter-book",
+    "jupytext",
+    "sphinxcontrib-bibtex",
+]
+gmsh = ["gmsh"]
+ldrb = ["ldrb"]
+pypi = ["build"]
+test = [
+    "ldrb",
+    "pytest",
+    "pytest-cov",
+]
+viz = ["h5py"]
+
+[project.scripts]
+cardiac-geometries = "cardiac_geometries.cli:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+zip-safe = false
+license-files = ["LICENSE"]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
+[tool.distutils.bdist_wheel]
+universal = 1
+
+
+[tool.aliases]
+test = "pytest"
+
+[tool.pytest.ini_options]
+addopts = "--cov=cardiac_geometries --cov-report html -v --cov-report term-missing"
+testpaths = ["tests"]
+
+
+[tool.mypy]
+files = ["cardiac_geometries", "tests"]
+ignore_missing_imports = true
+
+
+
+[tool.ruff]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 100
+
+# Assume Python 3.10.
+target-version = "py310"
+
+[tool.ruff.lint]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F"]
+ignore = ["E402", "E741", "E743", "E731"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+[tool.ruff.lint.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+
+[tool.bumpversion]
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+tag = true
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+current_version = "0.0.1"
+
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'

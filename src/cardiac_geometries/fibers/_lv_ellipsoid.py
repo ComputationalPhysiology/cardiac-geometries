@@ -16,6 +16,7 @@ def laplace(
     ffun: dolfin.MeshFunction,
     markers: Dict[str, Tuple[int, int]],
     function_space: str = "P_1",
+    outdir: Optional[Union[str, Path]] = None,
 ):
     endo_marker = markers["ENDO"][0]
     epi_marker = markers["EPI"][0]
@@ -37,6 +38,12 @@ def laplace(
         t,
         bcs,
     )
+    if outdir is not None:
+        outdir = Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
+        with dolfin.XDMFFile((outdir / "laplace.xdmf").as_posix()) as f:
+            f.write_checkpoint(t, "laplacefa", 0, dolfin.XDMFFile.Encoding.HDF5)
+
     if function_space != "P_1":
         family, degree = function_space.split("_")
         W = dolfin.FunctionSpace(
@@ -177,8 +184,7 @@ def compute_system(
     scalar_dofs = [
         dof
         for dof in range(end - start)
-        if V.dofmap().local_to_global_index(dof)
-        not in V.dofmap().local_to_global_unowned()
+        if V.dofmap().local_to_global_index(dof) not in V.dofmap().local_to_global_unowned()
     ]
 
     fiber = dolfin.Function(Vv)
@@ -226,7 +232,7 @@ def create_microstructure(
     function_space,
     outdir: Optional[Union[str, Path]] = None,
 ) -> Microstructure:
-    t = laplace(mesh, ffun, markers, function_space=function_space)
+    t = laplace(mesh, ffun, markers, function_space=function_space, outdir=outdir)
     system = compute_system(
         t,
         r_short_endo=r_short_endo,

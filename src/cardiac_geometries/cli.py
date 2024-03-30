@@ -131,10 +131,18 @@ def app():
 )
 @click.option(
     "--aha/--no-aha",
-    default=True,
+    default=False,
     is_flag=True,
     type=bool,
     help="If True create 17-segment AHA regions",
+    show_default=True,
+)
+@click.option(
+    "--axisymmetric/--no-axisymmetric",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help="If True create 2D axisymmetric mesh",
     show_default=True,
 )
 def create_lv_ellipsoid(
@@ -152,7 +160,8 @@ def create_lv_ellipsoid(
     fiber_angle_endo: float = -60,
     fiber_angle_epi: float = +60,
     fiber_space: str = "P_1",
-    aha: bool = True,
+    aha: bool = False,
+    axisymmetric: bool = False,
 ):
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
@@ -175,6 +184,7 @@ def create_lv_ellipsoid(
         fiber_angle_epi=fiber_angle_epi,
         fiber_space=fiber_space,
         aha=aha,
+        axisymmetric=axisymmetric,
     )
     if geo is not None:
         geo.save(outdir / "lv_ellipsoid.h5")
@@ -464,8 +474,7 @@ def create_biv_ellipsoid(
     default=math.pi / 6,
     type=float,
     help=(
-        "Angle to rotate the torso in order to object realistic"
-        " position of the heart in a torso"
+        "Angle to rotate the torso in order to object realistic" " position of the heart in a torso"
     ),
     show_default=True,
 )
@@ -791,7 +800,8 @@ def create_slab(
         fiber_angle_epi=fiber_angle_epi,
         fiber_space=fiber_space,
     )
-    geo.save(outdir / "slab.h5")
+    if geo is not None:
+        geo.save(outdir / "slab.h5")
 
 
 @click.command()
@@ -880,7 +890,8 @@ def create_slab_in_bath(
         bz=bz,
         dx=dx,
     )
-    geo.save(outdir / "slab_in_bath.h5")
+    if geo is not None:
+        geo.save(outdir / "slab_in_bath.h5")
 
 
 @click.command(
