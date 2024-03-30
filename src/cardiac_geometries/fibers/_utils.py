@@ -2,9 +2,12 @@ from pathlib import Path
 from typing import NamedTuple
 from typing import Optional
 from typing import Union
+import logging
 
 import dolfin
 import mpi4py
+
+logger = logging.getLogger(__name__)
 
 
 class Microstructure(NamedTuple):
@@ -26,13 +29,17 @@ def save_microstructure(
         h5file.write(system.s0, "s0")
         h5file.write(system.n0, "n0")
 
-    with dolfin.XDMFFile(
-        comm,
-        (Path(outdir) / "microstructure_viz.xdmf").as_posix(),
-    ) as xdmf:
-        xdmf.write_checkpoint(system.f0, "f0", 0, dolfin.XDMFFile.Encoding.HDF5, False)
-        xdmf.write_checkpoint(system.s0, "s0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
-        xdmf.write_checkpoint(system.n0, "n0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
+    try:
+        with dolfin.XDMFFile(
+            comm,
+            (Path(outdir) / "microstructure_viz.xdmf").as_posix(),
+        ) as xdmf:
+            xdmf.write_checkpoint(system.f0, "f0", 0, dolfin.XDMFFile.Encoding.HDF5, False)
+            xdmf.write_checkpoint(system.s0, "s0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
+            xdmf.write_checkpoint(system.n0, "n0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
+    except RuntimeError as e:
+        # This will for example fail for quadrature elements
+        logger.warning(f"Unable to write XDMF file: {e}")
 
 
 def facet_function_from_heart_mesh(
