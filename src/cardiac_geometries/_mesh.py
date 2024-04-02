@@ -632,18 +632,19 @@ def create_lv_ellipsoid(
 
 def create_benchmark_geometry_land15(
     outdir: Optional[Union[Path, str]] = None,
-    r_short_endo: float = 7.0,
-    r_short_epi: float = 10.0,
-    r_long_endo: float = 17.0,
-    r_long_epi: float = 20.0,
-    quota_base: float = 5.0,
     psize: float = 3.0,
     ndiv: float = 1.0,
     axisymmetric: bool = False,
     fiber_space: str = "Quadrature_4",
-    fiber_angle_endo: float = 90,
-    fiber_angle_epi: float = -90,
 ):
+    r_short_endo = 7.0
+    r_short_epi = 10.0
+    r_long_endo = 17.0
+    r_long_epi = 20.0
+    quota_base = 5.0
+    fiber_angle_endo = 90
+    fiber_angle_epi = -90
+
     mu_base_endo = -math.acos(quota_base / r_long_endo)
     mu_base_epi = -math.acos(quota_base / r_long_epi)
     mu_apex_endo = mu_apex_epi = -math.pi
