@@ -596,7 +596,11 @@ def create_lv_ellipsoid(
     if create_fibers:
         from .fibers._lv_ellipsoid import create_microstructure
 
-        ffun = geometry.marker_functions.efun if axisymmetric else geometry.marker_functions.ffun
+        ffun = (
+            geometry.marker_functions.efun
+            if axisymmetric
+            else geometry.marker_functions.ffun
+        )
         create_microstructure(
             mesh=geometry.mesh,
             ffun=ffun,
@@ -632,17 +636,17 @@ def create_benchmark_geometry_land15(
     r_short_epi: float = 10.0,
     r_long_endo: float = 17.0,
     r_long_epi: float = 20.0,
-    quota_base: float = -5.0,
+    quota_base: float = 5.0,
     psize: float = 3.0,
     ndiv: float = 1.0,
     axisymmetric: bool = False,
     fiber_space: str = "Quadrature_4",
-    fiber_angle_endo: float = -90,
-    fiber_angle_epi: float = +90,
+    fiber_angle_endo: float = 90,
+    fiber_angle_epi: float = -90,
 ):
-    mu_base_endo = math.acos(quota_base / r_long_endo)
-    mu_base_epi = math.acos(quota_base / r_long_epi)
-    mu_apex_endo = mu_apex_epi = 0
+    mu_base_endo = -math.acos(quota_base / r_long_endo)
+    mu_base_epi = -math.acos(quota_base / r_long_epi)
+    mu_apex_endo = mu_apex_epi = -math.pi
     psize_ref = psize / ndiv
     return create_lv_ellipsoid(
         outdir=outdir,
