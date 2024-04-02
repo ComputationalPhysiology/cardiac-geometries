@@ -627,6 +627,7 @@ def create_lv_ellipsoid(
 
 
 def create_benchmark_geometry_land15(
+    outdir: Optional[Union[Path, str]] = None,
     r_short_endo: float = 7.0,
     r_short_epi: float = 10.0,
     r_long_endo: float = 17.0,
@@ -644,6 +645,7 @@ def create_benchmark_geometry_land15(
     mu_apex_endo = mu_apex_epi = 0
     psize_ref = psize / ndiv
     return create_lv_ellipsoid(
+        outdir=outdir,
         r_short_endo=r_short_endo,
         r_short_epi=r_short_epi,
         r_long_endo=r_long_endo,
