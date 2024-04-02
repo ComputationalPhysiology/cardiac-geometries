@@ -596,7 +596,11 @@ def create_lv_ellipsoid(
     if create_fibers:
         from .fibers._lv_ellipsoid import create_microstructure
 
-        ffun = geometry.marker_functions.efun if axisymmetric else geometry.marker_functions.ffun
+        ffun = (
+            geometry.marker_functions.efun
+            if axisymmetric
+            else geometry.marker_functions.ffun
+        )
         create_microstructure(
             mesh=geometry.mesh,
             ffun=ffun,
@@ -624,6 +628,44 @@ def create_lv_ellipsoid(
         _tmpfile.__exit__(None, None, None)
 
     return geo
+
+
+def create_benchmark_geometry_land15(
+    outdir: Optional[Union[Path, str]] = None,
+    psize: float = 3.0,
+    ndiv: float = 1.0,
+    axisymmetric: bool = False,
+    fiber_space: str = "Quadrature_4",
+):
+    r_short_endo = 7.0
+    r_short_epi = 10.0
+    r_long_endo = 17.0
+    r_long_epi = 20.0
+    quota_base = 5.0
+    fiber_angle_endo = 90
+    fiber_angle_epi = -90
+
+    mu_base_endo = -math.acos(quota_base / r_long_endo)
+    mu_base_epi = -math.acos(quota_base / r_long_epi)
+    mu_apex_endo = mu_apex_epi = -math.pi
+    psize_ref = psize / ndiv
+    return create_lv_ellipsoid(
+        outdir=outdir,
+        r_short_endo=r_short_endo,
+        r_short_epi=r_short_epi,
+        r_long_endo=r_long_endo,
+        r_long_epi=r_long_epi,
+        mu_base_endo=mu_base_endo,
+        mu_base_epi=mu_base_epi,
+        mu_apex_endo=mu_apex_endo,
+        mu_apex_epi=mu_apex_epi,
+        psize_ref=psize_ref,
+        create_fibers=True,
+        fiber_angle_endo=fiber_angle_endo,
+        fiber_angle_epi=fiber_angle_epi,
+        fiber_space=fiber_space,
+        axisymmetric=axisymmetric,
+    )
 
 
 def create_slab(

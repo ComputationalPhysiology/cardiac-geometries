@@ -23,6 +23,7 @@ if has_dolfin():
         create_lv_ellipsoid,
         create_slab,
         create_biv_ellipsoid_torso,
+        create_benchmark_geometry_land15,
     )
 else:
     gmsh2dolfin = None  # type: ignore
@@ -33,6 +34,7 @@ else:
     create_lv_ellipsoid = None  # type: ignore
     create_slab = None  # type: ignore
     create_biv_ellipsoid_torso = None  # type: ignore
+    create_benchmark_geometry_land15 = None  # type: ignore
     lv_aha = None  # type: ignore
     biv_aha = None  # type: ignore
 
@@ -55,4 +57,5 @@ __all__ = [
     "mesh",
     "lv_aha",
     "biv_aha",
+    "create_benchmark_geometry_land15",
 ]
