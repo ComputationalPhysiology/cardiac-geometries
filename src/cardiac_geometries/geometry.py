@@ -13,10 +13,17 @@ from typing import Tuple
 from typing import Union
 
 import dolfin
-from ufl_legacy import FiniteElement  # noqa: F401
-from ufl_legacy import tetrahedron  # noqa: F401
-from ufl_legacy import Cell  # noqa: F401
-from ufl_legacy import VectorElement  # noqa: F401
+
+try:
+    from ufl_legacy import FiniteElement  # noqa: F401
+    from ufl_legacy import tetrahedron  # noqa: F401
+    from ufl_legacy import Cell  # noqa: F401
+    from ufl_legacy import VectorElement  # noqa: F401
+except ImportError:
+    from ufl import FiniteElement  # noqa: F401
+    from ufl import tetrahedron  # noqa: F401
+    from ufl import Cell  # noqa: F401
+    from ufl import VectorElement  # noqa: F401
 
 from .viz import dict_to_h5
 from .viz import h5_to_dict
