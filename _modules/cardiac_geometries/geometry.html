@@ -41,7 +41,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Apr 02, 2024"/>
+    <meta name="docbuild:last-update" content="Apr 17, 2024"/>
   </head>
   
   
@@ -348,18 +348,15 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">dolfin</span>
-    <span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">FiniteElement</span>  <span class="c1"># noqa: F401</span>
-    <span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">tetrahedron</span>  <span class="c1"># noqa: F401</span>
-    <span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">Cell</span>  <span class="c1"># noqa: F401</span>
-    <span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">VectorElement</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">import</span> <span class="nn">dolfin</span>
+<span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">FiniteElement</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">tetrahedron</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">Cell</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">ufl_legacy</span> <span class="kn">import</span> <span class="n">VectorElement</span>  <span class="c1"># noqa: F401</span>
 
-    <span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">dict_to_h5</span>
-    <span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">h5_to_dict</span>
-    <span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">h5pyfile</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
+<span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">dict_to_h5</span>
+<span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">h5_to_dict</span>
+<span class="kn">from</span> <span class="nn">.viz</span> <span class="kn">import</span> <span class="n">h5pyfile</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -943,7 +940,7 @@ By Henrik Finsberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Apr 02, 2024.
+  Last updated on Apr 17, 2024.
   <br/>
 </p>
   </div>
