@@ -12,18 +12,15 @@ from typing import Sequence
 from typing import Tuple
 from typing import Union
 
-try:
-    import dolfin
-    from ufl_legacy import FiniteElement  # noqa: F401
-    from ufl_legacy import tetrahedron  # noqa: F401
-    from ufl_legacy import Cell  # noqa: F401
-    from ufl_legacy import VectorElement  # noqa: F401
+import dolfin
+from ufl_legacy import FiniteElement  # noqa: F401
+from ufl_legacy import tetrahedron  # noqa: F401
+from ufl_legacy import Cell  # noqa: F401
+from ufl_legacy import VectorElement  # noqa: F401
 
-    from .viz import dict_to_h5
-    from .viz import h5_to_dict
-    from .viz import h5pyfile
-except ImportError:
-    pass
+from .viz import dict_to_h5
+from .viz import h5_to_dict
+from .viz import h5pyfile
 
 logger = logging.getLogger(__name__)
 
