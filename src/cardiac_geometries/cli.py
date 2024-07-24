@@ -11,7 +11,7 @@ from . import has_dolfin
 
 meta = metadata("cardiac_geometries")
 __version__ = meta["Version"]
-__author__ = meta["Author"]
+__author__ = meta["Author-email"]
 __license__ = meta["License"]
 
 
