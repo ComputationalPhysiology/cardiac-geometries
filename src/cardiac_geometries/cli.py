@@ -1025,6 +1025,50 @@ def info(
     console.print(table)
 
 
+@click.command(help="Create meshes from instances of https://zenodo.org/records/4506463")
+@click.argument("n", type=int)
+@click.option(
+    "--outdir",
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        readable=True,
+        resolve_path=True,
+    ),
+    default=Path("bai-atlas"),
+)
+@click.option("--force", is_flag=True, help="Force regeneration of files")
+@click.option("--verbose", is_flag=True, help="Print more information")
+def atlas_bai(n: int, outdir: Path, force: bool = False, verbose: bool = False) -> int:
+    from urllib.request import urlretrieve
+    import tarfile
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    # Round down to nearest 10
+    n_low = n // 10 * 10 + 1
+    n_high = n_low + 9
+
+    filename = f"instances_{n_low:03d}_to_{n_high:03d}.tar.gz"
+    vtu = outdir / f"instances_{n_low:03d}_to_{n_high:03d}" / f"instance_{n:03d}.vtu"
+    vtp = outdir / f"instances_{n_low:03d}_to_{n_high:03d}" / f"instance_{n:03d}.vtp"
+
+    if not (vtu.exists() and vtp.exists()):
+        url = f"https://zenodo.org/records/4506463/files/{filename}?download=1"
+        print(f"Downloading {url} to {outdir / filename}. This may take a while.")
+        path, headers = urlretrieve(url, outdir / filename)
+        print("Done downloading.")
+        print("Extracting...")
+        tar = tarfile.open(path)
+        tar.extractall(outdir)
+
+    from .bai_atlas import main
+
+    return main(vtp=vtp, vtu=vtu, output=outdir / f"instance_{n:03d}", force=force, verbose=verbose)
+
+
 app.add_command(create_lv_ellipsoid)
 app.add_command(create_biv_ellipsoid)
 app.add_command(create_biv_ellipsoid_torso)
@@ -1033,3 +1077,4 @@ app.add_command(create_slab_in_bath)
 app.add_command(fibers_to_xdmf)
 app.add_command(folder2h5)
 app.add_command(info)
+app.add_command(atlas_bai)

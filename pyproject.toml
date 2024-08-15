@@ -17,7 +17,7 @@ keywords = ["cardiac", "geometry", "mesh", "gmsh"]
 requires-python = ">=3.6"
 dependencies = [
     "cardiac-geometries-core>=0.2.1",
-    "meshio",
+    "meshio @ https://github.com/finsberg/meshio/releases/download/v5.3.6/meshio-5.3.6-py3-none-any.whl",
     "numpy",
     "rich-click",
 ]
