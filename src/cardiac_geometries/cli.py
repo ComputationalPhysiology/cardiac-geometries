@@ -1028,6 +1028,7 @@ def info(
 @click.command(help="Create meshes from instances of https://zenodo.org/records/4506463")
 @click.argument("n", type=int)
 @click.option(
+    "-o",
     "--outdir",
     type=click.Path(
         file_okay=False,
@@ -1039,8 +1040,17 @@ def info(
     default=Path("bai-atlas"),
 )
 @click.option("--force", is_flag=True, help="Force regeneration of files")
-@click.option("--verbose", is_flag=True, help="Print more information")
-def atlas_bai(n: int, outdir: Path, force: bool = False, verbose: bool = False) -> int:
+@click.option("-v", "--verbose", is_flag=True, help="Print more information")
+@click.option("--copy-original", is_flag=True, help="Copy original files into output directory")
+@click.option("--create-fibers", is_flag=True, help="Create fibers with LDRB algorithm")
+def atlas_bai(
+    n: int,
+    outdir: Path,
+    force: bool = False,
+    verbose: bool = False,
+    copy_original: bool = False,
+    create_fibers: bool = False,
+) -> int:
     from urllib.request import urlretrieve
     import tarfile
 
@@ -1048,7 +1058,7 @@ def atlas_bai(n: int, outdir: Path, force: bool = False, verbose: bool = False) 
     outdir.mkdir(exist_ok=True)
 
     # Round down to nearest 10
-    n_low = n // 10 * 10 + 1
+    n_low = (n - 1) // 10 * 10 + 1
     n_high = n_low + 9
 
     filename = f"instances_{n_low:03d}_to_{n_high:03d}.tar.gz"
@@ -1066,7 +1076,15 @@ def atlas_bai(n: int, outdir: Path, force: bool = False, verbose: bool = False) 
 
     from .bai_atlas import main
 
-    return main(vtp=vtp, vtu=vtu, output=outdir / f"instance_{n:03d}", force=force, verbose=verbose)
+    return main(
+        vtp=vtp,
+        vtu=vtu,
+        output=outdir / f"instance_{n:03d}",
+        force=force,
+        verbose=verbose,
+        copy_original=copy_original,
+        create_fibers=create_fibers,
+    )
 
 
 app.add_command(create_lv_ellipsoid)

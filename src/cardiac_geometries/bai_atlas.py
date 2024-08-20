@@ -1,5 +1,6 @@
 from textwrap import dedent
 import json
+import shutil
 from pathlib import Path
 from collections import Counter
 import logging
@@ -179,10 +180,10 @@ def convert_volume_mesh_to_dolfin(vtu: Path, output: Path) -> None:
     import dolfin
 
     m = meshio.read(vtu)
-    logger.debug(f"Writing {output / ORIGINAL_FOLDER / 'volume_mesh.xdmf'}")
-    meshio.write(output / ORIGINAL_FOLDER / "volume_mesh.xdmf", m)
+    logger.debug(f"Writing {output / ORIGINAL_FOLDER / 'mesh.xdmf'}")
+    meshio.write(output / ORIGINAL_FOLDER / "mesh.xdmf", m)
     mesh = dolfin.Mesh()
-    with dolfin.XDMFFile((output / ORIGINAL_FOLDER / "volume_mesh.xdmf").as_posix()) as xdmf:
+    with dolfin.XDMFFile((output / ORIGINAL_FOLDER / "mesh.xdmf").as_posix()) as xdmf:
         xdmf.read(mesh)
 
     W = dolfin.FunctionSpace(mesh, "CG", 1)
@@ -222,7 +223,7 @@ def create_fine_facet_function(vtp: Path, output: Path) -> None:
         xdmf.read(mesh)
 
     vmesh = dolfin.Mesh()
-    with dolfin.XDMFFile((output / ORIGINAL_FOLDER / "volume_mesh.xdmf").as_posix()) as xdmf:
+    with dolfin.XDMFFile((output / ORIGINAL_FOLDER / "mesh.xdmf").as_posix()) as xdmf:
         xdmf.read(vmesh)
 
     V = dolfin.FunctionSpace(mesh, "CG", 1)
@@ -280,7 +281,7 @@ def coarsen_mesh(vtp: Path, output: Path) -> None:
     logger.debug("Finished running gmsh")
 
 
-def create_fibers(output: Path, folder: str) -> None:
+def create_fibers_ldrb(output: Path, folder: str) -> None:
     import dolfin
 
     try:
@@ -293,7 +294,7 @@ def create_fibers(output: Path, folder: str) -> None:
 
     # Load mesh
     mesh = dolfin.Mesh()
-    with dolfin.XDMFFile((output / folder / "volume_mesh.xdmf").as_posix()) as xdmf:
+    with dolfin.XDMFFile((output / folder / "mesh.xdmf").as_posix()) as xdmf:
         xdmf.read(mesh)
 
     ffun = dolfin.MeshFunction("size_t", mesh, 2)
@@ -322,7 +323,7 @@ def create_fibers(output: Path, folder: str) -> None:
     )
 
     # Save fibers
-    with dolfin.XDMFFile((output / COARSE_FOLDER / "microstructure.xdmf").as_posix()) as xdmf:
+    with dolfin.XDMFFile((output / folder / "microstructure.xdmf").as_posix()) as xdmf:
         xdmf.write_checkpoint(f0, "f0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
         xdmf.write_checkpoint(s0, "s0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
         xdmf.write_checkpoint(n0, "n0", 0, dolfin.XDMFFile.Encoding.HDF5, True)
@@ -354,7 +355,15 @@ def check_args(vtp: Path, vtu: Path, output: Path) -> None:
     (output / ORIGINAL_FOLDER).mkdir(exist_ok=True)
 
 
-def main(vtp: Path, vtu: Path, output: Path, force: bool = False, verbose: bool = False) -> int:
+def main(
+    vtp: Path,
+    vtu: Path,
+    output: Path,
+    force: bool = False,
+    verbose: bool = False,
+    copy_original: bool = False,
+    create_fibers: bool = False,
+) -> int:
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level)
     logging.getLogger("h5py").setLevel(logging.INFO)
@@ -370,17 +379,23 @@ def main(vtp: Path, vtu: Path, output: Path, force: bool = False, verbose: bool 
     if not (output / ORIGINAL_FOLDER / "surface_mesh.xdmf").is_file() or force:
         convert_surface_mesh_to_dolfin(vtp, output)
 
-    if not (output / ORIGINAL_FOLDER / "volume_mesh.xdmf").is_file() or force:
+    if not (output / ORIGINAL_FOLDER / "mesh.xdmf").is_file() or force:
         convert_volume_mesh_to_dolfin(vtu, output)
 
     if not (output / ORIGINAL_FOLDER / "ffun.xdmf").is_file() or force:
         create_fine_facet_function(vtp, output)
 
-    if not (output / ORIGINAL_FOLDER / "microstructure.xdmf").is_file() or force:
-        create_fibers(output, ORIGINAL_FOLDER)
+    if create_fibers:
+        if not (output / ORIGINAL_FOLDER / "microstructure.xdmf").is_file() or force:
+            create_fibers_ldrb(output, ORIGINAL_FOLDER)
 
-    if not (output / COARSE_FOLDER / "microstructure.xdmf").is_file() or force:
-        create_fibers(output, COARSE_FOLDER)
+        if not (output / COARSE_FOLDER / "microstructure.xdmf").is_file() or force:
+            create_fibers_ldrb(output, COARSE_FOLDER)
+
+    if copy_original:
+        logger.info("Copying original files")
+        shutil.copy(vtp, output / "surface_mesh.vtp")
+        shutil.copy(vtu, output / "mesh.vtu")
 
     return 0
 
