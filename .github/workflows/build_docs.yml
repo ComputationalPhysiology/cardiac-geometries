@@ -1,28 +1,45 @@
-name: Github Pages
+# Simple workflow for deploying static content to GitHub Pages
+name: Build docs
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - "main"
+
+  # This workflow can be executed inside another workfow file
+  workflow_call:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-22.04
-    container:
-      image: ghcr.io/scientificcomputing/fenics-gmsh:2023-08-16
+    container: ghcr.io/scientificcomputing/fenics-gmsh:2023-08-16
     env:
-      # Directory that will be published on github pages
+      DEB_PYTHON_INSTALL_LAYOUT: deb_system
       PUBLISH_DIR: ./docs/_build/html
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
 
       - name: Install dependencies
-        run: python3 -m pip install -e ".[docs]"
+        run: python3 -m pip install ".[docs]"
+
+      - name: Cache notebooks
+        id: cache-notebooks
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: cache_key_1 # Bump number manually when you want to clear the cache
 
       - name: Build docs
-        run: jupyter book build -W docs
+        run: jupyter book build -W --keep-going docs
 
-      - name: Deploy
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload documentation as artifact
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ env.PUBLISH_DIR }}
+          name: documentation
+          path: ${{ env.PUBLISH_DIR }}
+          if-no-files-found: error
