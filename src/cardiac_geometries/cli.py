@@ -1038,11 +1038,14 @@ def info(
         resolve_path=True,
     ),
     default=Path("bai-atlas"),
+    help="Output directory, default is 'bai-atlas'",
 )
-@click.option("--force", is_flag=True, help="Force regeneration of files")
+@click.option("-f", "--force", is_flag=True, help="Force regeneration of files")
 @click.option("-v", "--verbose", is_flag=True, help="Print more information")
 @click.option("--copy-original", is_flag=True, help="Copy original files into output directory")
 @click.option("--create-fibers", is_flag=True, help="Create fibers with LDRB algorithm")
+@click.option("-c", "--coarsening", is_flag=True, help="Coarsen the mesh")
+@click.option("--ffun", is_flag=True, help="Create facet function")
 def atlas_bai(
     n: int,
     outdir: Path,
@@ -1050,6 +1053,8 @@ def atlas_bai(
     verbose: bool = False,
     copy_original: bool = False,
     create_fibers: bool = False,
+    coarsening: bool = False,
+    ffun: bool = False,
 ) -> int:
     from urllib.request import urlretrieve
     import tarfile
@@ -1084,6 +1089,8 @@ def atlas_bai(
         verbose=verbose,
         copy_original=copy_original,
         create_fibers=create_fibers,
+        coarsening=coarsening,
+        ffun=ffun,
     )
 
 

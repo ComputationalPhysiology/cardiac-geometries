@@ -4,6 +4,7 @@ root: index
 chapters:
   - file: "install"
   - file: "quickstart"
+  - file: "atlas"
   - file: "third_party"
   - file: "development"
   - file: "CONTRIBUTING"
