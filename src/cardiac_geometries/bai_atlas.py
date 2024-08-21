@@ -111,7 +111,7 @@ def create_facet_function(mesh, u):
     return ffun
 
 
-def convert_surface_mesh_to_dolfin(vtp: Path, output: Path) -> None:
+def convert_surface_mesh_to_dolfin(vtp: Path, output: Path, coarsening: bool = False) -> None:
     """Convert a vtp file to a dolfin xdmf file using the surface mesh
     representation.
 
@@ -141,31 +141,32 @@ def convert_surface_mesh_to_dolfin(vtp: Path, output: Path) -> None:
     with dolfin.XDMFFile((output / ORIGINAL_FOLDER / "surface_data.xdmf").as_posix()) as xdmf:
         xdmf.write_checkpoint(u, "u", 0, dolfin.XDMFFile.Encoding.HDF5, False)
 
-    import cardiac_geometries
+    if coarsening:
+        import cardiac_geometries
 
-    msh_path = output / MSHFILE
-    if not msh_path.is_file():
-        raise FileNotFoundError(f"File not found: {msh_path}")
+        msh_path = output / MSHFILE
+        if not msh_path.is_file():
+            raise FileNotFoundError(f"File not found: {msh_path}")
 
-    geo = cardiac_geometries.dolfin_utils.gmsh2dolfin(msh_path, output / COARSE_FOLDER)
-    ffun = create_facet_function(geo.mesh, u)
-    logger.debug(f"Writing {output / COARSE_FOLDER / 'ffun.xdmf'}")
-    with dolfin.XDMFFile((output / COARSE_FOLDER / "ffun.xdmf").as_posix()) as xdmf:
-        xdmf.write(ffun)
+        geo = cardiac_geometries.dolfin_utils.gmsh2dolfin(msh_path, output / COARSE_FOLDER)
+        ffun = create_facet_function(geo.mesh, u)
+        logger.debug(f"Writing {output / COARSE_FOLDER / 'ffun.xdmf'}")
+        with dolfin.XDMFFile((output / COARSE_FOLDER / "ffun.xdmf").as_posix()) as xdmf:
+            xdmf.write(ffun)
 
-    (output / COARSE_FOLDER / "markers.json").write_text(
-        json.dumps(
-            {
-                "BASE": [1, 2],
-                "EPI": [2, 2],
-                "ENDO_LV": [3, 2],
-                "ENDO_RV": [4, 2],
-            }
+        (output / COARSE_FOLDER / "markers.json").write_text(
+            json.dumps(
+                {
+                    "BASE": [1, 2],
+                    "EPI": [2, 2],
+                    "ENDO_LV": [3, 2],
+                    "ENDO_RV": [4, 2],
+                }
+            )
         )
-    )
 
 
-def convert_volume_mesh_to_dolfin(vtu: Path, output: Path) -> None:
+def convert_volume_mesh_to_dolfin(vtu: Path, output: Path, coarsening: bool = False) -> None:
     """Convert a vtu file to a dolfin xdmf file using the volume mesh
     representation.
 
@@ -188,28 +189,32 @@ def convert_volume_mesh_to_dolfin(vtu: Path, output: Path) -> None:
 
     W = dolfin.FunctionSpace(mesh, "CG", 1)
     w = dolfin.Function(W)
-    w.set_allow_extrapolation(True)
 
-    coarsen_mesh = dolfin.Mesh()
-    with dolfin.XDMFFile((output / COARSE_FOLDER / "mesh.xdmf").as_posix()) as xdmf:
-        xdmf.read(coarsen_mesh)
+    if coarsening:
+        w.set_allow_extrapolation(True)
 
-    W_coarse = dolfin.FunctionSpace(coarsen_mesh, "CG", 1)
-    w_coarse = dolfin.Function(W_coarse)
+        coarsen_mesh = dolfin.Mesh()
+        with dolfin.XDMFFile((output / COARSE_FOLDER / "mesh.xdmf").as_posix()) as xdmf:
+            xdmf.read(coarsen_mesh)
+
+        W_coarse = dolfin.FunctionSpace(coarsen_mesh, "CG", 1)
+        w_coarse = dolfin.Function(W_coarse)
+        logger.debug(f"Writing {output / COARSE_FOLDER / 'volume_data.xdmf'}")
+        xdmf_coarse = dolfin.XDMFFile((output / COARSE_FOLDER / "volume_data.xdmf").as_posix())
 
     logger.debug(f"Writing {output / ORIGINAL_FOLDER / 'volume_data.xdmf'}")
-    logger.debug(f"Writing {output / COARSE_FOLDER / 'volume_data.xdmf'}")
     xdmf_orig = dolfin.XDMFFile((output / ORIGINAL_FOLDER / "volume_data.xdmf").as_posix())
-    xdmf_coarse = dolfin.XDMFFile((output / COARSE_FOLDER / "volume_data.xdmf").as_posix())
     for k, v in m.point_data.items():
         w.vector().set_local(v[dolfin.dof_to_vertex_map(W)])
         xdmf_orig.write_checkpoint(w, k, 0, dolfin.XDMFFile.Encoding.HDF5, True)
-        logger.debug(f"Interpolating {k} to coarse mesh")
-        w_coarse.interpolate(w)
-        xdmf_coarse.write_checkpoint(w_coarse, k, 0, dolfin.XDMFFile.Encoding.HDF5, True)
+        if coarsening:
+            logger.debug(f"Interpolating {k} to coarse mesh")
+            w_coarse.interpolate(w)
+            xdmf_coarse.write_checkpoint(w_coarse, k, 0, dolfin.XDMFFile.Encoding.HDF5, True)
 
-    xdmf_coarse.close()
     xdmf_orig.close()
+    if coarsening:
+        xdmf_coarse.close()
 
 
 def create_fine_facet_function(vtp: Path, output: Path) -> None:
@@ -339,7 +344,7 @@ def get_parser():
     return parser
 
 
-def check_args(vtp: Path, vtu: Path, output: Path) -> None:
+def check_args(vtp: Path, vtu: Path, output: Path, coarsening: bool = False) -> None:
     if not vtp.is_file():
         raise FileNotFoundError(f"File not found: {vtp}")
     if not vtu.is_file():
@@ -349,10 +354,11 @@ def check_args(vtp: Path, vtu: Path, output: Path) -> None:
         logger.info(f"Creating output directory: {output}")
         output.mkdir(parents=True, exist_ok=True)
 
-    logger.debug(f"Creating subdirectories in {output / COARSE_FOLDER}")
-    (output / COARSE_FOLDER).mkdir(exist_ok=True)
     logger.debug(f"Creating subdirectories in {output / ORIGINAL_FOLDER}")
     (output / ORIGINAL_FOLDER).mkdir(exist_ok=True)
+    if coarsening:
+        logger.debug(f"Creating subdirectories in {output / COARSE_FOLDER}")
+        (output / COARSE_FOLDER).mkdir(exist_ok=True)
 
 
 def main(
@@ -363,6 +369,8 @@ def main(
     verbose: bool = False,
     copy_original: bool = False,
     create_fibers: bool = False,
+    coarsening: bool = False,
+    ffun: bool = False,
 ) -> int:
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level)
@@ -373,7 +381,7 @@ def main(
 
     check_args(vtp, vtu, output)
 
-    if not (output / MSHFILE).is_file() or force:
+    if coarsening and (not (output / MSHFILE).is_file() or force):
         coarsen_mesh(vtp, output)
 
     if not (output / ORIGINAL_FOLDER / "surface_mesh.xdmf").is_file() or force:
@@ -382,14 +390,14 @@ def main(
     if not (output / ORIGINAL_FOLDER / "mesh.xdmf").is_file() or force:
         convert_volume_mesh_to_dolfin(vtu, output)
 
-    if not (output / ORIGINAL_FOLDER / "ffun.xdmf").is_file() or force:
+    if ffun and (not (output / ORIGINAL_FOLDER / "ffun.xdmf").is_file() or force):
         create_fine_facet_function(vtp, output)
 
     if create_fibers:
         if not (output / ORIGINAL_FOLDER / "microstructure.xdmf").is_file() or force:
             create_fibers_ldrb(output, ORIGINAL_FOLDER)
 
-        if not (output / COARSE_FOLDER / "microstructure.xdmf").is_file() or force:
+        if coarsening and (not (output / COARSE_FOLDER / "microstructure.xdmf").is_file() or force):
             create_fibers_ldrb(output, COARSE_FOLDER)
 
     if copy_original:
