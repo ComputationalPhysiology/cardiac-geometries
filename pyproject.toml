@@ -16,7 +16,7 @@ classifiers = [
 keywords = ["cardiac", "geometry", "mesh", "gmsh"]
 requires-python = ">=3.6"
 dependencies = [
-    "cardiac-geometries-core>=0.2.1",
+    "cardiac-geometries-core>=0.2.1,<1.0.0",
     "meshio2",
     "numpy",
     "rich-click",
