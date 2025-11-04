@@ -37,7 +37,7 @@ dev = [
     "pre-commit",
 ]
 docs = [
-    "jupyter-book",
+    "jupyter-book<2.0",
     "jupytext",
     "sphinxcontrib-bibtex",
 ]
