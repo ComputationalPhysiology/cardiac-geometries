@@ -174,7 +174,6 @@ We can load the slab data as follows
 from cardiac_geometries.geometry import Geometry
 
 geo = Geometry.from_file("slab/slab.h5", schema_path="slab/slab.json")
-
 ```
 This object will now contain the objects listed in the schema and if there is an entry listed in the schema that is not contained in the file it will throw a `RuntimeError`.
 
@@ -190,17 +189,13 @@ geo1 = Geometry.from_file("slab1/slab.h5", schema_path="slab1/slab.json")
 geo2 = Geometry.from_file("slab2/slab.h5", schema_path="slab2/slab.json")
 
 scheme = {
-        "info1": H5Path(h5group="geo1/info", is_dolfin=False),
-        "mesh1": H5Path(h5group="geo1/mesh", is_mesh=True),
-        "info2": H5Path(h5group="geo2/info", is_dolfin=False),
-        "mesh2": H5Path(h5group="geo2/mesh", is_mesh=True),
+    "info1": H5Path(h5group="geo1/info", is_dolfin=False),
+    "mesh1": H5Path(h5group="geo1/mesh", is_mesh=True),
+    "info2": H5Path(h5group="geo2/info", is_dolfin=False),
+    "mesh2": H5Path(h5group="geo2/mesh", is_mesh=True),
 }
 
-geo = Geometry(
-    mesh1=geo1.mesh, info1=geo1.info,
-    mesh2=geo2.mesh, info2=geo2.info,
-    scheme=scheme
-)
+geo = Geometry(mesh1=geo1.mesh, info1=geo1.info, mesh2=geo2.mesh, info2=geo2.info, scheme=scheme)
 # This will also create a file double_slab.json with the scheme
 geo.save("double_slab.h5")
 ```
